@@ -1,0 +1,11 @@
+@import "tailwindcss";
+header {
+  height: 10vh;
+}
+
+a {
+  border: none !important;
+}
+.main-content {
+  margin-left: 70px;
+}

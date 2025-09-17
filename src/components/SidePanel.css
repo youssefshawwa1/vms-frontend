@@ -1,0 +1,139 @@
+.side-panel {
+  height: 90vh;
+  background: linear-gradient(135deg, #0b4e70 0%, #0b4e70 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  /* transition: width 0.3s ease; */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+.side-panel.expanded {
+  width: 250px;
+  min-width: 250px;
+}
+
+.side-panel.collapsed {
+  /* flex: 0 0 70px; */
+  width: 70px;
+  min-width: 70px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.panel-nav {
+  font-size: 1.2rem;
+  font-weight: 300;
+  padding: 20px 0px;
+  flex: 1;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s;
+  border-left: 4px solid transparent;
+}
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.nav-item.active {
+  background: #0d4461;
+  color: white;
+  border-left-color: #3498db;
+}
+.nav-icon {
+  font-size: 1.2rem;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+.nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.panel-footer {
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3498db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-weight: bold;
+}
+.user-details p {
+  margin: 0;
+}
+.user-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.user-role {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+.side-panel {
+  z-index: 40;
+}
+/* Responsive design */
+@media (max-width: 576px) {
+  .side-panel.expanded {
+    width: 100vw;
+    position: fixed;
+    z-index: 40;
+  }
+
+  /* .side-panel.collapsed {
+    width: 50px;
+  }
+
+  .nav-icon {
+    margin-right: 10px;
+  } */
+}

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 const LoadingContext = createContext();
 
 export const LoadingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [messageText, setMessageText] = useState("");
   const [isMessageVisible, setIsMessageVisible] = useState(false);
   const [messageType, setMessageType] = useState("info");

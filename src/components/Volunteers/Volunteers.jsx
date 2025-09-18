@@ -2,18 +2,37 @@ import Table from "../Table";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-// import Box from "@mui/material";
+import { useLoading } from "../../contexts/LoadingContext";
 function Volunteers() {
   const [volunteers, setVolunteers] = useState([]);
+  const { showLoading, hideLoading, isLoading } = useLoading();
   useEffect(() => {
     // Fetch volunteers from your API
     const fetchVolunteers = async () => {
-      const response = await fetch(
-        "http://192.168.0.5/fekra_volunteers/api/volunteers.php"
-      );
-      // console.log(await response.text());
-      const resp = await response.json();
-      setVolunteers(resp.data);
+      // showLoading();
+      try {
+        const response = await fetch(
+          "http://192.168.0.5/vms/backend/api/volunteers.php"
+        );
+        if (response) {
+          const resp = await response.json();
+          if (resp.result) {
+            setVolunteers(resp.data);
+            setTimeout(() => {
+              hideLoading();
+            }, 100);
+          } // console.log(await response.text());
+          else if (!resp.result) {
+            console.log("wowo");
+            //show message error.
+          }
+        }
+      } catch (error) {
+        setTimeout(() => {
+          //show message error, that there is a connection error with the server.
+          console.log(error);
+        }, 2000);
+      }
     };
 
     fetchVolunteers();
@@ -104,26 +123,28 @@ function Volunteers() {
   ];
   return (
     <>
-      <div className=" h-full  grid grid-cols-1 w-full">
-        <div className="py-10 flex justify-end">
-          <div className="">
-            {/* <Box variant="contained" color="primary" size="large">
+      {!isLoading && (
+        <div className=" h-full  grid grid-cols-1 w-full">
+          <div className="py-10 flex justify-end">
+            <div className="">
+              {/* <Box variant="contained" color="primary" size="large">
             Add a Volunteer
           </Box> */}
+            </div>
+            <div className="">
+              <Link
+                className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl"
+                to="/volunteers/add"
+              >
+                Add a Volunteer
+              </Link>
+            </div>
           </div>
-          <div className="">
-            <Link
-              className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl"
-              to="/volunteers/add"
-            >
-              Add a Volunteer
-            </Link>
+          <div className="w-full">
+            <Table rows={volunteers} columns={columns} />
           </div>
         </div>
-        <div className="w-full">
-          <Table rows={volunteers} columns={columns} />
-        </div>
-      </div>
+      )}
     </>
   );
 }

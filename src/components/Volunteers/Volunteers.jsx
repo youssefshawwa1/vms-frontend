@@ -11,6 +11,7 @@ function Volunteers() {
       const response = await fetch(
         "http://192.168.0.5/fekra_volunteers/api/volunteers.php"
       );
+      // console.log(await response.text());
       const resp = await response.json();
       setVolunteers(resp.data);
     };

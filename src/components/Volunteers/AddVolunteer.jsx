@@ -1,17 +1,19 @@
 import { Link } from "react-router-dom";
 import VolunteerForm from "./VolunteerForm";
 import { useLoading } from "../../contexts/LoadingContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 const AddVolunteer = () => {
-  const { hideLoading, isLoading } = useLoading();
+  const { hideLoading } = useLoading();
+  const [finished, setFinished] = useState(false);
   useEffect(() => {
     setTimeout(() => {
       hideLoading();
+      setFinished(true);
     }, 500);
   }, []);
   return (
     <>
-      {!isLoading && (
+      {finished && (
         <div className="add-volunteer w-full ">
           <Link to="/volunteers" className="back-link">
             ← Back to Volunteers
@@ -20,7 +22,7 @@ const AddVolunteer = () => {
             <h1 className="text-center text-3xl font-bold text-gray-700 mb-10">
               Add a volunteer page
             </h1>
-            <VolunteerForm data="" />
+            <VolunteerForm type="create" />
           </div>
         </div>
       )}

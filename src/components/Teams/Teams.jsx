@@ -1,11 +1,10 @@
 import Table from "../Table";
-import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useLoading } from "../../contexts/LoadingContext";
 
-function Volunteers() {
-  const [volunteers, setVolunteers] = useState([]);
+function Teams() {
+  const [teams, setTeams] = useState([]);
   const { isLoading, showLoading, hideLoading, showMessage, hideMessage } =
     useLoading();
   useEffect(() => {
@@ -14,12 +13,12 @@ function Volunteers() {
     const fetchVolunteers = async () => {
       try {
         const response = await fetch(
-          "http://localhost/vms/backend/api/volunteers.php"
+          "http://localhost/vms/backend/api/teams.php"
         );
         if (response) {
           const resp = await response.json();
           if (resp.result) {
-            setVolunteers(resp.data);
+            setTeams(resp.data);
             setTimeout(() => {
               hideLoading();
             }, 1000);
@@ -50,42 +49,11 @@ function Volunteers() {
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "firstName", headerName: "First name", width: 130 },
-    { field: "lastName", headerName: "Last name", width: 130 },
+    { field: "teamName", headerName: "Team Name", width: 130 },
     {
-      field: "email",
-      headerName: "Email",
-      width: 300,
-      sortable: true,
-    },
-    {
-      field: "phone",
-      headerName: "Phone",
-      width: 100,
-      sortable: true,
-    },
-    {
-      field: "birthDate",
-      headerName: "Birth Date",
-      width: 100,
-      sortable: true,
-    },
-    {
-      field: "gender",
-      headerName: "Gender",
-      width: 100,
-      sortable: true,
-    },
-    {
-      field: "major",
-      headerName: "Major",
-      width: 100,
-      sortable: true,
-    },
-    {
-      field: "university",
-      headerName: "University",
-      width: 100,
+      field: "description",
+      headerName: "description",
+      width: 500,
       sortable: true,
     },
     // {
@@ -124,7 +92,7 @@ function Volunteers() {
             className="bg-blue-400 w-full h-full p-4 text-white rounded-lg hover:bg-gray-400 focus:bg-gray-700  transition-color duration-200 ease-linear"
             variant="contained"
             size="small"
-            to={`/volunteers/${params.id}`}
+            to={`/teams/${params.id}`}
           >
             View
           </Link>
@@ -137,18 +105,18 @@ function Volunteers() {
       {!isLoading && (
         <div className=" h-full  grid grid-cols-1 w-full">
           <div className="py-10 flex justify-between">
-            <div className="">Add a Volunteer</div>
+            <div className="">All Teams</div>
             <div className="">
               <Link
                 className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl"
-                to="/volunteers/add"
+                to="/teams/add"
               >
-                Add a Volunteer
+                Add a Team
               </Link>
             </div>
           </div>
           <div className="w-full p-4">
-            <Table rows={volunteers} columns={columns} />
+            <Table rows={teams} columns={columns} />
           </div>
         </div>
       )}
@@ -156,4 +124,4 @@ function Volunteers() {
   );
 }
 
-export default Volunteers;
+export default Teams;

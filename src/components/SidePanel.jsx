@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./SidePanel.css";
-
+import { BiSolidDashboard } from "react-icons/bi";
+import { FaPeopleCarryBox, FaPeopleGroup } from "react-icons/fa6";
+import { FaTasks } from "react-icons/fa";
+import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 const SidePanel = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const location = useLocation();
 
   const navItems = [
-    { path: "/", label: "Dashboard", icon: "📊" },
-    { path: "/volunteers", label: "Volunteers", icon: "👥" },
-    { path: "/tasks", label: "Tasks", icon: "✅" },
-    { path: "/settings", label: "Settings", icon: "⚙️" },
+    { path: "/", label: "Dashboard", icon: <BiSolidDashboard /> },
+    { path: "/volunteers", label: "Volunteers", icon: <FaPeopleGroup /> },
+    { path: "/teams", label: "Teams", icon: <FaPeopleCarryBox /> },
+    { path: "/tasks", label: "Tasks", icon: <FaTasks /> },
   ];
 
   const togglePanel = () => {
@@ -24,7 +27,7 @@ const SidePanel = (props) => {
       <div className="panel-header text-center">
         {isExpanded && <h2>Navigation</h2>}
         <button className="toggle-btn" onClick={togglePanel}>
-          {isExpanded ? "◀" : "▶"}
+          {isExpanded ? <MdNavigateBefore /> : <MdNavigateNext />}
         </button>
       </div>
       <nav className="panel-nav flex flex-col ">

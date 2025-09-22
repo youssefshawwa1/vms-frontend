@@ -14,12 +14,16 @@ const VolunteerForm = (props) => {
     residentCountry: "",
   });
   //   const { isLoading, setIsLoading } = useState(true);
-  const { isLoading, showLoading, hideLoading } = useLoading();
-  const [successMessage, setSuccessMessage] = useState("");
+  const {
+    showLoading,
+    hideLoading,
+    showMessage,
+    hideMessage,
+    isMessageVisible,
+  } = useLoading();
   const [errors, setErrors] = useState({});
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length === 0) {
@@ -42,7 +46,7 @@ const VolunteerForm = (props) => {
       };
       try {
         const response = await fetch(
-          "http://192.168.0.5/fekra_volunteers/api/volunteers.php",
+          "http://192.168.0.2/vms/backend/api/volunteers.php",
           {
             method: "POST",
             headers: {
@@ -52,30 +56,42 @@ const VolunteerForm = (props) => {
           }
         );
         const res = await response.json();
+
         if (res.result) {
-          setSuccessMessage(res.message);
+          setTimeout(() => {
+            hideLoading();
+            showMessage(res.message, "Success");
+            setFormData({
+              firstName: "",
+              lastName: "",
+              birthDate: "",
+              major: "",
+              university: "",
+              phone: "",
+              email: "",
+              gender: "",
+              nationality: "",
+              residentCountry: "",
+            });
+          }, 1000);
+          // setTimeout(() => {
+
+          // }, 2000);
+        } else {
+          setTimeout(() => {
+            showMessage(res.message, "Internal Error");
+            hideLoading();
+          }, 1000);
         }
-        console.log(res);
-        // setSuccessMessage(JSON.parse(response.json()));
-        // setTimeout(() => {
-        //   setFormData({
-        //     firstName: "",
-        //     lastName: "",
-        //     birthDate: "",
-        //     major: "",
-        //     university: "",
-        //     phone: "",
-        //     email: "",
-        //     gender: "",
-        //     nationality: "",
-        //     residentCountry: "",
-        //   });
-        //   setSuccessMessage("");
-        // }, 2000);
       } catch (error) {
-        console.log(error);
+        setTimeout(() => {
+          hideLoading();
+          showMessage("Server can't be Reached!", "Connection Error");
+        }, 1000);
       } finally {
-        hideLoading();
+        setTimeout(() => {
+          hideMessage();
+        }, 2000);
       }
     } else {
       setErrors(formErrors);
@@ -122,7 +138,7 @@ const VolunteerForm = (props) => {
     return newErrors;
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} autoComplete="off">
       <div className="sections-container grid sm:grid-cols-1  gap-11 justify">
         <div className="section">
           <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text-left ">
@@ -135,6 +151,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <input
+                  autoComplete="off"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
                         ${
                           errors.firstName
@@ -162,6 +179,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <input
+                  autoComplete="off"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
                             ${
                               errors.lastName
@@ -186,6 +204,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <input
+                  autoComplete="off"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
                      ${errors.birthDate ? "border-red-500" : "border-gray-300"}
                     `}
@@ -208,6 +227,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <select
+                  autoComplete="off"
                   id="gender"
                   name="gender"
                   value={formData.gender}
@@ -237,6 +257,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <input
+                  autoComplete="off"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
                     ${errors.email ? "border-red-500" : "border-gray-300"}`}
                   type="email"
@@ -257,6 +278,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <input
+                  autoComplete="off"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
                     ${errors.phone ? "border-red-500" : "border-gray-300"}`}
                   type="tel"
@@ -284,6 +306,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <input
+                  autoComplete="off"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
                     ${
                       errors.university ? "border-red-500" : "border-gray-300"
@@ -308,6 +331,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <input
+                  autoComplete="off"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
                     ${errors.major ? "border-red-500" : "border-gray-300"}`}
                   type="text"
@@ -335,6 +359,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <select
+                  autoComplete="off"
                   id="nationality"
                   name="nationality"
                   value={formData.nationality}
@@ -363,6 +388,7 @@ const VolunteerForm = (props) => {
               </div>
               <div>
                 <select
+                  autoComplete="off"
                   id="residentCountry"
                   name="residentCountry"
                   value={formData.residentCountry}
@@ -398,10 +424,6 @@ const VolunteerForm = (props) => {
         >
           Submit
         </button>
-      </div>
-      <div className="text-center">
-        {isLoading && <div>Loading spinner/message...</div>}
-        {successMessage && <div className="success">{successMessage}</div>}
       </div>
     </form>
   );

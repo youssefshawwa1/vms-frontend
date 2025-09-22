@@ -1,6 +1,6 @@
 import { useLoading } from "./contexts/LoadingContext";
-import Loading from "./components/Loading";
-import Message from "./components/Message";
+import Loading from "./components/Helpers/Loading";
+import Message from "./components/Helpers/Message";
 import App from "./App";
 import { useEffect } from "react";
 

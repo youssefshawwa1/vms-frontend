@@ -5,14 +5,14 @@ const LoadingContext = createContext();
 
 export const LoadingProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [messageText, setMessageText] = useState("");
+  const [messageText, setMessageText] = useState();
   const [isMessageVisible, setIsMessageVisible] = useState(false);
-  const [messageType, setMessageType] = useState("info");
+  const [messageType, setMessageType] = useState("");
 
   const showLoading = () => setIsLoading(true);
   const hideLoading = () => setIsLoading(false);
 
-  const showMessage = (text, type = "info") => {
+  const showMessage = (text, type = "Success") => {
     setMessageText(text);
     setMessageType(type);
     setIsMessageVisible(true);

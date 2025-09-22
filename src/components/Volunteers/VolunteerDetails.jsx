@@ -14,7 +14,7 @@ const VolunteerDetail = () => {
         setLoading(true);
         // Replace with your actual API endpoint
         const response = await fetch(
-          `http://localhost/fekra_volunteers/api/volunteers.php?id=${id}`
+          `http://localhost/vms/backend/api/volunteers.php?id=${id}`
         );
         if (!response.ok) {
           throw new Error("Volunteer not found");

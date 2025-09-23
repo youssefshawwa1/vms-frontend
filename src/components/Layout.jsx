@@ -22,8 +22,9 @@ const Layout = () => {
     <>
       {isDone && (
         <>
-          <Header />
           <SidePanel userAvatar="YS" userRole="Admin" userName="joe" />
+          <Header />
+
           <div className="main-content flex">
             <Outlet />
           </div>

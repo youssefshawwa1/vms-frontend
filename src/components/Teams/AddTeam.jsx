@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import VolunteerForm from "./VolunteerForm";
+import TeamForm from "./TeamForm";
 import { useLoading } from "../../contexts/LoadingContext";
 import { useEffect, useState } from "react";
-const AddVolunteer = () => {
+const AddTeam = () => {
   const { hideLoading } = useLoading();
   const [finished, setFinished] = useState(false);
   useEffect(() => {
@@ -14,19 +14,19 @@ const AddVolunteer = () => {
   return (
     <>
       {finished && (
-        <div className="add-volunteer w-6xl mx-auto">
-          <Link to="/volunteers" className="back-link">
-            ← Back to Volunteers
+        <div className="add-teams h-full   px-4 max-w-6xl w-6xl mx-auto">
+          <Link to="/teams" className="back-link">
+            ← Back to Teams
           </Link>
-          <div className="form-container  rounded-lg shadow-xl  p-4   mx-auto m-5 mb-10">
+          <div className="form-container  rounded-lg shadow-xl  p-4 w-full m-auto m-5 mb-10">
             <h1 className="text-center text-3xl font-bold text-gray-700 mb-10">
-              Add a volunteer page
+              Add a Team
             </h1>
-            <VolunteerForm type="create" />
+            <TeamForm type="create" />
           </div>
         </div>
       )}
     </>
   );
 };
-export default AddVolunteer;
+export default AddTeam;

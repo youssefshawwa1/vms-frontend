@@ -1,10 +1,9 @@
 import Table from "../Table";
-import { Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import LinkBtn from "../LinkBtn";
 import { useState, useEffect } from "react";
 import { useLoading } from "../../contexts/LoadingContext";
 
-function Volunteers() {
+function Volunteers({ type, onRowDoubleClick }) {
   const [volunteers, setVolunteers] = useState([]);
   const { isLoading, showLoading, hideLoading, showMessage, hideMessage } =
     useLoading();
@@ -50,12 +49,12 @@ function Volunteers() {
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "firstName", headerName: "First name", width: 130 },
-    { field: "lastName", headerName: "Last name", width: 130 },
+    { field: "firstName", headerName: "First name", width: 100 },
+    { field: "lastName", headerName: "Last name", width: 100 },
     {
       field: "email",
       headerName: "Email",
-      width: 300,
+      width: 200,
       sortable: true,
     },
     {
@@ -73,7 +72,7 @@ function Volunteers() {
     {
       field: "gender",
       headerName: "Gender",
-      width: 100,
+      width: 80,
       sortable: true,
     },
     {
@@ -110,7 +109,9 @@ function Volunteers() {
     //     );
     //   },
     // },
-    {
+  ];
+  if (!type) {
+    columns.push({
       field: "view",
       headerName: "View",
       description: "This column is to View.",
@@ -120,35 +121,30 @@ function Volunteers() {
       renderCell: (params) => {
         // This is the key function
         return (
-          <Link
-            className="bg-blue-400 w-full h-full p-4 text-white rounded-lg hover:bg-gray-400 focus:bg-gray-700  transition-color duration-200 ease-linear"
-            variant="contained"
-            size="small"
-            to={`/volunteers/${params.id}`}
-          >
-            View
-          </Link>
+          // </Link>
+          <LinkBtn to={`/volunteers/${params.id}`} text="View" />
         );
       },
-    },
-  ];
+    });
+  }
   return (
     <>
       {!isLoading && (
-        <div className=" h-full  grid grid-cols-1 w-full">
-          <div className="py-10 flex justify-between">
-            <div className="">Add a Volunteer</div>
-            <div className="">
-              <Link
-                className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl"
-                to="/volunteers/add"
-              >
-                Add a Volunteer
-              </Link>
+        <div className=" h-full  grid grid-cols-1 w-full px-4 max-w-6xl mx-auto">
+          {!type && (
+            <div className="py-10 flex justify-between">
+              <div className="">Add a Volunteer</div>
+              <div className="">
+                <LinkBtn to="/volunteers/add" text="Add a Volunteer" />
+              </div>
             </div>
-          </div>
-          <div className="w-full p-4">
-            <Table rows={volunteers} columns={columns} />
+          )}
+          <div className="w-full">
+            <Table
+              rows={volunteers}
+              columns={columns}
+              onRowDoubleClick={onRowDoubleClick}
+            />
           </div>
         </div>
       )}

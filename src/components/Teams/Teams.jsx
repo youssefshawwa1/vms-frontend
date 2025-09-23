@@ -1,8 +1,7 @@
 import Table from "../Table";
-import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useLoading } from "../../contexts/LoadingContext";
-
+import LinkBtn from "../LinkBtn";
 function Teams() {
   const [teams, setTeams] = useState([]);
   const { isLoading, showLoading, hideLoading, showMessage, hideMessage } =
@@ -10,7 +9,7 @@ function Teams() {
   useEffect(() => {
     // Fetch volunteers from your API
     showLoading();
-    const fetchVolunteers = async () => {
+    const fetchTeams = async () => {
       try {
         const response = await fetch(
           "http://localhost/vms/backend/api/teams.php"
@@ -45,7 +44,7 @@ function Teams() {
       }
     };
 
-    fetchVolunteers();
+    fetchTeams();
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -53,7 +52,7 @@ function Teams() {
     {
       field: "description",
       headerName: "description",
-      width: 500,
+      width: 700,
       sortable: true,
     },
     // {
@@ -88,14 +87,15 @@ function Teams() {
       renderCell: (params) => {
         // This is the key function
         return (
-          <Link
-            className="bg-blue-400 w-full h-full p-4 text-white rounded-lg hover:bg-gray-400 focus:bg-gray-700  transition-color duration-200 ease-linear"
-            variant="contained"
-            size="small"
-            to={`/teams/${params.id}`}
-          >
-            View
-          </Link>
+          // <Link
+          //   className="bg-blue-400 w-full h-full p-4 text-white rounded-lg hover:bg-gray-400 focus:bg-gray-700  transition-color duration-200 ease-linear"
+          //   variant="contained"
+          //   size="small"
+          //   to={`${params.id}`}
+          // >
+          //   View
+          // </Link>
+          <LinkBtn to={`${params.id}`} text="View" />
         );
       },
     },
@@ -103,19 +103,14 @@ function Teams() {
   return (
     <>
       {!isLoading && (
-        <div className=" h-full  grid grid-cols-1 w-full">
+        <div className=" h-full  grid grid-cols-1 px-4 max-w-6xl mx-auto">
           <div className="py-10 flex justify-between">
             <div className="">All Teams</div>
             <div className="">
-              <Link
-                className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl"
-                to="/teams/add"
-              >
-                Add a Team
-              </Link>
+              <LinkBtn to="add" text="Add a Team" />
             </div>
           </div>
-          <div className="w-full p-4">
+          <div className="w-full">
             <Table rows={teams} columns={columns} />
           </div>
         </div>

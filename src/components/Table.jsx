@@ -31,28 +31,43 @@ import { DataGrid } from "@mui/x-data-grid";
 import { TextField, Box, Paper } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
-const Table = (props) => {
+const Table = ({ rows, columns, onRowDoubleClick }) => {
   const [searchText, setSearchText] = useState("");
   const [pageSize, setPageSize] = useState(7);
 
   // Memoize filtered rows to prevent unnecessary recalculations
   const filteredRows = useMemo(() => {
-    if (!searchText) return props.rows;
+    if (!searchText) return rows;
 
     const searchLower = searchText.toLowerCase();
-    return props.rows.filter((row) =>
+    return rows.filter((row) =>
       // Check if any column value contains the search text
-      props.columns.some((column) => {
+      columns.some((column) => {
         const value = row[column.field];
         return value && value.toString().toLowerCase().includes(searchLower);
       })
     );
-  }, [props.rows, props.columns, searchText]);
+  }, [rows, columns, searchText]);
 
   // Debounced search handler to prevent excessive re-renders
   const handleSearchChange = useCallback((event) => {
     setSearchText(event.target.value);
   }, []);
+  const handleRowDoubleClick = (params) => {
+    onRowDoubleClick(params.row);
+  };
+  let options = null;
+  if (onRowDoubleClick) {
+    options = {
+      cursor: "pointer",
+      "& .MuiDataGrid-row:hover": {
+        backgroundColor: "rgba(0, 0, 0, 0.04)",
+      },
+      "& .MuiDataGrid-cell": {
+        cursor: "pointer",
+      },
+    };
+  }
 
   return (
     <>
@@ -69,22 +84,36 @@ const Table = (props) => {
         </Box>
 
         <DataGrid
+          {...(onRowDoubleClick && {
+            onRowDoubleClick: handleRowDoubleClick,
+          })}
           rows={filteredRows}
-          columns={props.columns}
+          columns={columns}
+          onRowDoubleClick={onRowDoubleClick}
           pagination
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize },
             },
+            columns: {
+              columnVisibilityModel: {
+                id: false, // Hide ID column
+              },
+            },
+            filter: {
+              filterModel: {
+                items: [], // Start with no filters
+              },
+            },
           }}
           pageSizeOptions={[5, 7, 10, 15, 20]}
           onPaginationModelChange={(model) => setPageSize(model.pageSize)}
-          disableColumnMenu
           disableRowSelectionOnClick
           sx={{
             "& .MuiDataGrid-cell:focus": {
               outline: "none",
             },
+            ...options,
           }}
         />
       </Paper>

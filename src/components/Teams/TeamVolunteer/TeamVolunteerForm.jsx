@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { useLoading } from "../../contexts/LoadingContext";
-const TeamVolunteerForm = ({
-  teamId,
-  volunteerId,
-  reFetchData,
-  setActiveTab,
-}) => {
+import useFetching from "../../Global/Helpers/useFetching";
+
+const TeamVolunteerForm = ({ volunteerId, teamId, callBack }) => {
+  const { fetchData, sendData } = useFetching();
   const [formData, setFormData] = useState({
     volunteerTitle: "",
     startDate: "",
@@ -15,29 +12,18 @@ const TeamVolunteerForm = ({
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
-    console.log(`Here the teammm: ${teamId}`);
-    const fetching = async () => {
-      console.log(roles);
-      if (roles.length < 1) {
-        const response = await fetch(
-          "http://localhost/vms/backend/api/roles.php"
-        );
-        const res = await response.json();
-        setRoles(res.data);
-        console.log(res.data);
-      }
+    const fetchRoles = async () => {
+      await fetchData("roles.php", setRoles);
     };
-    fetching();
+    fetchRoles();
   }, []);
-  //   const { isLoading, setIsLoading } = useState(true);
-  const { showLoading, hideLoading, showMessage, hideMessage } = useLoading();
+
   const [errors, setErrors] = useState({});
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length === 0) {
-      showLoading();
       const data = {
         action: "addVolunteer",
         data: {
@@ -50,45 +36,7 @@ const TeamVolunteerForm = ({
           description: formData.description,
         },
       };
-      try {
-        const response = await fetch(
-          "http://localhost/vms/backend/api/teams.php",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          }
-        );
-        const res = await response.json();
-
-        if (res.result) {
-          setTimeout(() => {
-            hideLoading();
-            showMessage(res.message, "Success");
-            reFetchData();
-            setActiveTab("volunteers");
-          }, 1000);
-          // setTimeout(() => {
-
-          // }, 2000);
-        } else {
-          setTimeout(() => {
-            showMessage(res.message, "Internal Error");
-            hideLoading();
-          }, 1000);
-        }
-      } catch (error) {
-        setTimeout(() => {
-          hideLoading();
-          showMessage("Server can't be Reached!", "Connection Error");
-        }, 1000);
-      } finally {
-        setTimeout(() => {
-          hideMessage();
-        }, 3000);
-      }
+      await sendData("teams.php", data, callBack);
     } else {
       setErrors(formErrors);
     }

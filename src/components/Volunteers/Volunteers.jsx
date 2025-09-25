@@ -1,48 +1,17 @@
-import Table from "../Table";
-import LinkBtn from "../LinkBtn";
+import Table from "../Global/Table";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useLoading } from "../../contexts/LoadingContext";
-
+import { MdReadMore } from "react-icons/md";
+import { AddPerson } from "../Global/Icons";
+import useFetching from "../Global/Helpers/useFetching";
 function Volunteers({ type, onRowDoubleClick }) {
   const [volunteers, setVolunteers] = useState([]);
-  const { isLoading, showLoading, hideLoading, showMessage, hideMessage } =
-    useLoading();
+  const { isLoading } = useLoading();
+  const { fetchData } = useFetching();
   useEffect(() => {
-    // Fetch volunteers from your API
-    showLoading();
     const fetchVolunteers = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost/vms/backend/api/volunteers.php"
-        );
-        if (response) {
-          const resp = await response.json();
-          if (resp.result) {
-            setVolunteers(resp.data);
-            setTimeout(() => {
-              hideLoading();
-            }, 1000);
-          } // console.log(await response.text());
-          else {
-            setTimeout(() => {
-              hideLoading();
-              showMessage(resp.message, "Internal Error");
-            }, 1000);
-
-            //show message error.
-          }
-        }
-      } catch (error) {
-        setTimeout(() => {
-          hideLoading();
-          //show message error, that there is a connection error with the server.
-          showMessage("Server can't be Reached!", "Connection Error");
-        }, 1000);
-      } finally {
-        setTimeout(() => {
-          hideMessage();
-        }, 3000);
-      }
+      await fetchData("volunteers.php", setVolunteers);
     };
 
     fetchVolunteers();
@@ -121,8 +90,12 @@ function Volunteers({ type, onRowDoubleClick }) {
       renderCell: (params) => {
         // This is the key function
         return (
-          // </Link>
-          <LinkBtn to={`/volunteers/${params.id}`} text="View" />
+          <Link
+            to={`${params.id}`}
+            className="w-full h-full text-center flex justify-center items-center"
+          >
+            <MdReadMore className="text-yellow-400 text-4xl cursor-pointer hover:text-yellow-500 transition-colors" />
+          </Link>
         );
       },
     });
@@ -130,12 +103,18 @@ function Volunteers({ type, onRowDoubleClick }) {
   return (
     <>
       {!isLoading && (
-        <div className=" h-full  grid grid-cols-1 w-full px-4 max-w-6xl mx-auto">
+        <div className=" h-full grid grid-cols-1 w-full px-4 max-w-6xl mx-auto mb-10">
           {!type && (
             <div className="py-10 flex justify-between">
               <div className="">Add a Volunteer</div>
               <div className="">
-                <LinkBtn to="/volunteers/add" text="Add a Volunteer" />
+                {/* <LinkBtn to="volunteers/add" text="Add a Volunteer" /> */}
+                <Link
+                  to="add"
+                  className="w-full h-full text-center flex justify-center items-center"
+                >
+                  <AddPerson />
+                </Link>
               </div>
             </div>
           )}

@@ -1,74 +1,30 @@
 import { useState } from "react";
-import { useLoading } from "../../contexts/LoadingContext";
-const TeamForm = (props) => {
+import useFetching from "../Global/Helpers/useFetching";
+const TeamForm = ({ type, team, reFetch }) => {
+  const { sendData } = useFetching();
   const [formData, setFormData] = useState({
-    teamName: "",
-    description: "",
+    teamName: team ? team.teamName : "",
+    description: team ? team.description : "",
+    teamId: team ? team.id : "",
   });
-  //   const { isLoading, setIsLoading } = useState(true);
-  const {
-    showLoading,
-    hideLoading,
-    showMessage,
-    hideMessage,
-    isMessageVisible,
-  } = useLoading();
+
   const [errors, setErrors] = useState({});
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length === 0) {
-      showLoading();
       const data = {
-        action: "create",
+        action: type,
         data: {
           userId: 1001,
           teamName: formData.teamName,
           description: formData.description,
+          teamId: team ? team.id : "",
         },
       };
-      try {
-        const response = await fetch(
-          "http://localhost/vms/backend/api/teams.php",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          }
-        );
-        const res = await response.json();
 
-        if (res.result) {
-          setTimeout(() => {
-            hideLoading();
-            showMessage(res.message, "Success");
-            setFormData({
-              teamName: "",
-              description: "",
-            });
-          }, 1000);
-          // setTimeout(() => {
-
-          // }, 2000);
-        } else {
-          setTimeout(() => {
-            showMessage(res.message, "Internal Error");
-            hideLoading();
-          }, 1000);
-        }
-      } catch (error) {
-        setTimeout(() => {
-          hideLoading();
-          showMessage("Server can't be Reached!", "Connection Error");
-        }, 1000);
-      } finally {
-        setTimeout(() => {
-          hideMessage();
-        }, 2000);
-      }
+      await sendData("teams.php", data, reFetch);
     } else {
       setErrors(formErrors);
     }
@@ -163,7 +119,7 @@ const TeamForm = (props) => {
       {/* Add other fields similarly */}
       <div className="text-center p-4">
         <button
-          className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl cursor-pointer"
+          className="bg-yellow-200 w-50 h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl cursor-pointer"
           type="submit"
         >
           Submit

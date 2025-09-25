@@ -1,46 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TeamForm from "./TeamForm";
 import { MdCancel } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
-import { useTeam } from "../../contexts/TeamContext";
-
-const TeamCard = () => {
-  const { teamDetails, reFetch } = useTeam();
+const TeamVolunteerCard = ({ team, reFetch, reset }) => {
   const [edit, setEdit] = useState(false);
-  const switchEdit = () => {
-    setEdit(!edit);
+  const handleEditAction = () => {
+    setEdit(true);
   };
-
+  useEffect(() => {
+    handleCloseEdit();
+  }, [reset]);
+  const handleCloseEdit = () => {
+    setEdit(false);
+  };
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200 relative">
       {/* Team Header */}
       {!edit && (
         <>
-          <div className="absolute top-0 right-0 m-3 p-3 " onClick={switchEdit}>
+          <div
+            className="absolute top-0 right-0 m-3 p-3 "
+            onClick={handleEditAction}
+          >
             {/* <LinkBtn text="Edit" /> */}
             <MdEdit className="text-yellow-400 text-4xl cursor-pointer hover:text-yellow-500 transition-colors" />
           </div>
 
           <div className="border-b border-gray-200 pb-4 mb-4">
             <h2 className="text-2xl font-bold text-gray-800">
-              {teamDetails.teamName}
+              {team.teamName}
             </h2>
-            <p className="text-gray-600 mt-2">{teamDetails.description}</p>
+            <p className="text-gray-600 mt-2">{team.description}</p>
           </div>
         </>
       )}
       {edit && (
         <>
-          <div className="absolute top-0 right-0 m-2 p-3 " onClick={switchEdit}>
+          <div
+            className="absolute top-0 right-0 m-2 p-3 "
+            onClick={handleCloseEdit}
+          >
             <MdCancel className="text-red-500 text-3xl cursor-pointer hover:text-red-700 transition-colors" />
           </div>
           <div className="my-4">
-            <TeamForm
-              type="update"
-              team={teamDetails}
-              reFetch={reFetch}
-              reset={switchEdit}
-            />
+            <TeamForm type="update" team={team} reFetch={reFetch} />
           </div>
         </>
       )}
@@ -50,12 +53,12 @@ const TeamCard = () => {
         <div className="space-y-2">
           <div className="flex items-center text-gray-700">
             <span className="font-medium w-24">Created:</span>
-            <span>{new Date(teamDetails.createdAt).toLocaleDateString()}</span>
+            <span>{new Date(team.createdAt).toLocaleDateString()}</span>
           </div>
           <div className="flex items-center text-gray-700">
             <span className="font-medium w-24">By:</span>
             <span className="text-blue-600">
-              {teamDetails.createdBy.userName || "N/A"}
+              {team.createdBy.userName || "N/A"}
             </span>
           </div>
         </div>
@@ -64,12 +67,12 @@ const TeamCard = () => {
         <div className="space-y-2">
           <div className="flex items-center text-gray-700">
             <span className="font-medium w-24">Updated:</span>
-            <span>{new Date(teamDetails.updatedAt).toLocaleDateString()}</span>
+            <span>{new Date(team.updatedAt).toLocaleDateString()}</span>
           </div>
           <div className="flex items-center text-gray-700">
             <span className="font-medium w-24">By:</span>
             <span className="text-blue-600">
-              {teamDetails.updatedBy.userName || "N/A"}
+              {team.updatedBy.userName || "N/A"}
             </span>
           </div>
         </div>
@@ -77,10 +80,10 @@ const TeamCard = () => {
 
       {/* Team ID */}
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <span className="text-xs text-gray-500">Team ID: {teamDetails.id}</span>
+        <span className="text-xs text-gray-500">Team ID: {team.id}</span>
       </div>
     </div>
   );
 };
 
-export default TeamCard;
+export default TeamVolunteerCard;

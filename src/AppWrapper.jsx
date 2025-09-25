@@ -1,6 +1,5 @@
 import { useLoading } from "./contexts/LoadingContext";
-import Loading from "./components/Helpers/Loading";
-import Message from "./components/Helpers/Message";
+import { Message, Loading } from "./components/Global/Helpers/OverLay.jsx";
 import App from "./App";
 import { useEffect } from "react";
 

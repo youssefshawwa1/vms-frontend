@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { useLoading } from "../contexts/LoadingContext";
+import { LoadingTime } from "./Global/Global";
 function Home() {
   const { hideLoading } = useLoading();
   useEffect(() => {
     setTimeout(() => {
       hideLoading();
-    }, 1000);
+    }, LoadingTime);
   }, []);
   return (
     <>

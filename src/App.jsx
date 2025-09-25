@@ -1,15 +1,17 @@
 // App.jsx
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Volunteers from "./components/Volunteers/Volunteers";
 import VolunteerDetails from "./components/Volunteers/VolunteerDetails";
 import AddVolunteer from "./components/Volunteers/AddVolunteer";
 import AddTeam from "./components/Teams/AddTeam";
 import Teams from "./components/Teams/Teams";
-import Layout from "./components/Layout";
-import AddTeamVolunteer from "./components/Teams/AddTeamVolunteer";
+import Layout from "./components/Global/Main/Layout";
+import TeamVolunteer from "./components/Teams/TeamVolunteer/TeamVolunteer";
 import "./App.css";
 import TeamDetails from "./components/Teams/TeamDetails";
+import { VolunteerProvider } from "./contexts/VolunteerContext";
+import { TeamProvider } from "./contexts/TeamContext";
 
 const App = () => {
   return (
@@ -17,11 +19,29 @@ const App = () => {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="volunteers" element={<Volunteers />} />
-        <Route path="volunteers/:id" element={<VolunteerDetails />} />
+        <Route
+          path="volunteers/:id"
+          element={
+            <VolunteerProvider>
+              <VolunteerDetails />
+            </VolunteerProvider>
+          }
+        />
         <Route path="volunteers/add" element={<AddVolunteer />} />
         <Route path="teams" element={<Teams />} />
-        <Route path="teams/:id" element={<TeamDetails />} />
+        <Route
+          path="teams/:id"
+          element={
+            <TeamProvider>
+              <TeamDetails />
+            </TeamProvider>
+          }
+        />
         <Route path="teams/add" element={<AddTeam />} />
+        <Route
+          path="teams/:id/volunteering/:tvId"
+          element={<TeamVolunteer />}
+        />
       </Route>
     </Routes>
   );

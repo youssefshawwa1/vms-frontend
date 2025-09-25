@@ -1,26 +1,37 @@
 import { useState } from "react";
 import { useLoading } from "../../contexts/LoadingContext";
-const VolunteerForm = (props) => {
+import { API, LoadingTime, MessageTime } from "../Global/Global";
+import useFetching from "../Global/Helpers/useFetching";
+
+const VolunteerForm = ({ type, volunteer, reFetch }) => {
+  const { sendData } = useFetching();
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    birthDate: "",
-    major: "",
-    university: "",
-    phone: "",
-    email: "",
-    gender: "",
-    nationality: "",
-    residentCountry: "",
+    firstName: volunteer ? volunteer.firstName : "",
+    lastName: volunteer ? volunteer.lastName : "",
+    birthDate: volunteer ? volunteer.birthDate : "",
+    major: volunteer ? volunteer.major : "",
+    university: volunteer ? volunteer.university : "",
+    phone: volunteer ? volunteer.phone + "" : "",
+    email: volunteer ? volunteer.email : "",
+    gender: volunteer ? volunteer.gender.toLowerCase() : "",
+    nationality: volunteer ? volunteer.nationality : "",
+    residentCountry: volunteer ? volunteer.residentCountry : "",
   });
-  //   const { isLoading, setIsLoading } = useState(true);
-  const {
-    showLoading,
-    hideLoading,
-    showMessage,
-    hideMessage,
-    isMessageVisible,
-  } = useLoading();
+  const clearForm = () => {
+    setFormData({
+      firstName: "",
+      lastName: "",
+      birthDate: "",
+      major: "",
+      university: "",
+      phone: "",
+      email: "",
+      gender: "",
+      nationality: "",
+      residentCountry: "",
+    });
+  };
+  const { showLoading, hideLoading, showMessage, hideMessage } = useLoading();
   const [errors, setErrors] = useState({});
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +40,7 @@ const VolunteerForm = (props) => {
     if (Object.keys(formErrors).length === 0) {
       showLoading();
       const data = {
-        action: "create",
+        action: type,
         data: {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -41,58 +52,11 @@ const VolunteerForm = (props) => {
           gender: formData.gender,
           nationality: formData.nationality,
           residentCountry: formData.residentCountry,
+          volunteerId: volunteer ? volunteer.id : "",
           userId: 1001,
         },
       };
-      try {
-        const response = await fetch(
-          "http://192.168.0.2/vms/backend/api/volunteers.php",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          }
-        );
-        const res = await response.json();
-
-        if (res.result) {
-          setTimeout(() => {
-            hideLoading();
-            showMessage(res.message, "Success");
-            setFormData({
-              firstName: "",
-              lastName: "",
-              birthDate: "",
-              major: "",
-              university: "",
-              phone: "",
-              email: "",
-              gender: "",
-              nationality: "",
-              residentCountry: "",
-            });
-          }, 1000);
-          // setTimeout(() => {
-
-          // }, 2000);
-        } else {
-          setTimeout(() => {
-            showMessage(res.message, "Internal Error");
-            hideLoading();
-          }, 1000);
-        }
-      } catch (error) {
-        setTimeout(() => {
-          hideLoading();
-          showMessage("Server can't be Reached!", "Connection Error");
-        }, 1000);
-      } finally {
-        setTimeout(() => {
-          hideMessage();
-        }, 2000);
-      }
+      await sendData("volunteers.php", data, reFetch ? reFetch : clearForm);
     } else {
       setErrors(formErrors);
     }
@@ -115,7 +79,7 @@ const VolunteerForm = (props) => {
 
   const validateForm = () => {
     const newErrors = {};
-
+    console.log(formData);
     if (!formData.firstName.trim())
       newErrors.firstName = "First name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 header {
   height: 10vh;
 }
@@ -8,4 +9,57 @@ a {
 }
 .main-content {
   margin-left: 70px;
+}
+@theme {
+  --color-main: #f59e0b;
+  --color-main-500: #f7c878;
+}
+/* Custom components */
+@layer components {
+  .btn-custom {
+    background-color: var(--color-custom-yellow);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .custom-radio {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* Custom styles */
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    position: relative;
+  }
+  .custom-radio:checked {
+    background-color: var(--color-main);
+    border-color: var(--color-main);
+  }
+  .text-main {
+    color: var(--color-main) !important;
+  }
+  .custom-radio:checked::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
 }

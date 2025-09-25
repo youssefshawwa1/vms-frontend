@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import TeamForm from "./TeamForm";
 import { useLoading } from "../../contexts/LoadingContext";
 import { useEffect, useState } from "react";
+import { LoadingTime } from "../Global/Global";
 const AddTeam = () => {
   const { hideLoading } = useLoading();
   const [finished, setFinished] = useState(false);
@@ -9,12 +10,12 @@ const AddTeam = () => {
     setTimeout(() => {
       hideLoading();
       setFinished(true);
-    }, 500);
+    }, LoadingTime);
   }, []);
   return (
     <>
       {finished && (
-        <div className="add-teams h-full   px-4 max-w-6xl w-6xl mx-auto">
+        <div className="add-teams h-full   px-4 max-w-6xl w-6xl mx-auto mb-10">
           <Link to="/teams" className="back-link">
             ← Back to Teams
           </Link>
@@ -22,7 +23,7 @@ const AddTeam = () => {
             <h1 className="text-center text-3xl font-bold text-gray-700 mb-10">
               Add a Team
             </h1>
-            <TeamForm type="create" />
+            <TeamForm />
           </div>
         </div>
       )}

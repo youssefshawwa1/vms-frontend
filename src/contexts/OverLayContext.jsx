@@ -1,14 +1,20 @@
 // contexts/LoadingContext.js
 import React, { createContext, useContext, useState } from "react";
 
-const LoadingContext = createContext();
+const OverLayContext = createContext();
 
-export const LoadingProvider = ({ children }) => {
+export const OverLayProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [messageText, setMessageText] = useState();
   const [isMessageVisible, setIsMessageVisible] = useState(false);
   const [messageType, setMessageType] = useState("");
-
+  const [popUpConfig, setPopUpConfig] = useState({
+    isVisible: false,
+    title: "",
+    content: null, // This will hold the component
+    onSubmit: null, // Submit callback
+    onCancel: null, // Cancel callback
+  });
   const showLoading = () => setIsLoading(true);
   const hideLoading = () => setIsLoading(false);
 
@@ -22,8 +28,26 @@ export const LoadingProvider = ({ children }) => {
     setIsMessageVisible(false);
     setMessageText("");
   };
+  const showPopUp = (title, content) => {
+    setPopUpConfig({
+      isVisible: true,
+      title,
+      content,
+    });
+  };
+  const hidePopUp = () => {
+    setPopUpConfig({
+      isVisible: false,
+      title: "",
+      content: null,
+    });
+  };
 
   const value = {
+    //PupUp
+    hidePopUp,
+    showPopUp,
+    popUpConfig,
     // Loading states
     isLoading,
     showLoading,
@@ -38,14 +62,14 @@ export const LoadingProvider = ({ children }) => {
   };
 
   return (
-    <LoadingContext.Provider value={value}>{children}</LoadingContext.Provider>
+    <OverLayContext.Provider value={value}>{children}</OverLayContext.Provider>
   );
 };
 
-export const useLoading = () => {
-  const context = useContext(LoadingContext);
+export const useOverLay = () => {
+  const context = useContext(OverLayContext);
   if (!context) {
-    throw new Error("useLoading must be used within a LoadingProvider");
+    throw new Error("useOverLay must be used within a OverLayProvider");
   }
   return context;
 };

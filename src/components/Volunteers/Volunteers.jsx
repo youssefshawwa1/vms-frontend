@@ -1,13 +1,13 @@
 import Table from "../Global/Table";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useLoading } from "../../contexts/LoadingContext";
+import { useOverLay } from "../../contexts/OverLayContext";
 import { MdReadMore } from "react-icons/md";
 import { AddPerson } from "../Global/Icons";
 import useFetching from "../Global/Helpers/useFetching";
 function Volunteers({ type, onRowDoubleClick }) {
   const [volunteers, setVolunteers] = useState([]);
-  const { isLoading } = useLoading();
+  const { isLoading } = useOverLay();
   const { fetchData } = useFetching();
   useEffect(() => {
     const fetchVolunteers = async () => {
@@ -103,7 +103,7 @@ function Volunteers({ type, onRowDoubleClick }) {
   return (
     <>
       {!isLoading && (
-        <div className=" h-full grid grid-cols-1 w-full px-4 max-w-6xl mx-auto mb-10">
+        <div className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10 fadeIn">
           {!type && (
             <div className="py-10 flex justify-between">
               <div className="">Add a Volunteer</div>
@@ -118,7 +118,7 @@ function Volunteers({ type, onRowDoubleClick }) {
               </div>
             </div>
           )}
-          <div className="w-full">
+          <div className="w-full fadeIn">
             <Table
               rows={volunteers}
               columns={columns}

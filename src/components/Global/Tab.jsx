@@ -1,11 +1,19 @@
 import Table from "./Table";
-const Tab = ({ columns, rows, filter, setFilter }) => {
+const Tab = ({
+  columns,
+  rows,
+  filter,
+  setFilter,
+  hide,
+  getRowClassName = null,
+  styles = {},
+}) => {
   const filters = ["all", "current", "old"];
-
+  console.log(styles);
   return (
     <div>
       {/* Filter Controls */}
-      <div className="mb-6 ">
+      <div className="mb-6 fadeIn">
         <label className="text-sm font-medium text-gray-700 mr-4">Show:</label>
         <div className="flex space-x-4 flex-col gap-2 sm:flex-row">
           {filters.map((f) => (
@@ -26,7 +34,13 @@ const Tab = ({ columns, rows, filter, setFilter }) => {
           ))}
         </div>
       </div>
-      <Table columns={columns} rows={rows} />
+      <Table
+        columns={columns}
+        rows={rows}
+        hide={hide}
+        getRowClassName={getRowClassName}
+        styles={styles}
+      />
     </div>
   );
 };

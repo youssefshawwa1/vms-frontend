@@ -1,5 +1,5 @@
 // App.jsx
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/Home";
 import Volunteers from "./components/Volunteers/Volunteers";
 import VolunteerDetails from "./components/Volunteers/VolunteerDetails";
@@ -12,6 +12,8 @@ import "./App.css";
 import TeamDetails from "./components/Teams/TeamDetails";
 import { VolunteerProvider } from "./contexts/VolunteerContext";
 import { TeamProvider } from "./contexts/TeamContext";
+import { VolunteeringProvider } from "./contexts/VolunteeringContext";
+import PageNotFound from "./components/Global/Main/PageNotFound";
 
 const App = () => {
   return (
@@ -40,8 +42,13 @@ const App = () => {
         <Route path="teams/add" element={<AddTeam />} />
         <Route
           path="teams/:id/volunteering/:tvId"
-          element={<TeamVolunteer />}
+          element={
+            <VolunteeringProvider>
+              <TeamVolunteer />
+            </VolunteeringProvider>
+          }
         />
+        <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
   );

@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import TeamForm from "./TeamForm";
-import { useLoading } from "../../contexts/LoadingContext";
+import { useOverLay } from "../../contexts/OverLayContext";
 import { useEffect, useState } from "react";
 import { LoadingTime } from "../Global/Global";
 const AddTeam = () => {
-  const { hideLoading } = useLoading();
+  const { hideLoading } = useOverLay();
   const [finished, setFinished] = useState(false);
   useEffect(() => {
     setTimeout(() => {
@@ -15,7 +15,7 @@ const AddTeam = () => {
   return (
     <>
       {finished && (
-        <div className="add-teams h-full   px-4 max-w-6xl w-6xl mx-auto mb-10">
+        <div className="add-teams h-full   px-4 max-w-6xl w-6xl mx-auto mb-10 fadeIn">
           <Link to="/teams" className="back-link">
             ← Back to Teams
           </Link>

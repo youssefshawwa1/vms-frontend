@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import VolunteerForm from "./VolunteerForm";
-import { useLoading } from "../../contexts/LoadingContext";
+import { useOverLay } from "../../contexts/OverLayContext";
 import { useEffect, useState } from "react";
 const AddVolunteer = () => {
-  const { hideLoading } = useLoading();
+  const { hideLoading } = useOverLay();
   const [finished, setFinished] = useState(false);
   useEffect(() => {
     setTimeout(() => {
@@ -22,7 +22,7 @@ const AddVolunteer = () => {
             <h1 className="text-center text-3xl font-bold text-gray-700 mb-10">
               Add a volunteer page
             </h1>
-            <VolunteerForm type="create" />
+            <VolunteerForm />
           </div>
         </div>
       )}

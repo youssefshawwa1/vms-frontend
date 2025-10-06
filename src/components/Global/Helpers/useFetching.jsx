@@ -1,20 +1,20 @@
 // hooks/useFetching.js
-import { useLoading } from "../../../contexts/LoadingContext";
+import { useOverLay } from "../../../contexts/OverLayContext";
 import { API, LoadingTime, MessageTime } from "../Global";
 
 const useFetching = () => {
-  const { hideLoading, showMessage, hideMessage, showLoading } = useLoading();
+  const { hideLoading, showMessage, hideMessage, showLoading } = useOverLay();
 
   const fetchData = async (where, callBack) => {
     showLoading();
     try {
       const url = `${API}${where}`;
       const response = await fetch(url);
+      // console.log(await response.text());
       const resp = await response.json();
 
       if (resp.result) {
         setTimeout(() => hideLoading(), LoadingTime);
-        // Usually you want to return the data, not just result
         if (callBack) {
           callBack(resp.data);
         } else {
@@ -48,7 +48,6 @@ const useFetching = () => {
         },
         body: JSON.stringify(data),
       });
-
       const resp = await response.json();
 
       if (resp.result) {

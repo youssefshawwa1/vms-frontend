@@ -1,11 +1,50 @@
-import { useState } from "react";
-import { useLoading } from "../../contexts/LoadingContext";
-import { API, LoadingTime, MessageTime } from "../Global/Global";
+import { useValidateForm, validators } from "../Global/useValidateForm";
 import useFetching from "../Global/Helpers/useFetching";
-
+import {
+  Input,
+  SelectInput,
+  FormSubmitBtn,
+  FormSectionGroup,
+  FormSection,
+} from "../Global/Form";
 const VolunteerForm = ({ type, volunteer, reFetch }) => {
-  const { sendData } = useFetching();
-  const [formData, setFormData] = useState({
+  const countries = [
+    {
+      text: "Select Nationality",
+      value: "",
+    },
+    {
+      text: "Lebanon",
+      value: "lb",
+    },
+    {
+      text: "Syria",
+      value: "sy",
+    },
+    {
+      text: "Palestine",
+      value: "ps",
+    },
+    {
+      text: "Other",
+      value: "other",
+    },
+  ];
+  const genders = [
+    {
+      text: "Select Gender",
+      value: "",
+    },
+    {
+      text: "Male",
+      value: "male",
+    },
+    {
+      text: "Female",
+      value: "female",
+    },
+  ];
+  const initialData = {
     firstName: volunteer ? volunteer.firstName : "",
     lastName: volunteer ? volunteer.lastName : "",
     birthDate: volunteer ? volunteer.birthDate : "",
@@ -13,34 +52,46 @@ const VolunteerForm = ({ type, volunteer, reFetch }) => {
     university: volunteer ? volunteer.university : "",
     phone: volunteer ? volunteer.phone + "" : "",
     email: volunteer ? volunteer.email : "",
-    gender: volunteer ? volunteer.gender.toLowerCase() : "",
+    gender: volunteer
+      ? volunteer.gender
+        ? volunteer.gender.toLowerCase()
+        : ""
+      : "",
     nationality: volunteer ? volunteer.nationality : "",
     residentCountry: volunteer ? volunteer.residentCountry : "",
-  });
-  const clearForm = () => {
-    setFormData({
-      firstName: "",
-      lastName: "",
-      birthDate: "",
-      major: "",
-      university: "",
-      phone: "",
-      email: "",
-      gender: "",
-      nationality: "",
-      residentCountry: "",
-    });
   };
-  const { showLoading, hideLoading, showMessage, hideMessage } = useLoading();
-  const [errors, setErrors] = useState({});
+  const validationRules = {
+    firstName: validators.required(),
+    lastName: validators.required(),
+    birthDate: validators.birthDate(),
+    major: validators.required(),
+    university: validators.requiredAndLengthRange(
+      2,
+      300,
+      "University is required!"
+    ),
+    phone: validators.phone(),
+    email: validators.email(),
+    gender: validators.required(),
+    nationality: validators.required(),
+    residentCountry: validators.required(),
+  };
+  const {
+    formData,
+    errors,
+    handleChange,
+    handleBlur,
+    validateForm,
+    resetForm,
+  } = useValidateForm(initialData, validationRules);
+  const { sendData } = useFetching();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formErrors = validateForm();
 
-    if (Object.keys(formErrors).length === 0) {
-      showLoading();
+    if (validateForm()) {
       const data = {
-        action: type,
+        action: type ? type : "create",
         data: {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -56,339 +107,116 @@ const VolunteerForm = ({ type, volunteer, reFetch }) => {
           userId: 1001,
         },
       };
-      await sendData("volunteers.php", data, reFetch ? reFetch : clearForm);
-    } else {
-      setErrors(formErrors);
-    }
-  };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: "",
-      });
+      await sendData("volunteers.php", data, reFetch ? reFetch : resetForm);
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    console.log(formData);
-    if (!formData.firstName.trim())
-      newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!formData.birthDate) newErrors.birthDate = "Birth date is required";
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!formData.university.trim())
-      newErrors.university = "University Or School is required";
-    if (!formData.major.trim()) newErrors.major = "Major is required.";
-    if (!formData.gender) newErrors.gender = "Gender is required";
-    if (!formData.nationality)
-      newErrors.nationality = "Nationality is required";
-    if (!formData.residentCountry)
-      newErrors.residentCountry = "Resident country is required";
-
-    return newErrors;
-  };
   return (
     <form onSubmit={handleSubmit} autoComplete="off">
-      <div className="sections-container grid sm:grid-cols-1  gap-11 justify">
-        <div className="section">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text-left ">
-            Personal Information
-          </h2>
-          <div className=" grid sm:grid-cols-1 gap-6 md:grid-cols-2 ">
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="firstName">First Name:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                        ${
-                          errors.firstName
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                  type="text"
-                  name="firstName"
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="John.."
-                />
-                {errors.firstName && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.firstName}
-                  </p>
-                )}
-                {/* <p className="mt-1 text-sm text-red-600">error</p> */}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="lastName">Last Name:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                            ${
-                              errors.lastName
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }`}
-                  type="text"
-                  name="lastName"
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Doe.."
-                />
-                {errors.lastName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="birthDate">Birth Date:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                     ${errors.birthDate ? "border-red-500" : "border-gray-300"}
-                    `}
-                  type="date"
-                  name="birthDate"
-                  id="birthDate"
-                  value={formData.birthDate}
-                  onChange={handleChange}
-                />
-                {errors.birthDate && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.birthDate}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="gender">Gender:</label>
-              </div>
-              <div>
-                <select
-                  autoComplete="off"
-                  id="gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${errors.gender ? "border-red-500" : "border-gray-300"}`}
-                >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-                {errors.gender && (
-                  <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="section">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text-left ">
-            Contact Info
-          </h2>
-          <div className=" grid sm:grid-cols-1 gap-6 md:grid-cols-1">
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="email">Email Address:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${errors.email ? "border-red-500" : "border-gray-300"}`}
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="example@example.com.."
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="phone">Phone Number</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${errors.phone ? "border-red-500" : "border-gray-300"}`}
-                  type="tel"
-                  name="phone"
-                  id="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="70 702 700"
-                />
-                {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="section">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text-left ">
-            Education Information
-          </h2>
-          <div className=" grid sm:grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="university">University / School:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${
-                      errors.university ? "border-red-500" : "border-gray-300"
-                    }`}
-                  type="text"
-                  name="university"
-                  id="university"
-                  value={formData.university}
-                  onChange={handleChange}
-                  placeholder="Lebanese University.."
-                />
-                {errors.university && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.university}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="major">Major:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${errors.major ? "border-red-500" : "border-gray-300"}`}
-                  type="text"
-                  name="major"
-                  id="major"
-                  value={formData.major}
-                  onChange={handleChange}
-                  placeholder="Computer Scince"
-                />
-                {errors.major && (
-                  <p className="mt-1 text-sm text-red-600">{errors.major}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="section">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text-left ">
-            Location Information
-          </h2>
-          <div className=" grid sm:grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="nationality">Nationality:</label>
-              </div>
-              <div>
-                <select
-                  autoComplete="off"
-                  id="nationality"
-                  name="nationality"
-                  value={formData.nationality}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${
-                      errors.nationality ? "border-red-500" : "border-gray-300"
-                    }`}
-                >
-                  <option value="">Select nationality</option>
-                  <option value="lb">Lebanon</option>
-                  <option value="sy">Syria</option>
-                  <option value="ps">Palestine</option>
-                  <option value="other">Other</option>
-                </select>
-                {errors.nationality && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.nationality}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="residentCountry">Country of Residence:</label>
-              </div>
-              <div>
-                <select
-                  autoComplete="off"
-                  id="residentCountry"
-                  name="residentCountry"
-                  value={formData.residentCountry}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${
-                      errors.residentCountry
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                >
-                  <option value="">Select nationality</option>
-                  <option value="lb">Lebanon</option>
-                  <option value="sy">Syria</option>
-                  <option value="ps">Palestine</option>
-                  <option value="other">Other</option>
-                </select>
-                {errors.residentCountry && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.residentCountry}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Add other fields similarly */}
-      <div className="text-center p-4">
-        <button
-          className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl cursor-pointer"
-          type="submit"
-        >
-          Submit
-        </button>
-      </div>
+      <FormSectionGroup>
+        <FormSection title="Personal Information">
+          <Input
+            value={formData.firstName}
+            error={errors.firstName}
+            label="First Name"
+            onChange={handleChange}
+            holder="some first name.."
+            name={"firstName"}
+            onBlur={handleBlur}
+          />
+          <Input
+            value={formData.lastName}
+            error={errors.lastName}
+            label="Last Name"
+            onChange={handleChange}
+            holder="some last name.."
+            name="lastName"
+            onBlur={handleBlur}
+          />
+          <Input
+            value={formData.birthDate}
+            error={errors.birthDate}
+            label="Birth Date"
+            onChange={handleChange}
+            holder="date"
+            type="date"
+            name="birthDate"
+            onBlur={handleBlur}
+          />
+          <SelectInput
+            label="Gender"
+            value={formData.gender}
+            onChange={handleChange}
+            error={errors.gender}
+            options={genders}
+            name="gender"
+            onBlur={handleBlur}
+          />
+        </FormSection>
+        <FormSection title="Contact Info">
+          <Input
+            value={formData.email}
+            error={errors.email}
+            label="Email Address"
+            onChange={handleChange}
+            holder="joe@gmail.com.."
+            type="email"
+            name="email"
+            onBlur={handleBlur}
+          />
+          <Input
+            value={formData.phone}
+            error={errors.phone}
+            label="Phone Number"
+            onChange={handleChange}
+            holder="81 800 700.."
+            type="tel"
+            name="phone"
+            onBlur={handleBlur}
+          />
+        </FormSection>
+        <FormSection title="Education Information">
+          <Input
+            value={formData.university}
+            error={errors.university}
+            label="University / School"
+            onChange={handleChange}
+            holder="LIU.."
+            name="university"
+            onBlur={handleBlur}
+          />
+          <Input
+            value={formData.major}
+            error={errors.major}
+            label="Major"
+            onChange={handleChange}
+            holder="Computer Science.."
+            name="major"
+            onBlur={handleBlur}
+          />
+        </FormSection>
+        <FormSection title="Location Information">
+          <SelectInput
+            label="Nationality"
+            value={formData.nationality}
+            onChange={handleChange}
+            error={errors.nationality}
+            options={countries}
+            name="nationality"
+            onBlur={handleBlur}
+          />
+          <SelectInput
+            label="Country of Residence"
+            value={formData.residentCountry}
+            onChange={handleChange}
+            error={errors.residentCountry}
+            options={countries}
+            name="residentCountry"
+            onBlur={handleBlur}
+          />
+        </FormSection>
+      </FormSectionGroup>
+      <FormSubmitBtn text={type ? "Update Volunteer" : "Add Volunteer"} />
     </form>
   );
 };

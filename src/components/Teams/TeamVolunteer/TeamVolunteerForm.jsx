@@ -1,22 +1,48 @@
 import { useState, useEffect } from "react";
 import useFetching from "../../Global/Helpers/useFetching";
+import {
+  Input,
+  FormSubmitBtn,
+  FormSectionGroup,
+  FormSection,
+  SelectInput,
+  CheckBox,
+} from "../../Global/Form";
 
-const TeamVolunteerForm = ({ volunteerId, teamId, callBack }) => {
+const TeamVolunteerForm = ({ volunteeringDetails, callBack, type }) => {
   const { fetchData, sendData } = useFetching();
   const [formData, setFormData] = useState({
-    volunteerTitle: "",
-    startDate: "",
-    roleId: "",
-    description: "",
+    volunteerTitle: volunteeringDetails.volunteerTitle
+      ? volunteeringDetails.volunteerTitle
+      : "",
+    startDate: volunteeringDetails.startDate
+      ? volunteeringDetails.startDate
+      : "",
+    roleId: volunteeringDetails.role ? volunteeringDetails.role.roleId : "",
+    description: volunteeringDetails.description
+      ? volunteeringDetails.description
+      : "",
+    endDate: volunteeringDetails.endDate ? volunteeringDetails.endDate : "",
   });
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
     const fetchRoles = async () => {
-      await fetchData("roles.php", setRoles);
+      const d = await fetchData("roles.php");
+      setRoles(() => [
+        {
+          text: "Select Type",
+          value: "",
+        },
+        ...d.map((role) => ({
+          text: role.roleTitle,
+          value: role.id,
+        })),
+      ]);
     };
     fetchRoles();
   }, []);
+  const [complete, setComplete] = useState(false);
 
   const [errors, setErrors] = useState({});
   const handleSubmit = async (e) => {
@@ -25,15 +51,19 @@ const TeamVolunteerForm = ({ volunteerId, teamId, callBack }) => {
 
     if (Object.keys(formErrors).length === 0) {
       const data = {
-        action: "addVolunteer",
+        action: type ? "updateVolunteering" : "addVolunteering",
         data: {
           userId: 1001,
-          teamId: teamId,
-          volunteerId: volunteerId,
+          teamId: volunteeringDetails.teamId ? volunteeringDetails.teamId : "",
+          volunteerId: volunteeringDetails.volunteerId
+            ? volunteeringDetails.volunteerId
+            : "",
           volunteerTitle: formData.volunteerTitle,
           startDate: formData.startDate,
           roleId: formData.roleId,
           description: formData.description,
+          teamVolunteerId: volunteeringDetails.id ? volunteeringDetails.id : "",
+          endDate: complete == true ? formData.endDate : "",
         },
       };
       await sendData("teams.php", data, callBack);
@@ -65,139 +95,76 @@ const TeamVolunteerForm = ({ volunteerId, teamId, callBack }) => {
     if (!formData.description.trim())
       newErrors.description = "Description is required";
     if (!formData.startDate) newErrors.startDate = "Start date is required";
+    if (complete) {
+      if (!formData.endDate) newErrors.endDate = "End Date is Required!";
+      else if (formData.endDate < formData.startDate)
+        newErrors.endDate = "Inserted Date is before the start Date!";
+    }
 
     if (!formData.roleId) newErrors.roleId = "Role type is required";
     return newErrors;
   };
   return (
     <form onSubmit={handleSubmit} autoComplete="off">
-      <div className="sections-container grid sm:grid-cols-1  gap-11 justify">
-        <div className="section">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text-left ">
-            Volunteering Information
-          </h2>
-          <div className=" grid sm:grid-cols-1 gap-6 md:grid-cols-2 ">
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="volunteerTitle">Volunteer Title:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                        ${
-                          errors.volunteerTitle
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                  type="text"
-                  name="volunteerTitle"
-                  id="volunteerTitle"
-                  value={formData.volunteerTitle}
-                  onChange={handleChange}
-                  placeholder="CEO.."
-                />
-                {errors.volunteerTitle && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.volunteerTitle}
-                  </p>
-                )}
-                {/* <p className="mt-1 text-sm text-red-600">error</p> */}
-              </div>
-            </div>
+      <FormSectionGroup>
+        <FormSection title="Volunteering Information">
+          <Input
+            label="Volunteering Title"
+            error={errors.volunteerTitle}
+            onChange={handleChange}
+            value={formData.volunteerTitle}
+            name="volunteerTitle"
+            holder="Coordinator..."
+          />
+          <SelectInput
+            label="Role Type"
+            value={formData.roleId}
+            onChange={handleChange}
+            error={errors.roleId}
+            options={roles}
+            name={"roleId"}
+          ></SelectInput>
+          <Input
+            label="Description"
+            error={errors.description}
+            onChange={handleChange}
+            value={formData.description}
+            name="description"
+            type="textarea"
+            holder="Some Description"
+          />
+          <Input
+            label="Start Date"
+            error={errors.startDate}
+            onChange={handleChange}
+            value={formData.startDate}
+            name="startDate"
+            type="date"
+          />
 
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="roleId">Role Type:</label>
-              </div>
-              <div>
-                <select
-                  autoComplete="off"
-                  id="roleId"
-                  name="roleId"
-                  value={formData.roleId}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                    ${errors.roleId ? "border-red-500" : "border-gray-300"}`}
-                >
-                  <option value="">Select Type</option>
-                  {/* <option value="male">Male</option>
-                  <option value="female">Female</option> */}
-                  {roles.map((role) => {
-                    return (
-                      <option key={role.id} value={role.id}>
-                        {role.roleTitle}
-                      </option>
-                    );
-                  })}
-                </select>
-                {errors.roleId && (
-                  <p className="mt-1 text-sm text-red-600">{errors.roleId}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="description">Description:</label>
-              </div>
-              <div>
-                <textarea
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                            ${
-                              errors.description
-                                ? "border-red-500"
-                                : "border-gray-300"
-                            }`}
-                  type="text"
-                  name="description"
-                  id="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="Some Description.."
-                ></textarea>
-                {errors.description && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.description}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1">
-              <div>
-                <label htmlFor="startDate">Start Date:</label>
-              </div>
-              <div>
-                <input
-                  autoComplete="off"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-yellow-200 focus:border-yellow-200 outline-none transition 
-                     ${errors.startDate ? "border-red-500" : "border-gray-300"}
-                    `}
-                  type="date"
-                  name="startDate"
-                  id="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                />
-                {errors.startDate && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.startDate}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Add other fields similarly */}
-      <div className="text-center p-4">
-        <button
-          className="bg-yellow-200 w-70  h-full p-4 text-white rounded-lg hover:bg-yellow-300 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl cursor-pointer"
-          type="submit"
-        >
-          Submit
-        </button>
-      </div>
+          <CheckBox
+            checked={complete}
+            setChecked={setComplete}
+            ifChecked={() => {
+              if (complete) {
+                errors.endDate = "";
+              }
+            }}
+            label="End Volunteering"
+          />
+          {complete && (
+            <Input
+              label="End Date"
+              error={errors.endDate}
+              onChange={handleChange}
+              value={formData.endDate}
+              name="endDate"
+              type="date"
+            />
+          )}
+        </FormSection>
+      </FormSectionGroup>
+      <FormSubmitBtn text={type ? "Update Volunteering" : "Add Volunteering"} />
     </form>
   );
 };

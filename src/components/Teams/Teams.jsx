@@ -1,6 +1,6 @@
 import Table from "../Global/Table";
 import { useState, useEffect } from "react";
-import { useLoading } from "../../contexts/LoadingContext";
+import { useOverLay } from "../../contexts/OverLayContext";
 import { Link } from "react-router-dom";
 import { AddGroup, View } from "../Global/Icons";
 
@@ -8,7 +8,7 @@ import useFetching from "../Global/Helpers/useFetching";
 function Teams({ type, onRowDoubleClick }) {
   const { fetchData } = useFetching();
   const [teams, setTeams] = useState([]);
-  const { isLoading } = useLoading();
+  const { isLoading } = useOverLay();
   useEffect(() => {
     const fetchTeams = async () => {
       await fetchData("teams.php", setTeams);
@@ -48,7 +48,7 @@ function Teams({ type, onRowDoubleClick }) {
   return (
     <>
       {!isLoading && (
-        <div className=" h-full  grid grid-cols-1 px-4 max-w-6xl mx-auto mb-10">
+        <div className=" h-full w-full  grid grid-cols-1 px-4 mx-auto mb-10 fadeIn">
           {!type && (
             <div className="py-10 flex justify-between">
               <div className="">All Teams</div>

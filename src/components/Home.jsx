@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useLoading } from "../contexts/LoadingContext";
+import { useOverLay } from "../contexts/OverLayContext";
 import { LoadingTime } from "./Global/Global";
 function Home() {
-  const { hideLoading } = useLoading();
+  const { hideLoading } = useOverLay();
   useEffect(() => {
     setTimeout(() => {
       hideLoading();

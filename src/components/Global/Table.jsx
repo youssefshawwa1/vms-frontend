@@ -3,7 +3,14 @@ import { DataGrid } from "@mui/x-data-grid";
 import { TextField, Box, Paper } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
-const Table = ({ rows, columns, onRowDoubleClick }) => {
+const Table = ({
+  rows,
+  columns,
+  onRowDoubleClick,
+  hide = {},
+  getRowClassName,
+  styles,
+}) => {
   const [searchText, setSearchText] = useState("");
   const [pageSize, setPageSize] = useState(7);
 
@@ -42,7 +49,7 @@ const Table = ({ rows, columns, onRowDoubleClick }) => {
   }
 
   return (
-    <Paper className="p-2">
+    <Paper className="p-2 fadeIn">
       <Box sx={{ display: "flex", alignItems: "flex-end", mb: 2 }}>
         <Search sx={{ color: "action.active", mr: 1, my: 0.5 }} />
         <TextField
@@ -68,6 +75,7 @@ const Table = ({ rows, columns, onRowDoubleClick }) => {
         rows={filteredRows}
         columns={columns}
         onRowDoubleClick={onRowDoubleClick}
+        getRowClassName={getRowClassName}
         pagination
         initialState={{
           pagination: {
@@ -75,7 +83,8 @@ const Table = ({ rows, columns, onRowDoubleClick }) => {
           },
           columns: {
             columnVisibilityModel: {
-              id: false, // Hide ID column
+              id: false,
+              ...hide,
             },
           },
           filter: {
@@ -92,6 +101,7 @@ const Table = ({ rows, columns, onRowDoubleClick }) => {
             outline: "none",
           },
           ...options,
+          ...styles,
         }}
       />
     </Paper>

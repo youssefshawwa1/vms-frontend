@@ -3,7 +3,9 @@
 header {
   height: 10vh;
 }
-
+.page-not-found {
+  height: 90vh !important;
+}
 a {
   border: none !important;
 }
@@ -22,12 +24,15 @@ a {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
   }
-
+  .custome-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
   .custom-radio {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-
     /* Custom styles */
     width: 20px;
     height: 20px;
@@ -61,5 +66,55 @@ a {
 @layer utilities {
   .text-shadow {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+.slideIn {
+  animation: slideIn 0.3s ease-in-out forwards;
+}
+
+.slideOut {
+  animation: slideOut 0.3s ease-in-out forwards;
+}
+.fadeIn {
+  animation: fadeIn 0.3s ease-in forwards;
+}
+.fadeOut {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }

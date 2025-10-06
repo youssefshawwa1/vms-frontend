@@ -5,24 +5,18 @@ import TasksTab from "../Tasks/TasksTab";
 import AddTaskTab from "../Tasks/AddTaskTab";
 import VolunteeringTab from "./VolunteeringTab";
 import AddVolunteering from "./AddVolunteering";
-const TeamTabs = () => {
+const TeamVolunteerTabs = () => {
   const tabs = useMemo(
     () => [
-      {
-        name: "volunteering",
-        title: "Volunteering",
-      },
       {
         name: "tasks",
         title: "Tasks",
       },
-      { name: "addTask", title: "Add a Task", hide: true },
-      { name: "addTeamVolunteer", title: "Add a Volunteer", hide: true },
+      { name: "addTask", title: "Add a Task", hide: false },
     ],
     []
   );
-  const [activeTab, setActiveTab] = useState("volunteers");
-  const [selectedVolunteering, setSelectedVolunteering] = useState({});
+  const [activeTab, setActiveTab] = useState("tasks");
   const tablesSection = useRef(null);
   const {
     teamVolunteering,
@@ -38,7 +32,6 @@ const TeamTabs = () => {
 
   const handleAddTask = (params) => {
     setActiveTab("addTask");
-    setSelectedVolunteering(params);
     goToTables();
   };
   const handleChangeSelection = () => {
@@ -58,7 +51,7 @@ const TeamTabs = () => {
     setTimeout(() => {
       tablesSection.current?.scrollIntoView({
         behavior: "smooth",
-        block: "end",
+        block: "start",
       });
     }, 500);
   };
@@ -80,18 +73,6 @@ const TeamTabs = () => {
       </div>
       {/* Tab Content */}
       <div className="p-6 w-full">
-        {/* Volunteers Tab */}
-        {activeTab === "volunteering" && (
-          <VolunteeringTab
-            rows={teamVolunteering[volunteeringFilter]}
-            filter={volunteeringFilter}
-            setFilter={setVolunteeringFilter}
-            type="forTeam"
-            handleAddTeamVolunteer={handleAddTeamVolunteer}
-            handleAddTask={handleAddTask}
-          />
-        )}
-
         {/* Tasks Tab */}
         {activeTab === "tasks" && (
           <TasksTab

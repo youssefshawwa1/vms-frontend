@@ -1,15 +1,16 @@
 // components/VolunteerDetail.jsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import VolunteerCard from "./VolunteerCard";
+import VolunteerForm from "./VolunteerForm";
 import VolunteerTabs from "./VolunteerTabs";
 import { useVolunteer } from "../../contexts/VolunteerContext";
 import useFetching from "../Global/Helpers/useFetching";
-import { useLoading } from "../../contexts/LoadingContext";
+import Card from "../Global/Card";
+import { Edit, Cancel } from "../Global/Icons";
 const VolunteerDetail = () => {
   const { id } = useParams(); // This extracts the :id from the URL
-  const { isLoading } = useLoading();
   const { fetchData } = useFetching();
+  const [cardData, setCardData] = useState({});
   const {
     volunteerDetails,
     volunteerTeams,
@@ -27,11 +28,8 @@ const VolunteerDetail = () => {
     teamsFilter,
     volunteeringFilter,
     tasksFilter,
-    reFetch,
     reFetchData,
-    setTeamsFilter,
-    setVolunteeringFilter,
-    setTasksFilter,
+    reFetch,
   } = useVolunteer();
   useEffect(() => {
     const fetchVolunteer = async () => {
@@ -47,7 +45,103 @@ const VolunteerDetail = () => {
       );
 
       if (data) {
+        setEdit(false);
         setVolunteerDetails(data.details);
+        setCardData({
+          label: data.details.firstName + " " + data.details.lastName,
+          lastItem: {
+            label: "Volunteer ID:",
+            text: data.details.id,
+          },
+          sections: [
+            {
+              label: "Personal Information",
+              items: [
+                {
+                  label: "First Name:",
+                  text: data.details.firstName,
+                },
+                {
+                  label: "Last Name:",
+                  text: data.details.lastName,
+                },
+                {
+                  label: "Birth Date:",
+                  text: data.details.birthDate,
+                },
+                {
+                  label: "Gender:",
+                  text: data.details.gender,
+                  // type: "date",
+                },
+              ],
+            },
+            {
+              label: "Contact Info",
+              items: [
+                {
+                  label: "Email:",
+                  text: data.details.email,
+                },
+                {
+                  label: "Phone:",
+                  text: data.details.phone,
+                },
+              ],
+            },
+            {
+              label: "Education Information",
+              items: [
+                {
+                  label: "University / School:",
+                  text: data.details.university,
+                },
+                {
+                  label: "Major:",
+                  text: data.details.major,
+                },
+              ],
+            },
+            {
+              label: "Location Information",
+              items: [
+                {
+                  label: "Nationality:",
+                  text: data.details.nationality,
+                },
+                {
+                  label: "Resident Country:",
+                  text: data.details.residentCountry,
+                },
+              ],
+            },
+            {
+              type: "last",
+              items: [
+                {
+                  type: "last",
+                  label: "Inserted:",
+                  text: data.details.insertionDate,
+                },
+                {
+                  type: "last",
+                  label: "By:",
+                  text: data.details.createdBy.userName,
+                },
+                {
+                  type: "last",
+                  label: "Updated:",
+                  text: data.details.updatedAt,
+                },
+                {
+                  type: "last",
+                  label: "By:",
+                  text: data.details.updatedBy.userName,
+                },
+              ],
+            },
+          ],
+        });
         setVolunteerTasks({
           ...volunteerTasks,
           [tasksFilter]: data.volunteerTasks,
@@ -129,8 +223,10 @@ const VolunteerDetail = () => {
 
     fetchVolunteer();
   }, [tasksFilter]);
+  const [edit, setEdit] = useState(false);
+
   return (
-    <div className="teams-detail px-4 w-full max-w-6xl mx-auto mx-auto mb-10">
+    <div className="teams-detail px-4 w-full mx-auto mx-auto mb-10 fadeIn">
       <Link
         to="/volunteers"
         className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors"
@@ -138,10 +234,43 @@ const VolunteerDetail = () => {
         ← Back to Volunteers
       </Link>
 
-      {volunteerDetails.id && (
+      {cardData.lastItem && (
         <>
-          <VolunteerCard />
-          <div className="mt-8">
+          {/* <div className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200 relative fadeIn">
+          <Card data={}/>
+          </div> */}
+          <div className="bg-white rounded-lg shadow-md  mb-6 border border-gray-200">
+            <div className="fadeIn relative ">
+              {!edit && (
+                <div className="fadeIn p-6">
+                  <div
+                    className="absolute top-0 right-0 m-2 p-1 z-55"
+                    onClick={() => setEdit(!edit)}
+                  >
+                    <Edit />
+                  </div>
+                  <Card data={cardData} />
+                </div>
+              )}
+              {edit && (
+                <div className="fadeIn p-6">
+                  <div
+                    className="absolute top-0 right-0 m-2 p-1  z-55"
+                    onClick={() => setEdit(!edit)}
+                  >
+                    <Cancel />
+                  </div>
+                  <VolunteerForm
+                    type="update"
+                    volunteer={volunteerDetails}
+                    reFetch={reFetch}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          {/* <VolunteerCard /> */}
+          <div className="mt-8 fadeIn">
             <VolunteerTabs />
           </div>
         </>

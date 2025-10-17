@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useOverLay } from "../contexts/OverLayContext";
-import { LoadingTime } from "./Global/Global";
+import { useOverLay } from "../Contexts/OverLayContext";
+import { LoadingTime } from "../Components/Global/Global";
 function Home() {
   const { hideLoading } = useOverLay();
   useEffect(() => {

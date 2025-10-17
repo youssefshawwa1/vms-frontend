@@ -1,6 +1,6 @@
 // hooks/useFetching.js
-import { useOverLay } from "../../../contexts/OverLayContext";
-import { API, LoadingTime, MessageTime } from "../Global";
+import { useOverLay } from "../Contexts/OverLayContext";
+import { API, LoadingTime, MessageTime } from "../Components/Global/Global";
 
 const useFetching = () => {
   const { hideLoading, showMessage, hideMessage, showLoading } = useOverLay();

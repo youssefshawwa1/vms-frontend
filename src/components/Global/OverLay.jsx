@@ -1,4 +1,4 @@
-import { useOverLay } from "../../../contexts/OverLayContext";
+import { useOverLay } from "../../Contexts/OverLayContext";
 import { BiError } from "react-icons/bi";
 import { GiConfirmed } from "react-icons/gi";
 const Message = () => {
@@ -8,16 +8,16 @@ const Message = () => {
     <div
       className={`overlay w-screen h-screen inset-0 flex fixed items-center justify-center z-100 `}
     >
-      <div className=" text-center w-40 h-25  p-4 relative h-40">
+      <div className=" text-center w-screen  p-4 relative h-40 items-center justify-center self-center">
         {messageType == "Success" ? (
           <GiConfirmed size={90} className="text-yellow-300 absulote m-auto " />
         ) : (
           <BiError size={90} className="text-yellow-300 absulote m-auto" />
         )}
-        <>
-          {messageType} <br />
-          {messageText}
-        </>
+        <div className="w-full">
+          <h2 className="text-yellow-300 text-xl font-bold">{messageType}</h2>
+          <p className="text-gray-300 font-medium">{messageText}</p>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { View, AddDocument, AddPerson } from "../Global/Icons";
 import Tab from "../Global/Tab";
+import { useOverLay } from "../../Contexts/OverLayContext";
+import { useEffect } from "react";
 
 const VolunteeringTab = ({
   rows,
@@ -10,6 +12,10 @@ const VolunteeringTab = ({
   handleAddTeamVolunteer,
   type,
 }) => {
+  const { hideLoading } = useOverLay();
+  useEffect(() => {
+    hideLoading();
+  }, []);
   let columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "volunteerTitle", headerName: "Title", width: 130 },
@@ -126,7 +132,7 @@ const VolunteeringTab = ({
             className="w-full h-full text-center flex justify-center items-center"
             variant="contained"
             size="small"
-            to={`volunteering/${params.id}`}
+            to={`../volunteering/${params.id}`}
           >
             <View />
           </Link>

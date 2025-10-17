@@ -1,9 +1,10 @@
 // components/TeamDetails.jsx
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import TeamTabs from "./TeamTabs"; // Import the tabs component
-import { useTeam } from "../../contexts/TeamContext";
-import useFetching from "../Global/Helpers/useFetching";
+import TeamTabs from "./TeamTabs";
+import { useTeam } from "../../Contexts/TeamContext";
+import { Routes, Route } from "react-router-dom";
+import useFetching from "../../Hooks/useFetching";
 import TeamForm from "./TeamForm";
 import { Edit, Cancel } from "../Global/Icons";
 import Card from "../Global/Card";
@@ -24,113 +25,130 @@ const TeamDetails = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    const fetchTeam = async () => {
-      if (teamTasks[tasksFilter] && teamVolunteering[volunteeringFilter]) {
-        return;
-      }
-      const data = await fetchData(
-        `teams.php?id=${id}&tasks=${tasksFilter}&volunteering=${volunteeringFilter}&team`
+    const fetchTeamData = async () => {
+      // Determine what needs to be fetched
+      const shouldFetchTeam = !(
+        teamTasks[tasksFilter] && teamVolunteering[volunteeringFilter]
+      );
+      const shouldFetchTasks = !(
+        teamTasks[tasksFilter] || tasksFilter === "current"
+      );
+      const shouldFetchVolunteering = !(
+        teamVolunteering[volunteeringFilter] || volunteeringFilter === "current"
       );
 
-      if (data) {
-        setTeamDetails(data.details);
-        setCardData({
-          label: data.details.teamName,
-          description: data.details.description,
-          lastItem: {
-            label: "Team ID:",
-            text: data.details.id,
-          },
-          sections: [
-            {
-              type: "last",
-              items: [
-                {
-                  type: "last",
-                  label: "Inserted:",
-                  text: data.details.createdAt,
-                },
-                {
-                  type: "last",
-                  label: "By:",
-                  text: data.details.createdBy.userName,
-                },
-                {
-                  type: "last",
-                  label: "Updated:",
-                  text: data.details.updatedAt,
-                },
-                {
-                  type: "last",
-                  label: "By:",
-                  text: data.details.updatedBy.userName,
-                },
-              ],
+      // If nothing needs to be fetched, exit early
+      if (!shouldFetchTeam && !shouldFetchTasks && !shouldFetchVolunteering) {
+        return;
+      }
+
+      try {
+        let teamData, tasksData, volunteeringData;
+
+        // Fetch combined team data if needed
+        if (shouldFetchTeam) {
+          teamData = await fetchData(
+            `teams.php?id=${id}&tasks=${tasksFilter}&volunteering=${volunteeringFilter}&team`
+          );
+        }
+        // Fetch tasks only if needed and not part of the combined fetch
+        if (shouldFetchTasks && !shouldFetchTeam) {
+          tasksData = await fetchData(
+            `teams.php?id=${id}&tasks=${tasksFilter}`
+          );
+        }
+        // Fetch volunteering only if needed and not part of the combined fetch
+        if (shouldFetchVolunteering && !shouldFetchTeam) {
+          volunteeringData = await fetchData(
+            `teams.php?id=${id}&volunteering=${volunteeringFilter}`
+          );
+        }
+
+        // Use the data from the combined fetch if it happened, otherwise use individual fetches
+        const finalTeamData = teamData || tasksData || volunteeringData;
+        if (!finalTeamData) {
+          console.log("Error: No data received");
+          return;
+        }
+
+        // Update state for team details and card data only if combined data was fetched
+        if (teamData) {
+          setTeamDetails(teamData.details);
+          setCardData({
+            label: teamData.details.teamName,
+            description: teamData.details.description,
+            lastItem: {
+              label: "Team ID:",
+              text: teamData.details.id,
             },
-          ],
-        });
-        setTeamVolunteering({
-          ...teamVolunteering,
-          [volunteeringFilter]: data.teamVolunteering,
-        });
-        setTeamTasks({
-          ...teamTasks,
-          [tasksFilter]: data.teamTasks,
-        });
-      } else {
-        console.log("error");
+            sections: [
+              {
+                type: "last",
+                items: [
+                  {
+                    type: "last",
+                    label: "Inserted:",
+                    text: teamData.details.createdAt,
+                  },
+                  {
+                    type: "last",
+                    label: "By:",
+                    text: teamData.details.createdBy.userName,
+                  },
+                  {
+                    type: "last",
+                    label: "Updated:",
+                    text: teamData.details.updatedAt,
+                  },
+                  {
+                    type: "last",
+                    label: "By:",
+                    text: teamData.details.updatedBy.userName,
+                  },
+                ],
+              },
+            ],
+          });
+        }
+
+        // Update teamVolunteering state
+        if (teamData) {
+          setTeamVolunteering((prev) => ({
+            ...prev,
+            [volunteeringFilter]: teamData.teamVolunteering,
+          }));
+        } else if (volunteeringData) {
+          setTeamVolunteering((prev) => ({
+            ...prev,
+            [volunteeringFilter]: volunteeringData.teamVolunteering,
+          }));
+        }
+
+        // Update teamTasks state
+        if (teamData) {
+          setTeamTasks((prev) => ({
+            ...prev,
+            [tasksFilter]: teamData.teamTasks,
+          }));
+        } else if (tasksData) {
+          setTeamTasks((prev) => ({
+            ...prev,
+            [tasksFilter]: tasksData.teamTasks,
+          }));
+        }
+      } catch (error) {
+        console.log("Fetch error:", error);
       }
     };
 
-    fetchTeam();
-  }, [reFetchData]);
-  useEffect(() => {
-    const fetchTeam = async () => {
-      if (teamTasks[tasksFilter] || tasksFilter == "current") {
-        return;
-      }
-
-      const data = await fetchData(`teams.php?id=${id}&tasks=${tasksFilter}`);
-      console.log(data);
-      if (data) {
-        setTeamTasks({
-          ...teamTasks,
-          [tasksFilter]: data.teamTasks,
-        });
-      } else {
-        console.log("error");
-      }
-    };
-
-    fetchTeam();
-  }, [tasksFilter]);
-
-  useEffect(() => {
-    const fetchTeam = async () => {
-      if (
-        teamVolunteering[volunteeringFilter] ||
-        volunteeringFilter == "current"
-      ) {
-        return;
-      }
-      const data = await fetchData(
-        `teams.php?id=${id}&volunteering=${volunteeringFilter}`
-      );
-
-      if (data) {
-        setTeamVolunteering({
-          ...teamVolunteering,
-          [volunteeringFilter]: data.teamVolunteering,
-        });
-      } else {
-        console.log("error");
-      }
-    };
-
-    fetchTeam();
-  }, [volunteeringFilter]);
+    fetchTeamData();
+  }, [reFetchData, tasksFilter, volunteeringFilter]);
   const [cardData, setCardData] = useState({});
   const [edit, setEdit] = useState(false);
+  const handleRefetch = () => {
+    reFetch();
+    setEdit(!edit);
+  };
   return (
     // <div className="teams-detail px-4 w-full max-w-6xl mx-auto mb-10">
     //   <Link
@@ -187,7 +205,7 @@ const TeamDetails = () => {
                   <TeamForm
                     type="update"
                     team={teamDetails}
-                    reFetch={reFetch}
+                    reFetch={handleRefetch}
                   />
                 </div>
               )}

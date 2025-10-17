@@ -1,6 +1,6 @@
-import { useOverLay } from "./contexts/OverLayContext.jsx";
-import { Message, Loading } from "./components/Global/Helpers/OverLay.jsx";
-import PopUp from "./components/Global/PopUp.jsx";
+import { useOverLay } from "./Contexts/OverLayContext.jsx";
+import { Message, Loading } from "./Components/Global/OverLay.jsx";
+import PopUp from "./Components/Global/PopUp.jsx";
 import App from "./App";
 import { useEffect } from "react";
 

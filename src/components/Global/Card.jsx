@@ -30,7 +30,7 @@ const Card = ({ data }) => {
               )
             )}
             <div className="mt-4 pt-4 border-t border-gray-200">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 ">
                 {data.lastItem.label} {data.lastItem.text}
               </span>
             </div>

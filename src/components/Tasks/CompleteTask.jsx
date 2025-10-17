@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useFetching from "../Global/Helpers/useFetching";
+import useFetching from "../../Hooks/useFetching";
 const CompleteTask = ({ data, callBack }) => {
   const { sendData } = useFetching();
   const [completionDate, setEndDate] = useState(
@@ -165,7 +165,7 @@ const CompleteTask = ({ data, callBack }) => {
         <button
           type="button"
           onClick={handleSubmit}
-          className="px-4 py-2 bg-main text-white rounded-md hover:bg-main-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="px-4 py-2 bg-main text-white rounded-md hover:bg-main-500 focus:outline-none focus:ring-2 focus:ring-yellow-200"
         >
           Confirm
         </button>

@@ -1,11 +1,7 @@
-import useFetching from "../Global/Helpers/useFetching";
-import { useValidateForm, validators } from "../Global/useValidateForm";
-import {
-  Input,
-  FormSubmitBtn,
-  FormSectionGroup,
-  FormSection,
-} from "../Global/Form";
+import useFetching from "../../Hooks/useFetching";
+import { useValidateForm, validators } from "../../Hooks/useValidateForm";
+import { FormSubmitBtn, FormSectionGroup, FormSection } from "../Global/Form";
+import { useMemo } from "react";
 const TeamForm = ({ type, team, reFetch }) => {
   const validationRules = {
     teamName: validators.required("Team Name is required!"),
@@ -19,10 +15,40 @@ const TeamForm = ({ type, team, reFetch }) => {
     teamName: team ? team.teamName : "",
     description: team ? team.description : "",
   };
-  const { formData, errors, handleChange, handleBlur, validateForm } =
-    useValidateForm(initialData, validationRules);
+  const {
+    formData,
+    errors,
+    handleChange,
+    handleBlur,
+    validateForm,
+    resetForm,
+  } = useValidateForm(initialData, validationRules);
   const { sendData } = useFetching();
-
+  const structure = useMemo(
+    () => [
+      {
+        label: "Team Name",
+        error: errors.teamName,
+        onChange: handleChange,
+        value: formData.teamName,
+        name: "teamName",
+        holder: "Logistics...",
+        onBlur: handleBlur,
+        show: true,
+      },
+      {
+        label: "Description",
+        error: errors.description,
+        onChange: handleChange,
+        value: formData.description,
+        name: "description",
+        holder: "Some Description...",
+        onBlur: handleBlur,
+        show: true,
+      },
+    ],
+    [errors, formData, handleChange, handleBlur]
+  );
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -36,37 +62,15 @@ const TeamForm = ({ type, team, reFetch }) => {
           teamId: team ? team.id : "",
         },
       };
-
-      await sendData("teams.php", data, reFetch);
+      await sendData("teams.php", data, reFetch ? reFetch : resetForm);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} autoComplete="off" className="fadeIn">
       <FormSectionGroup>
-        <FormSection title="Team Information">
-          <Input
-            label="Team Name"
-            error={errors.teamName}
-            onChange={handleChange}
-            value={formData.teamName}
-            name="teamName"
-            holder="Logistics..."
-            onBlur={handleBlur}
-          />
-          <Input
-            label="Description"
-            error={errors.description}
-            onChange={handleChange}
-            value={formData.description}
-            type="textarea"
-            name="description"
-            holder="Some Description"
-            onBlur={handleBlur}
-          />
-        </FormSection>
+        <FormSection title="Team Information" data={structure} />
       </FormSectionGroup>
-
       <FormSubmitBtn text={type ? "Update Team" : "Add Team"} />
     </form>
   );

@@ -17,6 +17,12 @@ const useValidateForm = (initialData, validationRules) => {
       }));
     }
   };
+  const clearFieldError = (field) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: "",
+    }));
+  };
   const handleBlur = (e) => {
     const { name } = e.target;
     setTouched((prev) => ({
@@ -74,6 +80,7 @@ const useValidateForm = (initialData, validationRules) => {
     updateField,
     resetForm,
     setFormData,
+    clearFieldError,
   };
 };
 
@@ -133,6 +140,17 @@ const validators = {
     (value) => {
       if (!value) return message;
       else if (new Date(value) >= new Date()) return message1;
+      return "";
+    },
+  date:
+    (
+      date,
+      message = `This field is required`,
+      message1 = `Can't be before Start Date!`
+    ) =>
+    (value) => {
+      if (!value) return message;
+      else if (new Date(value) <= new Date(date)) return message1;
       return "";
     },
   phone:

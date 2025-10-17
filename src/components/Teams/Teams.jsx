@@ -1,10 +1,10 @@
 import Table from "../Global/Table";
 import { useState, useEffect } from "react";
-import { useOverLay } from "../../contexts/OverLayContext";
+import { useOverLay } from "../../Contexts/OverLayContext";
 import { Link } from "react-router-dom";
 import { AddGroup, View } from "../Global/Icons";
+import useFetching from "../../Hooks/useFetching";
 
-import useFetching from "../Global/Helpers/useFetching";
 function Teams({ type, onRowDoubleClick }) {
   const { fetchData } = useFetching();
   const [teams, setTeams] = useState([]);

@@ -1,59 +1,50 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useTeam } from "../../contexts/TeamContext";
+import { useVolunteering } from "../../Contexts/VolunteeringContext";
 import TabBtns from "../Global/TabBtns";
 import TasksTab from "../Tasks/TasksTab";
 import AddTaskTab from "../Tasks/AddTaskTab";
-import VolunteeringTab from "./VolunteeringTab";
-import AddVolunteering from "./AddVolunteering";
+// import VolunteeringTab from "../Teams/VolunteeringTab";
+// import AddVolunteering from "../Teams/AddVolunteering";
 const TeamVolunteerTabs = () => {
   const tabs = useMemo(
     () => [
       {
+        name: "statistics",
+        title: "Statistics",
+      },
+      {
         name: "tasks",
         title: "Tasks",
       },
-      { name: "addTask", title: "Add a Task", hide: false },
+      { name: "addTask", title: "Add a Task" },
     ],
     []
   );
-  const [activeTab, setActiveTab] = useState("tasks");
+  const [activeTab, setActiveTab] = useState("statistics");
   const tablesSection = useRef(null);
   const {
-    teamVolunteering,
-    teamTasks,
-    teamDetails,
-    volunteeringFilter,
+    volunteeringDetails,
+    volunteeringTasks,
     tasksFilter,
-    reFetchData,
     reFetch,
-    setVolunteeringFilter,
+
     setTasksFilter,
-  } = useTeam();
+  } = useVolunteering();
 
-  const handleAddTask = (params) => {
-    setActiveTab("addTask");
-    goToTables();
-  };
   const handleChangeSelection = () => {
-    setActiveTab("volunteering");
+    setActiveTab("tasks");
     goToTables();
   };
-  const handleAddTeamVolunteer = () => {
-    setActiveTab("addTeamVolunteer");
-    goToTables();
-  };
-
   useEffect(() => {
-    setActiveTab("volunteering");
     goToTables();
-  }, [reFetchData]);
+  }, [activeTab]);
   const goToTables = () => {
     setTimeout(() => {
       tablesSection.current?.scrollIntoView({
         behavior: "smooth",
-        block: "start",
+        block: "end",
       });
-    }, 500);
+    }, 200);
   };
   return (
     <div
@@ -76,28 +67,22 @@ const TeamVolunteerTabs = () => {
         {/* Tasks Tab */}
         {activeTab === "tasks" && (
           <TasksTab
-            rows={teamTasks[tasksFilter]}
+            rows={volunteeringTasks[tasksFilter]}
             filter={tasksFilter}
             setFilter={setTasksFilter}
-            details={teamDetails}
-            reFetch={reFetch}
-            type="forTeam"
+            details={volunteeringDetails}
+            reFetch={volunteeringTasks}
+            type="forVolunteering"
           />
         )}
-        {activeTab === "addTeamVolunteer" && (
-          <AddVolunteering
-            type="forTeam"
-            details={{
-              teamId: teamDetails.id,
-            }}
-            reFetch={reFetch}
-          />
-        )}
+
         {activeTab === "addTask" && (
           <AddTaskTab
-            selectedVolunteering={selectedVolunteering}
+            selectedVolunteeringHide={true}
             callBack={reFetch}
             cancel={handleChangeSelection}
+            hide={true}
+            selectedVolunteering={volunteeringDetails}
           />
         )}
       </div>
@@ -105,4 +90,4 @@ const TeamVolunteerTabs = () => {
   );
 };
 
-export default TeamTabs;
+export default TeamVolunteerTabs;

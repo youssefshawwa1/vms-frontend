@@ -183,7 +183,7 @@ const TasksTab = ({
       backgroundColor: "#f89facff",
     },
     "& .warning-row": {
-      backgroundColor: "#f9e1bbff",
+      backgroundColor: "#f4c57aff",
     },
     "& .alert-row": {
       backgroundColor: "#fff3e0",

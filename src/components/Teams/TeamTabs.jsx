@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useRef } from "react";
-import { useTeam } from "../../contexts/TeamContext";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useTeam } from "../../Contexts/TeamContext";
 import TabBtns from "../Global/TabBtns";
 import TasksTab from "../Tasks/TasksTab";
 import AddTaskTab from "../Tasks/AddTaskTab";
@@ -21,7 +21,7 @@ const TeamTabs = () => {
     ],
     []
   );
-  const [activeTab, setActiveTab] = useState("volunteers");
+  const [activeTab, setActiveTab] = useState("volunteering");
   const [selectedVolunteering, setSelectedVolunteering] = useState({});
   const tablesSection = useRef(null);
   const {
@@ -30,7 +30,6 @@ const TeamTabs = () => {
     teamDetails,
     volunteeringFilter,
     tasksFilter,
-    reFetchData,
     reFetch,
     setVolunteeringFilter,
     setTasksFilter,
@@ -49,18 +48,16 @@ const TeamTabs = () => {
     setActiveTab("addTeamVolunteer");
     goToTables();
   };
-
   useEffect(() => {
-    setActiveTab("volunteering");
     goToTables();
-  }, [reFetchData]);
+  }, [activeTab]);
   const goToTables = () => {
     setTimeout(() => {
       tablesSection.current?.scrollIntoView({
         behavior: "smooth",
         block: "end",
       });
-    }, 500);
+    }, 200);
   };
   return (
     <div

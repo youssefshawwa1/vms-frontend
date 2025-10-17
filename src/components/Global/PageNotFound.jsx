@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { useOverLay } from "../../../contexts/OverLayContext";
+import { useOverLay } from "../../Contexts/OverLayContext";
 const PageNotFound = () => {
   const { hideLoading } = useOverLay();
   // Set the HTTP status code to 404 for SEO and analytics

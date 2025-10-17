@@ -1,19 +1,20 @@
 // App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
-import Home from "./components/Home";
-import Volunteers from "./components/Volunteers/Volunteers";
-import VolunteerDetails from "./components/Volunteers/VolunteerDetails";
-import AddVolunteer from "./components/Volunteers/AddVolunteer";
-import AddTeam from "./components/Teams/AddTeam";
+import { Outlet } from "react-router-dom";
+import Home from "./Pages/Home";
+import Volunteers from "./Components/Volunteers/Volunteers";
+import VolunteerDetails from "./Components/Volunteers/VolunteerDetails";
+import AddVolunteer from "./Components/Volunteers/AddVolunteer";
+import AddTeam from "./Components/Teams/AddTeam";
 import Teams from "./components/Teams/Teams";
-import Layout from "./components/Global/Main/Layout";
-import TeamVolunteer from "./components/Teams/TeamVolunteer/TeamVolunteer";
+import Layout from "./Components/Global/Layout/Layout";
+import TeamVolunteer from "./Components/Volunteering/VolunteeringDetails";
 import "./App.css";
-import TeamDetails from "./components/Teams/TeamDetails";
-import { VolunteerProvider } from "./contexts/VolunteerContext";
-import { TeamProvider } from "./contexts/TeamContext";
-import { VolunteeringProvider } from "./contexts/VolunteeringContext";
-import PageNotFound from "./components/Global/Main/PageNotFound";
+import TeamDetails from "./Components/Teams/TeamDetails";
+import { VolunteerProvider } from "./Contexts/VolunteerContext";
+import { TeamProvider } from "./Contexts/TeamContext";
+import { VolunteeringProvider } from "./Contexts/VolunteeringContext";
+import PageNotFound from "./Components/Global/PageNotFound";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="volunteers" element={<Volunteers />} />
+
         <Route
           path="volunteers/:id"
           element={
@@ -41,7 +43,7 @@ const App = () => {
         />
         <Route path="teams/add" element={<AddTeam />} />
         <Route
-          path="teams/:id/volunteering/:tvId"
+          path="volunteering/:id"
           element={
             <VolunteeringProvider>
               <TeamVolunteer />

@@ -26,7 +26,7 @@ const Layout = () => {
           <SidePanel userAvatar="YS" userRole="Admin" userName="joe" />
           <Header />
 
-          <div className="main-content flex">
+          <div className="main-content flex mx-0 px-0">
             <Outlet />
           </div>
         </>

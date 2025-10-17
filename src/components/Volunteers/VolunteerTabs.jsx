@@ -1,15 +1,19 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useVolunteer } from "../../contexts/VolunteerContext";
+import { useVolunteer } from "../../Contexts/VolunteerContext";
 import Tab from "../Global/Tab";
 import TabBtns from "../Global/TabBtns";
 import VolunteeringTab from "../Teams/VolunteeringTab";
 import AddVolunteering from "../Teams/AddVolunteering";
-
+import { useOverLay } from "../../Contexts/OverLayContext";
 import TasksTab from "../Tasks/TasksTab";
 
 import AddTaskTab from "../Tasks/AddTaskTab";
 
 const VolunteerTabs = () => {
+  const { hideLoading } = useOverLay();
+  useEffect(() => {
+    hideLoading();
+  }, []);
   const tabs = useMemo(
     () => [
       {
@@ -26,8 +30,8 @@ const VolunteerTabs = () => {
       },
 
       {
-        name: "hours",
-        title: "Volunteering Hours",
+        name: "recognition",
+        title: "Recognition",
       },
       {
         name: "addToTeam",
@@ -59,9 +63,9 @@ const VolunteerTabs = () => {
   const tablesSection = useRef();
   const [activeTab, setActiveTab] = useState("tasks");
   const [selectedVolunteering, setSelectedVolunteering] = useState({});
-  useEffect(() => {
-    setActiveTab("tasks");
-  }, [reFetchData]);
+  // useEffect(() => {
+  //   setActiveTab("tasks");
+  // }, [reFetchData]);
   const handleAddTask = (params) => {
     setActiveTab("addTask");
     setSelectedVolunteering(params);
@@ -77,10 +81,12 @@ const VolunteerTabs = () => {
   }, [activeTab]);
 
   const goToTables = () => {
-    tablesSection.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-    });
+    setTimeout(() => {
+      tablesSection.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }, 200);
   };
   const volunteerTeamsColumns = useMemo(
     () => [

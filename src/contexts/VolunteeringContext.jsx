@@ -9,7 +9,7 @@ export const VolunteeringProvider = ({ children }) => {
   const [volunteeringTasks, setVolunteeringTasks] = useState({});
   const [tasksFilter, setTasksFilter] = useState("current");
   const [reFetchData, setReFetchData] = useState(false);
-
+  const [volunteeringStatistics, setVolunteeringStatistics] = useState({});
   const reFetch = () => {
     setVolunteeringDetails({});
     setVolunteeringTasks({});
@@ -20,11 +20,13 @@ export const VolunteeringProvider = ({ children }) => {
     volunteeringDetails,
     volunteeringTasks,
     tasksFilter,
+    volunteeringStatistics,
     reFetch,
     reFetchData,
     setTasksFilter,
     setVolunteeringTasks,
     setVolunteeringDetails,
+    setVolunteeringStatistics,
   };
 
   return (

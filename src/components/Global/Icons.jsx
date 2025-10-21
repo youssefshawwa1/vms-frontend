@@ -1,12 +1,12 @@
-import { MdCancel } from "react-icons/md";
-import { MdReadMore } from "react-icons/md";
-import { MdEdit } from "react-icons/md";
+import {
+  MdCancel,
+  MdReadMore,
+  MdEdit,
+  MdGroupAdd,
+  MdOutlineAssignmentTurnedIn,
+  MdOutlineAssignmentReturned,
+} from "react-icons/md";
 import { BsPersonFillAdd } from "react-icons/bs";
-// import { MdAssignmentAdd } from "react-icons/md";
-import { MdGroupAdd } from "react-icons/md";
-// import { FaClipboardCheck } from "react-icons/fa";
-import { MdOutlineAssignmentTurnedIn } from "react-icons/md";
-import { MdOutlineAssignmentReturned } from "react-icons/md";
 const style =
   "text-main-500 text-4xl cursor-pointer hover:text-yellow-500 transition-colors";
 const View = () => {

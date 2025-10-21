@@ -64,7 +64,7 @@ const VolunteerForm = ({ type, volunteer, reFetch }) => {
   const validationRules = {
     firstName: validators.required(),
     lastName: validators.required(),
-    birthDate: validators.birthDate(),
+    birthDate: validators.futureDate(),
     major: validators.required(),
     university: validators.requiredAndLengthRange(
       2,

@@ -27,9 +27,9 @@ const CompleteTask = ({ data, callBack }) => {
         action: "completeTask",
         data: {
           userId: 1001,
-          taskId: data.id,
+          taskId: data?.id,
           completionDate: completionDate,
-          teamVolunteerId: data.teamVolunteerId,
+          teamVolunteerId: data?.teamVolunteerId,
         },
       };
       await sendData("teamVolunteers.php", d, callBack);
@@ -37,37 +37,39 @@ const CompleteTask = ({ data, callBack }) => {
   };
   return (
     <>
-      <div className="p-6 space-y-4">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 ">
-          <div>
+      <div className="p-3 space-y-0">
+        <div className="grid grid-cols-2 sm:grid-cols-2 ">
+          {/* <div>
             <label className="block text-sm font-medium text-gray-500">
               Name of Volunteer
             </label>
-            <p className="mt-1 text-gray-900 font-semibold">{data.fullName}</p>
-          </div>
-
+            <p className="mt-1 text-gray-900 font-semibold">{data?.fullName}</p>
+          </div> */}
+          {/* 
           <div>
             <label className="block text-sm font-medium text-gray-500">
               Volunteering Team
             </label>
-            <p className="mt-1 text-gray-900 font-semibold">{data.teamName}</p>
-          </div>
+            <p className="mt-1 text-gray-900 font-semibold">{data?.teamName}</p>
+          </div> */}
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-500">
               Volunteering Title
             </label>
             <p className="mt-1 text-gray-900 font-semibold">
               {" "}
-              {data.volunteerTitle}
+              {data?.volunteerTitle || data?.volunteeringTitle}
             </p>
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm font-medium text-gray-500">
               Task Title
             </label>
-            <p className="mt-1 text-gray-900 font-semibold">{data.taskTitle}</p>
+            <p className="mt-1 text-gray-900 font-semibold">
+              {data?.taskTitle}
+            </p>
           </div>
 
           <div className="col-span-full">
@@ -75,7 +77,7 @@ const CompleteTask = ({ data, callBack }) => {
               Task Description
             </label>
             <p className="mt-1 text-gray-900 whitespace-pre-wrap font-semibold">
-              {data.taskDescription}
+              {data?.taskDescription}
             </p>
           </div>
 
@@ -84,7 +86,7 @@ const CompleteTask = ({ data, callBack }) => {
               Volunteering Hours
             </label>
             <p className="mt-1 text-gray-900 font-semibold">
-              {data.volunteeringHours} Hr
+              {data?.volunteeringHours} Hr
             </p>
           </div>
 
@@ -93,7 +95,7 @@ const CompleteTask = ({ data, callBack }) => {
               Start Date
             </label>
             <p className="mt-1 text-gray-900 font-semibold">
-              {new Date(data.startDate).toLocaleDateString()}
+              {new Date(data?.startDate).toLocaleDateString()}
             </p>
           </div>
           <div>
@@ -101,7 +103,7 @@ const CompleteTask = ({ data, callBack }) => {
               End Date
             </label>
             <p className="mt-1 text-gray-900 font-semibold">
-              {new Date(data.endDate).toLocaleDateString()}
+              {new Date(data?.endDate).toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -117,7 +119,7 @@ const CompleteTask = ({ data, callBack }) => {
                 onClick={handleAddEndDate}
                 className="text-sm text-blue-600 hover:text-blue-800 font-medium"
               >
-                + Add Custom Completion Date
+                + Custome Date
               </button>
             )}
           </div>

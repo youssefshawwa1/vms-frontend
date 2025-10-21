@@ -132,10 +132,10 @@ const validators = {
       else if (value.length > maxLength) return message3;
       return "";
     },
-  birthDate:
+  futureDate:
     (
       message = `This field is required`,
-      message1 = `Birth Date Can't be in the future!`
+      message1 = `Can't be in the future!`
     ) =>
     (value) => {
       if (!value) return message;
@@ -151,6 +151,19 @@ const validators = {
     (value) => {
       if (!value) return message;
       else if (new Date(value) <= new Date(date)) return message1;
+      return "";
+    },
+  dateWithStartEnd:
+    (
+      date,
+      message = `This field is required`,
+      message2 = "Can't be in the future!",
+      message1 = `Can't be before Start Date!`
+    ) =>
+    (value) => {
+      if (!value) return message;
+      else if (new Date(value) < new Date(date)) return message1;
+      else if (new Date(value) > new Date()) return message2;
       return "";
     },
   phone:

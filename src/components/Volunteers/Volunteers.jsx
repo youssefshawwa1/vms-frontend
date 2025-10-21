@@ -5,7 +5,6 @@ import { useOverLay } from "../../Contexts/OverLayContext";
 import { MdReadMore } from "react-icons/md";
 import { AddPerson } from "../Global/Icons";
 import useFetching from "../../Hooks/useFetching";
-import { Outlet } from "react-router-dom";
 function Volunteers({ type, onRowDoubleClick }) {
   const [volunteers, setVolunteers] = useState([]);
   const { isLoading } = useOverLay();
@@ -126,7 +125,6 @@ function Volunteers({ type, onRowDoubleClick }) {
               onRowDoubleClick={onRowDoubleClick}
             />
           </div>
-          <Outlet />
         </div>
       )}
     </>

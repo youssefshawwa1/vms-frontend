@@ -2,28 +2,29 @@ import { useMemo, useState } from "react";
 import useFetching from "../../Hooks/useFetching";
 import { FormSubmitBtn, FormSectionGroup, FormSection } from "../Global/Form";
 import { useValidateForm, validators } from "../../Hooks/useValidateForm";
-const TaskForm = ({ teamVolunteerId, callBack, type }) => {
+const TaskForm = ({ teamVolunteerId, callBack, task }) => {
   const validationRules = {
     taskTitle: validators.required(),
     taskDescription: validators.required(),
     startDate: validators.required(),
     endDate: validators.required(),
-    volunteeringHours: (value) => {
-      if (value <= 0) {
-        return "Must be at leat 1 hour per task!";
-      } else if (value > 15) {
-        return "Must be at max 15 Hour per task!";
-      }
+    volunteeringHours: validators.dateWithStartEnd(),
+    completionDate: () => {
+      if (!formData.completionDate) return "This field is required";
+      else if (new Date(formData.completionDate) > new Date())
+        return "Can't be in the future!";
+      else if (new Date(formData.completionDate) < new Date(formData.startDate))
+        return "Can't be before start date!";
     },
   };
   const initialData = {
-    taskTitle: "",
-    taskDescription: "",
-    startDate: "",
-    endDate: "",
-    volunteeringHours: 1,
-    completed: "",
-    completionDate: "",
+    taskTitle: task?.taskTitle || "",
+    taskDescription: task?.taskDescription || "",
+    startDate: task?.startDate || "",
+    endDate: task?.endDate || "",
+    volunteeringHours: task ? task.volunteeringHours : 1,
+    completed: task ? (task.completed ? true : false) : false,
+    completionDate: task?.completionDate || "",
   };
 
   const {
@@ -38,7 +39,7 @@ const TaskForm = ({ teamVolunteerId, callBack, type }) => {
   } = useValidateForm(initialData, validationRules);
 
   const { sendData } = useFetching();
-  const [complete, setComplete] = useState(false);
+  const [complete, setComplete] = useState(initialData.completed);
 
   const structure = useMemo(
     () => [
@@ -61,6 +62,7 @@ const TaskForm = ({ teamVolunteerId, callBack, type }) => {
         holder: "Some Description..",
         onBlur: handleBlur,
         show: true,
+        type: "textarea",
       },
       {
         label: "Start Date",
@@ -110,9 +112,9 @@ const TaskForm = ({ teamVolunteerId, callBack, type }) => {
           setComplete(newValue);
           // clearFieldError("completionDate");
           if (!newValue) {
-            updateField("completionDate", "");
+            updateField("completionDate", task?.completionDate || "");
           }
-          validationRules.completionDate = validationRules.required();
+          validationRules.completionDate = validators.required();
         },
         show: true,
         type: "checkbox",
@@ -132,13 +134,12 @@ const TaskForm = ({ teamVolunteerId, callBack, type }) => {
     e.preventDefault();
     const currentValidationRules = { ...validationRules };
     complete
-      ? (currentValidationRules.completionDate = validators.required())
+      ? (currentValidationRules.completionDate = validators.dateWithStartEnd())
       : validationRules.currentValidationRules ??
         delete validationRules.completionDate;
-
     if (validateForm()) {
       const data = {
-        action: "addTask",
+        action: task ? "updateTask" : "addTask",
         data: {
           userId: 1001,
           taskTitle: formData.taskTitle,
@@ -149,7 +150,7 @@ const TaskForm = ({ teamVolunteerId, callBack, type }) => {
           teamVolunteerId: teamVolunteerId,
           completed: complete,
           completionDate: complete ? formData.completionDate : "",
-          taskId: "",
+          taskId: task?.taskId || "",
         },
       };
       const handleRefetch = () => {
@@ -164,7 +165,7 @@ const TaskForm = ({ teamVolunteerId, callBack, type }) => {
     <form onSubmit={handleSubmit} autoComplete="off">
       <FormSectionGroup>
         <FormSection title="Task Information" data={structure} />
-        <FormSubmitBtn text={type ? "Update Task" : "Add Task"} />
+        <FormSubmitBtn text={task ? "Update Task" : "Add Task"} />
       </FormSectionGroup>
     </form>
   );

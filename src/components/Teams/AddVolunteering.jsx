@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Teams from "./Teams";
 import VolunteeringForm from "../Volunteering/VolunteeringForm";
 import Volunteers from "../Volunteers/Volunteers";
 import SelectionCard from "../Global/SelectionCard";
-const AddVolunteering = ({ type, details, reFetch }) => {
+const AddVolunteering = ({ type, details, reFetch, whenVisible }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showTable, setShowTable] = useState(true);
   const handleBackToSelection = () => {
@@ -76,6 +76,7 @@ const AddVolunteering = ({ type, details, reFetch }) => {
           ) : (
             <Teams type="show" onRowDoubleClick={handleRowDoubleClick} />
           )}
+          {whenVisible ? whenVisible() : ""}
         </>
       )}
 

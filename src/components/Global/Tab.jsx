@@ -7,12 +7,11 @@ const Tab = ({
   hide,
   getRowClassName = null,
   styles = {},
+  whenVisible,
 }) => {
   const filters = ["all", "current", "old"];
-  console.log(styles);
   return (
     <div>
-      {/* Filter Controls */}
       <div className="mb-6 fadeIn">
         <label className="text-sm font-medium text-gray-700 mr-4">Show:</label>
         <div className="flex space-x-4 flex-col gap-2 sm:flex-row">
@@ -41,6 +40,7 @@ const Tab = ({
         getRowClassName={getRowClassName}
         styles={styles}
       />
+      {whenVisible ? whenVisible() : ""}
     </div>
   );
 };

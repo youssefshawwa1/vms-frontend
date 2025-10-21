@@ -98,8 +98,6 @@ const CardSection = ({ section, type, onlyOne }) => {
   if (type) {
     style =
       "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-t border-gray-500 pt-4 mt-12 ";
-
-    // style = "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm pt-4 mt-12";
   } else {
     style = "grid grid-cols-1 gap-4 text-sm sm:grid-cols-2";
   }

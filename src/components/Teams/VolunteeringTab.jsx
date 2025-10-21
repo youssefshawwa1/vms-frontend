@@ -11,6 +11,7 @@ const VolunteeringTab = ({
   handleAddTask,
   handleAddTeamVolunteer,
   type,
+  whenVisible,
 }) => {
   const { hideLoading } = useOverLay();
   useEffect(() => {
@@ -42,39 +43,62 @@ const VolunteeringTab = ({
         return row.endDate ? new Date(row.endDate).toLocaleDateString() : "";
       },
     },
-    {
-      field: "totalHours",
-      headerName: "Total Hours",
-      width: 130,
-      valueGetter: (value, row) => {
-        return `${row.totalHours ? row.totalHours : 0} Hr`;
-      },
-    },
-    { field: "totalTasks", headerName: "Total Tasks", width: 130 },
-    {
-      field: "active",
-      headerName: "Status",
-      width: 60,
-      valueGetter: (value, row) => {
-        if (row.active) {
-          return "Active";
-        }
-
-        return "Not Active";
-      },
-    },
   ];
   switch (type) {
     case "forVolunteer":
-      columns.push({
-        field: "teamName",
-        headerName: "Team",
-        description: "This column is to View.",
-        width: 100,
-      });
+      columns.push(
+        {
+          field: "totalHours",
+          headerName: "Total Hours",
+          width: 130,
+          valueGetter: (value, row) => {
+            return `${row.totalHours ? row.totalHours : 0} Hr`;
+          },
+        },
+        { field: "totalTasks", headerName: "Total Tasks", width: 130 },
+        {
+          field: "active",
+          headerName: "Status",
+          width: 60,
+          valueGetter: (value, row) => {
+            if (row.active) {
+              return "Active";
+            }
+
+            return "Not Active";
+          },
+        },
+        {
+          field: "teamName",
+          headerName: "Team",
+          description: "This column is to View.",
+          width: 100,
+        }
+      );
       break;
     case "forTeam":
       columns.push(
+        {
+          field: "totalHours",
+          headerName: "Total Hours",
+          width: 130,
+          valueGetter: (value, row) => {
+            return `${row.totalHours ? row.totalHours : 0} Hr`;
+          },
+        },
+        { field: "totalTasks", headerName: "Total Tasks", width: 130 },
+        {
+          field: "active",
+          headerName: "Status",
+          width: 60,
+          valueGetter: (value, row) => {
+            if (row.active) {
+              return "Active";
+            }
+
+            return "Not Active";
+          },
+        },
         {
           field: "name",
           headerName: "Full Name",
@@ -88,8 +112,18 @@ const VolunteeringTab = ({
         { field: "phone", headerName: "Phone", width: 130 }
       );
       break;
+
     default:
-      columns = "";
+      columns.push(
+        { field: "volunteerName ", headerName: "Volunteer Name", width: 100 },
+        { field: "description", headerName: "Description", width: 100 },
+        {
+          field: "teamName",
+          headerName: "Team",
+          width: 100,
+          sortable: true,
+        }
+      );
   }
 
   columns.push(
@@ -104,7 +138,7 @@ const VolunteeringTab = ({
         // This is the key function
 
         return (
-          !params.endDate && (
+          !params.row.endDate && (
             <button
               onClick={() => {
                 handleAddTask(params.row);
@@ -132,7 +166,7 @@ const VolunteeringTab = ({
             className="w-full h-full text-center flex justify-center items-center"
             variant="contained"
             size="small"
-            to={`../volunteering/${params.id}`}
+            to={`/volunteering/${params.id}`}
           >
             <View />
           </Link>
@@ -152,6 +186,7 @@ const VolunteeringTab = ({
           status: false,
           description: false,
         }}
+        whenVisible={whenVisible}
       />
       <div className="absolute top-0 right-0" onClick={handleAddTeamVolunteer}>
         <AddPerson />

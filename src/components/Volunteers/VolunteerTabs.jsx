@@ -1,19 +1,14 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useVolunteer } from "../../Contexts/VolunteerContext";
 import Tab from "../Global/Tab";
 import TabBtns from "../Global/TabBtns";
 import VolunteeringTab from "../Teams/VolunteeringTab";
 import AddVolunteering from "../Teams/AddVolunteering";
-import { useOverLay } from "../../Contexts/OverLayContext";
 import TasksTab from "../Tasks/TasksTab";
 
 import AddTaskTab from "../Tasks/AddTaskTab";
 
 const VolunteerTabs = () => {
-  const { hideLoading } = useOverLay();
-  useEffect(() => {
-    hideLoading();
-  }, []);
   const tabs = useMemo(
     () => [
       {
@@ -55,38 +50,36 @@ const VolunteerTabs = () => {
     volunteerDetails,
     tasksFilter,
     reFetch,
-    reFetchData,
     setTeamsFilter,
     setVolunteeringFilter,
     setTasksFilter,
   } = useVolunteer();
   const tablesSection = useRef();
   const [activeTab, setActiveTab] = useState("tasks");
-  const [selectedVolunteering, setSelectedVolunteering] = useState({});
+  const [selectedVolunteering, setSelectedVolunteering] = useState(null);
   // useEffect(() => {
   //   setActiveTab("tasks");
   // }, [reFetchData]);
   const handleAddTask = (params) => {
-    setActiveTab("addTask");
     setSelectedVolunteering(params);
+    setActiveTab("addTask");
   };
   const handleChangeSelection = () => {
-    setActiveTab("volunteering");
+    setSelectedVolunteering(null);
+    setTimeout(() => {
+      setActiveTab("volunteering");
+    }, 200);
   };
   const handleAddToTeam = () => {
     setActiveTab("addToTeam");
   };
-  useEffect(() => {
-    goToTables();
-  }, [activeTab]);
-
   const goToTables = () => {
     setTimeout(() => {
       tablesSection.current?.scrollIntoView({
         behavior: "smooth",
         block: "end",
       });
-    }, 200);
+    }, 300);
   };
   const volunteerTeamsColumns = useMemo(
     () => [
@@ -149,6 +142,7 @@ const VolunteerTabs = () => {
             type="forVolunteer"
             handleAddTask={handleAddTask}
             handleAddTeamVolunteer={handleAddToTeam}
+            whenVisible={goToTables}
           />
         )}
         {/* Tasks Tab */}
@@ -160,6 +154,7 @@ const VolunteerTabs = () => {
             details={volunteerDetails}
             reFetch={reFetch}
             type="forVolunteer"
+            whenVisible={goToTables}
           />
         )}
         {activeTab === "teams" && (
@@ -168,6 +163,7 @@ const VolunteerTabs = () => {
             rows={volunteerTeams[teamsFilter]}
             filter={teamsFilter}
             setFilter={setTeamsFilter}
+            whenVisible={goToTables}
           />
         )}
 
@@ -178,6 +174,7 @@ const VolunteerTabs = () => {
               volunteerId: volunteerDetails.id,
             }}
             reFetch={reFetch}
+            whenVisible={goToTables}
           />
         )}
         {activeTab === "addTask" && (
@@ -186,6 +183,7 @@ const VolunteerTabs = () => {
             callBack={reFetch}
             cancel={handleChangeSelection}
             hide="volunteer"
+            whenVisible={goToTables}
           />
         )}
       </div>

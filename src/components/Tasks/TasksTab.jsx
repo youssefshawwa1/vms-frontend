@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Tab from "../Global/Tab";
-import { useOverLay } from "../../contexts/OverLayContext";
+import { useOverLay } from "../../Contexts/OverLayContext";
 import { View, CompleteDocument } from "../Global/Icons";
 import CompleteTask from "./CompleteTask";
 const TasksTab = ({
@@ -10,6 +10,7 @@ const TasksTab = ({
   details,
   reFetch,
   type = "full",
+  whenVisible,
 }) => {
   const { showPopUp, hidePopUp } = useOverLay();
   let columns = [
@@ -43,7 +44,6 @@ const TasksTab = ({
       headerName: "Status",
       width: 130,
       valueGetter: (value, row) => {
-        console.log(row);
         return `${row.completed ? "Completed" : "In Progress"}`;
       },
     },
@@ -91,25 +91,26 @@ const TasksTab = ({
         }
       );
       break;
-    case "forVolunteering":
+    case "forTasks":
       columns.push(
+        {
+          field: "volunteerTitle",
+          headerName: "Title",
+          width: 130,
+        },
+        {
+          field: "volunteerName",
+          headerName: "Full Name",
+          width: 130,
+        },
         {
           field: "teamName",
           headerName: "Team",
           width: 130,
-        },
-        {
-          field: "fullName",
-          headerName: "Full Name",
-          width: 130,
-          valueGetter: (value, row) => {
-            return row.firstName + " " + row.lastName;
-          },
         }
       );
       break;
     default:
-      columns = "";
   }
   columns.push({
     field: "complete",
@@ -142,15 +143,14 @@ const TasksTab = ({
     description: "This column is to View.",
     sortable: false,
     width: 100,
-    // Use `valueGetter` to combine multiple values
+
     renderCell: (params) => {
-      // This is the key function
       return (
         <Link
           className="w-full h-full text-center flex justify-center items-center"
           variant="contained"
           size="small"
-          to={`tasks/${params.id}`}
+          to={`/tasks/${params.id}`}
         >
           <View />
         </Link>
@@ -163,10 +163,12 @@ const TasksTab = ({
       <CompleteTask
         data={{
           fullName: `${
-            params.firstName ? params.firstName : details.firstName
-          } ${params.lastName ? params.lastName : details.lastName}`,
+            params?.volunteerName ||
+            details?.firstName + " " + details?.lastName ||
+            params?.firstName + " " + params?.lastName
+          }`,
 
-          teamName: `${details.teamName ? details.teamName : params.teamName}`,
+          teamName: `${details?.teamName ? details.teamName : params.teamName}`,
           ...params,
         }}
         callBack={() => {
@@ -183,7 +185,7 @@ const TasksTab = ({
       backgroundColor: "#f89facff",
     },
     "& .warning-row": {
-      backgroundColor: "#f4c57aff",
+      backgroundColor: "#ffeed2ff",
     },
     "& .alert-row": {
       backgroundColor: "#fff3e0",
@@ -218,14 +220,17 @@ const TasksTab = ({
   };
 
   return (
-    <Tab
-      columns={columns}
-      rows={rows}
-      filter={filter}
-      setFilter={setFilter}
-      styles={columnsStyles}
-      getRowClassName={getRowClassName}
-    />
+    <>
+      <Tab
+        columns={columns}
+        rows={rows}
+        filter={filter}
+        setFilter={setFilter}
+        styles={columnsStyles}
+        getRowClassName={getRowClassName}
+        whenVisible={whenVisible}
+      />
+    </>
   );
 };
 

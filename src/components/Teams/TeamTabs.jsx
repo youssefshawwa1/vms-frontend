@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useTeam } from "../../Contexts/TeamContext";
 import TabBtns from "../Global/TabBtns";
 import TasksTab from "../Tasks/TasksTab";
@@ -22,7 +22,7 @@ const TeamTabs = () => {
     []
   );
   const [activeTab, setActiveTab] = useState("volunteering");
-  const [selectedVolunteering, setSelectedVolunteering] = useState({});
+  const [selectedVolunteering, setSelectedVolunteering] = useState(null);
   const tablesSection = useRef(null);
   const {
     teamVolunteering,
@@ -37,20 +37,18 @@ const TeamTabs = () => {
 
   const handleAddTask = (params) => {
     setActiveTab("addTask");
+
     setSelectedVolunteering(params);
-    goToTables();
   };
   const handleChangeSelection = () => {
-    setActiveTab("volunteering");
-    goToTables();
+    setSelectedVolunteering(null);
+    setTimeout(() => {
+      setActiveTab("volunteering");
+    }, 200);
   };
   const handleAddTeamVolunteer = () => {
     setActiveTab("addTeamVolunteer");
-    goToTables();
   };
-  useEffect(() => {
-    goToTables();
-  }, [activeTab]);
   const goToTables = () => {
     setTimeout(() => {
       tablesSection.current?.scrollIntoView({
@@ -86,6 +84,7 @@ const TeamTabs = () => {
             type="forTeam"
             handleAddTeamVolunteer={handleAddTeamVolunteer}
             handleAddTask={handleAddTask}
+            whenVisible={goToTables}
           />
         )}
 
@@ -98,6 +97,7 @@ const TeamTabs = () => {
             details={teamDetails}
             reFetch={reFetch}
             type="forTeam"
+            whenVisible={goToTables}
           />
         )}
         {activeTab === "addTeamVolunteer" && (
@@ -107,6 +107,7 @@ const TeamTabs = () => {
               teamId: teamDetails.id,
             }}
             reFetch={reFetch}
+            whenVisible={goToTables}
           />
         )}
         {activeTab === "addTask" && (
@@ -114,6 +115,8 @@ const TeamTabs = () => {
             selectedVolunteering={selectedVolunteering}
             callBack={reFetch}
             cancel={handleChangeSelection}
+            ref={null}
+            whenVisible={goToTables}
           />
         )}
       </div>

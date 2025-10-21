@@ -1,19 +1,30 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./SidePanel.css";
+import { MdVolunteerActivism, MdOutlineSubtitles } from "react-icons/md";
+import { FaUsersCog, FaTasks } from "react-icons/fa";
 import { BiSolidDashboard } from "react-icons/bi";
 import { FaPeopleCarryBox, FaPeopleGroup } from "react-icons/fa6";
-import { FaTasks } from "react-icons/fa";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 const SidePanel = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const location = useLocation();
-
   const navItems = [
     { path: "/", label: "Dashboard", icon: <BiSolidDashboard /> },
     { path: "/volunteers", label: "Volunteers", icon: <FaPeopleGroup /> },
     { path: "/teams", label: "Teams", icon: <FaPeopleCarryBox /> },
+    {
+      path: "/volunteering",
+      label: "Volunteering",
+      icon: <MdVolunteerActivism />,
+    },
     { path: "/tasks", label: "Tasks", icon: <FaTasks /> },
+    {
+      path: "/rules",
+      label: "Volunteering Rules",
+      icon: <MdOutlineSubtitles />,
+    },
+    { path: "/users", label: "Users", icon: <FaUsersCog /> },
   ];
 
   const togglePanel = () => {

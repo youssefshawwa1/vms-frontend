@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { useOverLay } from "../../contexts/OverLayContext";
+import { useOverLay } from "../../Contexts/OverLayContext";
 
 const PopUp = () => {
   const { popUpConfig, hidePopUp } = useOverLay();
-  const [shouldRender, setShouldRender] = useState(false);
+  const [shouldRender, setShouldRender] = useState(true);
 
   useEffect(() => {
     if (popUpConfig.isVisible) {
-      setShouldRender(true);
+      setTimeout(() => {
+        setShouldRender(true);
+      }, 300);
     }
   }, [popUpConfig.isVisible]);
 
@@ -19,35 +21,39 @@ const PopUp = () => {
   if (!popUpConfig.isVisible && !shouldRender) return null;
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center overlay ${
-        shouldRender ? "fadeIn" : "fadeOut"
-      }`}
-    >
-      {/* Backdrop */}
-      <div className={`absolute inset-0 `} onClick={handleCancel} />
+    <>
+      {popUpConfig.isVisible && (
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center overlay ${
+            shouldRender ? "fadeIn" : "fadeOut"
+          }`}
+        >
+          {/* Backdrop */}
+          <div className={`absolute inset-0 `} onClick={handleCancel} />
 
-      {/* Modal */}
-      <div
-        className={`
-        relative bg-white rounded-lg shadow-xl w-full max-w-md
+          {/* Modal */}
+          <div
+            className={`
+        relative bg-white rounded-lg shadow-xl w-full max-w-xs
         ${shouldRender ? "fadeIn" : "fadeOut"}
       `}
-      >
-        <div className="flex justify-between items-center p-6 border-b border-gray-300">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {popUpConfig.title}
-          </h2>
-          <button
-            onClick={handleCancel}
-            className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
           >
-            &times;
-          </button>
+            <div className="flex justify-between items-center p-6 border-b border-gray-300">
+              <h2 className="text-xl font-semibold text-gray-800">
+                {popUpConfig.title}
+              </h2>
+              <button
+                onClick={handleCancel}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              >
+                &times;
+              </button>
+            </div>
+            <div className="p-0">{popUpConfig.content}</div>
+          </div>
         </div>
-        <div className="p-0">{popUpConfig.content}</div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

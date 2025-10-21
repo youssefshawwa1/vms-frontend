@@ -58,6 +58,7 @@ const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
       ]);
     };
     fetchRoles();
+    if (volunteeringDetails.endDate) setComplete(true);
   }, []);
 
   const structure = useMemo(
@@ -142,7 +143,13 @@ const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     complete
-      ? (validationRules.endDate = validators.date(formData.startDate))
+      ? (validationRules.endDate = () => {
+          if (!formData.endDate) return "This field is required";
+          else if (new Date(formData.endDate) > new Date())
+            return "Can't be in the Future!";
+          else if (new Date(formData.endDate) < new Date(formData.startDate))
+            return "Can't be before Start Date!";
+        })
       : validationRules.endDate ?? delete validationRules.endDate;
     if (validateForm()) {
       const data = {

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import TeamTabs from "./TeamTabs";
 import { useTeam } from "../../Contexts/TeamContext";
-import { Routes, Route } from "react-router-dom";
 import useFetching from "../../Hooks/useFetching";
 import TeamForm from "./TeamForm";
 import { Edit, Cancel } from "../Global/Icons";

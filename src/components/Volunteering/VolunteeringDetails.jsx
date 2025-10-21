@@ -6,9 +6,9 @@ import useFetching from "../../Hooks/useFetching";
 import Card from "../Global/Card";
 import { Edit, Cancel } from "../Global/Icons";
 import VolunteeringForm from "./VolunteeringForm";
-import TeamVolunteerTabs from "./VolunteeringTabs";
+import VolunteeringTabs from "./VolunteeringTabs";
 
-const TeamVolunteer = () => {
+const VolunteeringDetails = () => {
   const {
     volunteeringDetails,
     volunteeringTasks,
@@ -227,7 +227,7 @@ const TeamVolunteer = () => {
             </div>
           </div>
           <div className="mt-8 fadeIn">
-            <TeamVolunteerTabs />
+            <VolunteeringTabs />
           </div>
         </>
       )}
@@ -235,4 +235,4 @@ const TeamVolunteer = () => {
   );
 };
 
-export default TeamVolunteer;
+export default VolunteeringDetails;

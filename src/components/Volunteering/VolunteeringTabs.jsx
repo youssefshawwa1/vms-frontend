@@ -5,7 +5,16 @@ import TasksTab from "../Tasks/TasksTab";
 import AddTaskTab from "../Tasks/AddTaskTab";
 // import VolunteeringTab from "../Teams/VolunteeringTab";
 // import AddVolunteering from "../Teams/AddVolunteering";
-const TeamVolunteerTabs = () => {
+const VolunteeringTabs = () => {
+  const [activeTab, setActiveTab] = useState("statistics");
+  const tablesSection = useRef(null);
+  const {
+    volunteeringDetails,
+    volunteeringTasks,
+    tasksFilter,
+    reFetch,
+    setTasksFilter,
+  } = useVolunteering();
   const tabs = useMemo(
     () => [
       {
@@ -16,21 +25,14 @@ const TeamVolunteerTabs = () => {
         name: "tasks",
         title: "Tasks",
       },
-      { name: "addTask", title: "Add a Task" },
+      {
+        name: "addTask",
+        title: "Add a Task",
+        hide: volunteeringDetails.endDate ? true : false,
+      },
     ],
     []
   );
-  const [activeTab, setActiveTab] = useState("statistics");
-  const tablesSection = useRef(null);
-  const {
-    volunteeringDetails,
-    volunteeringTasks,
-    tasksFilter,
-    reFetch,
-
-    setTasksFilter,
-  } = useVolunteering();
-
   const handleChangeSelection = () => {
     setActiveTab("tasks");
     goToTables();
@@ -71,12 +73,12 @@ const TeamVolunteerTabs = () => {
             filter={tasksFilter}
             setFilter={setTasksFilter}
             details={volunteeringDetails}
-            reFetch={volunteeringTasks}
+            reFetch={reFetch}
             type="forVolunteering"
           />
         )}
 
-        {activeTab === "addTask" && (
+        {activeTab === "addTask" && !volunteeringDetails.endDate && (
           <AddTaskTab
             selectedVolunteeringHide={true}
             callBack={reFetch}
@@ -90,4 +92,4 @@ const TeamVolunteerTabs = () => {
   );
 };
 
-export default TeamVolunteerTabs;
+export default VolunteeringTabs;

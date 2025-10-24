@@ -18,6 +18,8 @@ import Volunteering from "./Components/Volunteering/Volunteering";
 import VolunteeringDetails from "./Components/Volunteering/VolunteeringDetails";
 import Tasks from "./Components/Tasks/Tasks";
 import TaskDetails from "./Components/Tasks/TaskDetails";
+import Certificates from "./Components/VolunteeringCertificates/Certificates";
+import CertificateDetails from "./Components/VolunteeringCertificates/CertificateDetails";
 const App = () => {
   return (
     <Routes>
@@ -67,6 +69,11 @@ const App = () => {
         <Route path="tasks" element={<Outlet />}>
           <Route index element={<Tasks />} />
           <Route path=":id" element={<TaskDetails />} />
+          {/* <Route path="add" element={<AddVolun />} /> */}
+        </Route>
+        <Route path="certificates" element={<Outlet />}>
+          <Route index element={<Certificates />} />
+          <Route path=":id" element={<CertificateDetails />} />
           {/* <Route path="add" element={<AddVolun />} /> */}
         </Route>
         <Route path="*" element={<PageNotFound />} />

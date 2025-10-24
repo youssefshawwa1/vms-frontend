@@ -32,6 +32,7 @@ const CompleteTask = ({ data, callBack }) => {
           teamVolunteerId: data?.teamVolunteerId,
         },
       };
+
       await sendData("teamVolunteers.php", d, callBack);
     }
   };
@@ -39,30 +40,6 @@ const CompleteTask = ({ data, callBack }) => {
     <>
       <div className="p-3 space-y-0">
         <div className="grid grid-cols-2 sm:grid-cols-2 ">
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-500">
-              Name of Volunteer
-            </label>
-            <p className="mt-1 text-gray-900 font-semibold">{data?.fullName}</p>
-          </div> */}
-          {/* 
-          <div>
-            <label className="block text-sm font-medium text-gray-500">
-              Volunteering Team
-            </label>
-            <p className="mt-1 text-gray-900 font-semibold">{data?.teamName}</p>
-          </div> */}
-
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-500">
-              Volunteering Title
-            </label>
-            <p className="mt-1 text-gray-900 font-semibold">
-              {" "}
-              {data?.volunteerTitle || data?.volunteeringTitle}
-            </p>
-          </div> */}
-
           <div>
             <label className="block text-sm font-medium text-gray-500">
               Task Title

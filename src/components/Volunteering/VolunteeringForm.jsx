@@ -15,17 +15,14 @@ const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
     ),
   };
   const initialData = {
-    volunteerTitle: volunteeringDetails.volunteerTitle
-      ? volunteeringDetails.volunteerTitle
-      : "",
-    startDate: volunteeringDetails.startDate
-      ? volunteeringDetails.startDate
-      : "",
-    roleId: volunteeringDetails.role ? volunteeringDetails.role.roleId : "",
-    description: volunteeringDetails.description
-      ? volunteeringDetails.description
-      : "",
-    endDate: volunteeringDetails.endDate ? volunteeringDetails.endDate : "",
+    volunteerTitle: volunteeringDetails?.volunteerTitle || "",
+    startDate: volunteeringDetails?.startDate || "",
+    roleId: volunteeringDetails?.role || "",
+    description: volunteeringDetails?.description || "",
+    endDate: volunteeringDetails?.endDate || "",
+    teamId: volunteeringDetails?.team?.teamId || "",
+    volunteerId: volunteeringDetails?.volunteer?.volunteerId || "",
+    teamVolunteerId: volunteeringDetails?.id || "",
   };
 
   const {
@@ -156,17 +153,13 @@ const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
         action: type ? "updateVolunteering" : "addVolunteering",
         data: {
           userId: 1001,
-          teamId: volunteeringDetails.team
-            ? volunteeringDetails.team.teamId
-            : "",
-          volunteerId: volunteeringDetails.volunteer
-            ? volunteeringDetails.volunteer.volunteerId
-            : "",
+          teamId: formData.teamId,
+          volunteerId: formData.volunteerId,
           volunteerTitle: formData.volunteerTitle,
           startDate: formData.startDate,
           roleId: formData.roleId,
           description: formData.description,
-          teamVolunteerId: volunteeringDetails.id ? volunteeringDetails.id : "",
+          teamVolunteerId: formData.teamVolunteerId,
           endDate: complete == true ? formData.endDate : "",
         },
       };

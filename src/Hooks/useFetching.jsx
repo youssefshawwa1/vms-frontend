@@ -10,7 +10,7 @@ const useFetching = () => {
     try {
       const url = `${API}${where}`;
       const response = await fetch(url);
-      // console.log(await response.text());
+
       const resp = await response.json();
 
       if (resp.result) {
@@ -49,7 +49,6 @@ const useFetching = () => {
         body: JSON.stringify(data),
       });
       const resp = await response.json();
-
       if (resp.result) {
         setTimeout(() => {
           showMessage(resp.message, "Success");

@@ -5,6 +5,7 @@ import {
   MdGroupAdd,
   MdOutlineAssignmentTurnedIn,
   MdOutlineAssignmentReturned,
+  MdCloudDownload,
 } from "react-icons/md";
 import { BsPersonFillAdd } from "react-icons/bs";
 const style =
@@ -14,6 +15,9 @@ const View = () => {
 };
 const Edit = () => {
   return <MdEdit className={`${style}`} />;
+};
+const Download = () => {
+  return <MdCloudDownload className={`${style}`} />;
 };
 
 const Cancel = () => {
@@ -44,4 +48,5 @@ export {
   AddPerson,
   AddNormal,
   CompleteDocument,
+  Download,
 };

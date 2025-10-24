@@ -5,6 +5,9 @@ body,
   min-height: 100vh;
   min-width: 100vw;
 } */
+ .animate-pulse {
+  animation-duration: 500ms;
+}
 header {
   height: 10vh;
 }

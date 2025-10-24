@@ -14,7 +14,6 @@ export const VolunteerProvider = ({ children }) => {
   const [tasksFilter, setTasksFilter] = useState("current");
   const [volunteeringFilter, setVolunteeringFilter] = useState("current");
   const [reFetchData, setReFetchData] = useState(false);
-
   const reFetch = () => {
     setVolunteerDetails({});
     setVolunteerTeams({});

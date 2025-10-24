@@ -24,6 +24,7 @@ const Card = ({ data }) => {
                   section={section}
                   type={section.type}
                   onlyOne={onlyOne}
+                  row={section?.row}
                 />
               ) : (
                 <CardSection key={index} section={section} />
@@ -52,45 +53,30 @@ const CardHeader = ({ label, description }) => {
 };
 
 const CardItem = ({ label, text, type }) => {
-  const style = `flex items-center ${
+  const style = `grid grid-cols-1 gap-4 sm:flex items-center ${
     type ? "text-xs text-gray-700" : "text-gray-900"
   }`;
 
   const getDisplayValue = () => {
     if (text == null) return "N/A";
-
-    // Only try to parse strings as dates, not numbers
     if (typeof text === "string") {
       const date = new Date(text);
       if (!isNaN(date.getTime())) {
         return date.toLocaleDateString();
       }
     }
-
-    // For numbers and other types, convert to string
     return text.toString();
   };
 
   return (
     <div className="space-y-2">
       <div className={style}>
-        <span className="font-medium w-24">{label}:</span>
+        <span className="font-medium ">{label}:</span>
         <span>{getDisplayValue()}</span>
       </div>
     </div>
   );
 };
-const CardLastItem = ({ label, text, type }) => {
-  return (
-    <div className="text-xs flex items-center text-gray-700">
-      <span className="font-medium w-24">{label}</span>
-      <span className="text-blue-600">
-        {type ? new Date(text).toLocaleDateString() || "N/A" : text || "N/A"}
-      </span>
-    </div>
-  );
-};
-
 // import CardHeader from "./CardHeader";
 // import CardItem from "./CardItem";
 const CardSection = ({ section, type, onlyOne }) => {
@@ -99,13 +85,15 @@ const CardSection = ({ section, type, onlyOne }) => {
     style =
       "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-t border-gray-500 pt-4 mt-12 ";
   } else {
-    style = "grid grid-cols-1 gap-4 text-sm sm:grid-cols-2";
+    style = `grid grid-cols-1 gap-4 text-sm ${
+      !section.row && "sm:grid-cols-2"
+    }`;
   }
   if (onlyOne) {
     style += "border-none ";
   }
   return (
-    <div className="mb-8">
+    <div className="mb-8 grid">
       {!type && <CardSectionHeader title={section.label} />}
       <div className={style}>
         {section.items.map((item, index) =>

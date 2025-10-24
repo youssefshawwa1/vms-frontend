@@ -6,6 +6,7 @@ import { FaUsersCog, FaTasks } from "react-icons/fa";
 import { BiSolidDashboard } from "react-icons/bi";
 import { FaPeopleCarryBox, FaPeopleGroup } from "react-icons/fa6";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
+import { PiCertificateBold } from "react-icons/pi";
 const SidePanel = (props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const location = useLocation();
@@ -20,9 +21,9 @@ const SidePanel = (props) => {
     },
     { path: "/tasks", label: "Tasks", icon: <FaTasks /> },
     {
-      path: "/rules",
-      label: "Volunteering Rules",
-      icon: <MdOutlineSubtitles />,
+      path: "/certificates",
+      label: "Certificates",
+      icon: <PiCertificateBold />,
     },
     { path: "/users", label: "Users", icon: <FaUsersCog /> },
   ];

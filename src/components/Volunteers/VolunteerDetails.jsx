@@ -47,6 +47,8 @@ const VolunteerDetail = () => {
         volunteerVolunteering[volunteeringFilter] ||
         volunteeringFilter === "current"
       );
+      const shouldFetchCertificates = !volunteerCertificates;
+
       const shouldFetchTasks = !(
         volunteerTasks[tasksFilter] || tasksFilter === "current"
       );
@@ -56,18 +58,19 @@ const VolunteerDetail = () => {
         !shouldFetchAll &&
         !shouldFetchTeams &&
         !shouldFetchVolunteering &&
-        !shouldFetchTasks
+        !shouldFetchTasks &&
+        !shouldFetchCertificates
       ) {
         return;
       }
 
       try {
-        let allData, teamsData, volunteeringData, tasksData;
+        let allData, teamsData, volunteeringData, tasksData, certificatesData;
 
         // Fetch all volunteer data if needed
         if (shouldFetchAll) {
           allData = await fetchData(
-            `volunteers.php?id=${id}&tasks=${tasksFilter}&volunteering=${volunteeringFilter}&teams=${teamsFilter}&volunteer`
+            `volunteers.php?id=${id}&tasks=${tasksFilter}&volunteering=${volunteeringFilter}&teams=${teamsFilter}&volunteer&certificates`
           );
         }
 
@@ -87,8 +90,17 @@ const VolunteerDetail = () => {
             `volunteers.php?id=${id}&tasks=${tasksFilter}`
           );
         }
-
-        const finalData = allData || teamsData || volunteeringData || tasksData;
+        if (shouldFetchCertificates && !shouldFetchAll) {
+          certificatesData = await fetchData(
+            `volunteers.php?id=${id}&certificates`
+          );
+        }
+        const finalData =
+          allData ||
+          teamsData ||
+          volunteeringData ||
+          tasksData ||
+          certificatesData;
         if (!finalData) {
           console.log("Error: No data received");
           return;
@@ -168,45 +180,43 @@ const VolunteerDetail = () => {
               },
             ],
           });
-        }
-
-        // Update volunteer tasks state
-        if (allData) {
           setVolunteerTasks((prev) => ({
             ...prev,
             [tasksFilter]: allData.volunteerTasks,
           }));
-        } else if (tasksData) {
+          setVolunteerTeams((prev) => ({
+            ...prev,
+            [teamsFilter]: allData.volunteerTeams,
+          }));
+          setVolunteerVolunteering((prev) => ({
+            ...prev,
+            [volunteeringFilter]: allData.volunteering,
+          }));
+          setVolunteerCertificates(allData.certificates);
+          setVolunteerHours(allData.volunteeringHours);
+        }
+
+        if (tasksData) {
           setVolunteerTasks((prev) => ({
             ...prev,
             [tasksFilter]: tasksData.volunteerTasks,
           }));
         }
-
-        // Update volunteer teams state
-        if (allData) {
-          setVolunteerTeams((prev) => ({
-            ...prev,
-            [teamsFilter]: allData.volunteerTeams,
-          }));
-        } else if (teamsData) {
+        if (teamsData) {
           setVolunteerTeams((prev) => ({
             ...prev,
             [teamsFilter]: teamsData.volunteerTeams,
           }));
         }
-
-        // Update volunteer volunteering state
-        if (allData) {
-          setVolunteerVolunteering((prev) => ({
-            ...prev,
-            [volunteeringFilter]: allData.volunteering,
-          }));
-        } else if (volunteeringData) {
+        if (volunteeringData) {
           setVolunteerVolunteering((prev) => ({
             ...prev,
             [volunteeringFilter]: volunteeringData.volunteering,
           }));
+        }
+        if (certificatesData) {
+          setVolunteerCertificates(certificatesData.certificates);
+          setVolunteerHours(certificatesData.volunteeringHours);
         }
       } catch (error) {
         console.log("Fetch error:", error);

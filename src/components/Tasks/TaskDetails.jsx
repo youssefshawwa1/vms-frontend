@@ -152,30 +152,35 @@ const TaskDetails = () => {
     setEdit(!edit);
   };
   const handleComplete = () => {
-    console.log(taskDetails);
     showPopUp(
       "Complete a Task",
       <CompleteTask
         data={{
           // fullName: taskDetails.taskTitle,
-          taskTitle: taskDetails.taskTitle,
+          taskTitle: data.taskTitle,
 
-          taskDescription: taskDetails.taskDescription,
-          volunteeringHours: taskDetails.volunteeringHours,
-          startDate: taskDetails.startDate,
-          endDate: taskDetails.endDate,
-          taskId: taskDetails.id,
+          taskDescription: data.taskDescription,
+          volunteeringHours: data.volunteeringHours,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          id: data.id,
         }}
         callBack={() => {
           hidePopUp();
-          setReFetch((prev) => !prev);
           setTaskDetails(null);
+          setReFetch((prev) => !prev);
         }}
         onCancel={hidePopUp}
       />
     );
   };
-
+  // const canEdit = () => {
+  //   const createdAt = new Date(data.createdAt);
+  //   const currentDate = new Date();
+  //   const diffTime = currentDate - createdAt;
+  //   const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  //   return diffDays <= 7;
+  // };
   return (
     <div className="px-4 w-full mx-auto mb-10 fadeIn">
       <Link
@@ -224,9 +229,9 @@ const TaskDetails = () => {
                 <TaskForm
                   type="update"
                   callBack={handleRefetch}
-                  task={taskDetails}
+                  task={data}
                   teamVolunteerId={
-                    taskDetails.fullDetails.volunteering.teamVolunteerId
+                    data.fullDetails.volunteering.teamVolunteerId
                   }
                 />
               </div>

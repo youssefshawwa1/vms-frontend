@@ -108,28 +108,22 @@ const TeamDetails = () => {
               },
             ],
           });
-        }
-
-        // Update teamVolunteering state
-        if (teamData) {
           setTeamVolunteering((prev) => ({
             ...prev,
             [volunteeringFilter]: teamData.teamVolunteering,
           }));
-        } else if (volunteeringData) {
+          setTeamTasks((prev) => ({
+            ...prev,
+            [tasksFilter]: teamData.teamTasks,
+          }));
+        }
+        if (volunteeringData) {
           setTeamVolunteering((prev) => ({
             ...prev,
             [volunteeringFilter]: volunteeringData.teamVolunteering,
           }));
         }
-
-        // Update teamTasks state
-        if (teamData) {
-          setTeamTasks((prev) => ({
-            ...prev,
-            [tasksFilter]: teamData.teamTasks,
-          }));
-        } else if (tasksData) {
+        if (tasksData) {
           setTeamTasks((prev) => ({
             ...prev,
             [tasksFilter]: tasksData.teamTasks,

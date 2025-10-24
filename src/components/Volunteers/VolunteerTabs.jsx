@@ -5,9 +5,11 @@ import TabBtns from "../Global/TabBtns";
 import VolunteeringTab from "../Teams/VolunteeringTab";
 import AddVolunteering from "../Teams/AddVolunteering";
 import TasksTab from "../Tasks/TasksTab";
-
+import CertificatesTab from "../VolunteeringCertificates/CertificatesTab";
 import AddTaskTab from "../Tasks/AddTaskTab";
-
+import { View } from "../Global/Icons";
+// import CertificateForm from "../VolunteeringCertificates/CertificateForm";
+import AddCertificate from "../VolunteeringCertificates/AddCertificate";
 const VolunteerTabs = () => {
   const tabs = useMemo(
     () => [
@@ -25,8 +27,8 @@ const VolunteerTabs = () => {
       },
 
       {
-        name: "recognition",
-        title: "Recognition",
+        name: "certificates",
+        title: "Certificates",
       },
       {
         name: "addToTeam",
@@ -36,6 +38,11 @@ const VolunteerTabs = () => {
       {
         name: "addTask",
         title: "Add Task",
+        hide: true,
+      },
+      {
+        name: "addCertificate",
+        title: "Add Certificate",
         hide: true,
       },
     ],
@@ -48,6 +55,8 @@ const VolunteerTabs = () => {
     teamsFilter,
     volunteeringFilter,
     volunteerDetails,
+    volunteerCertificates,
+    volunteerHours,
     tasksFilter,
     reFetch,
     setTeamsFilter,
@@ -72,6 +81,9 @@ const VolunteerTabs = () => {
   };
   const handleAddToTeam = () => {
     setActiveTab("addToTeam");
+  };
+  const handleAddCertificate = () => {
+    setActiveTab("addCertificate");
   };
   const goToTables = () => {
     setTimeout(() => {
@@ -99,18 +111,28 @@ const VolunteerTabs = () => {
         },
       },
       { field: "totalTasks", headerName: "Total Tasks", width: 130 },
-      // {
-      //   field: "view",
-      //   headerName: "View",
-      //   description: "This column is to View.",
-      //   sortable: false,
-      //   width: 100,
-      //   // Use `valueGetter` to combine multiple values
-      //   renderCell: (params) => {
-      //     // This is the key function
-      //     return <LinkBtn to={`tasks/${params.id}`} text="View" />;
-      //   },
-      // },
+      {
+        field: "view",
+        headerName: "View",
+        // description: "This column is to Add a task.",
+        sortable: false,
+        width: 80,
+        // Use `valueGetter` to combine multiple values
+        renderCell: (params) => {
+          // This is the key function
+
+          return (
+            <button
+              onClick={() => {
+                // handleAddTask(params.row);
+              }}
+              className="w-full h-full text-center flex justify-center items-center"
+            >
+              <View />
+            </button>
+          );
+        },
+      },
     ],
     []
   );
@@ -143,6 +165,16 @@ const VolunteerTabs = () => {
             handleAddTask={handleAddTask}
             handleAddTeamVolunteer={handleAddToTeam}
             whenVisible={goToTables}
+          />
+        )}
+        {activeTab === "certificates" && (
+          <CertificatesTab
+            rows={volunteerCertificates}
+            type="forVolunteer"
+            // whenVisible={goToTables}
+            handleAddCertificate={handleAddCertificate}
+            whenVisible={goToTables}
+            details={volunteerHours}
           />
         )}
         {/* Tasks Tab */}
@@ -184,6 +216,23 @@ const VolunteerTabs = () => {
             cancel={handleChangeSelection}
             hide="volunteer"
             whenVisible={goToTables}
+          />
+        )}
+        {activeTab === "addCertificate" && (
+          // <CertificateForm volunteerrDetails={{ id: volunteerDetails.id }} />
+          <AddCertificate
+            selectedVolunteering={{
+              id: volunteerDetails.id,
+              issuedHours: volunteerHours.issuedHours,
+              totalHours: volunteerHours.totalHours,
+              currentHours: volunteerHours.currentHours,
+            }}
+            callBack={null}
+            // hide={true}
+            whenVisible={goToTables}
+            cancel={() => {
+              setActiveTab("certificates");
+            }}
           />
         )}
       </div>

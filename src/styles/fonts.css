@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "BrittanySignature";
+  src: url("../fonts/BrittanySignature.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Radley-Regular";
+  src: url("../fonts/Radley-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

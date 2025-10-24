@@ -88,7 +88,7 @@ const validators = {
   required:
     (message = "This field is required") =>
     (value) =>
-      !value || value.toString().trim() === "" ? message : "",
+      !value || value == 0 || value.toString().trim() === "" ? message : "",
 
   email:
     (message = "Email is required", message1 = "Invalid email format") =>

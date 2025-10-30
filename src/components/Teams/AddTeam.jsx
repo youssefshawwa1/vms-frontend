@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import TeamForm from "./TeamForm";
-import { useOverLay } from "../../contexts/OverLayContext";
+import { useOverLay } from "../../Contexts/OverLayContext";
 import { useEffect, useState } from "react";
 import { LoadingTime } from "../Global/Global";
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 const AddTeam = () => {
   const { hideLoading } = useOverLay();
   const [finished, setFinished] = useState(false);
@@ -12,6 +13,7 @@ const AddTeam = () => {
       setFinished(true);
     }, LoadingTime);
   }, []);
+  useDocumentTitle(["Add new team"]);
   return (
     <>
       {finished && (

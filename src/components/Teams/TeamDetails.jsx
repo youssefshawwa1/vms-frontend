@@ -7,6 +7,7 @@ import useFetching from "../../Hooks/useFetching";
 import TeamForm from "./TeamForm";
 import { Edit, Cancel } from "../Global/Icons";
 import Card from "../Global/Card";
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 const TeamDetails = () => {
   const { fetchData } = useFetching();
   const {
@@ -22,7 +23,8 @@ const TeamDetails = () => {
     setTeamTasks,
   } = useTeam();
   const { id } = useParams();
-
+  const [cardData, setCardData] = useState({});
+  const [edit, setEdit] = useState(false);
   useEffect(() => {
     const fetchTeamData = async () => {
       // Determine what needs to be fetched
@@ -136,31 +138,12 @@ const TeamDetails = () => {
 
     fetchTeamData();
   }, [reFetchData, tasksFilter, volunteeringFilter]);
-  const [cardData, setCardData] = useState({});
-  const [edit, setEdit] = useState(false);
+  useDocumentTitle([teamDetails?.teamName, "Team"]);
   const handleRefetch = () => {
     reFetch();
     setEdit(!edit);
   };
   return (
-    // <div className="teams-detail px-4 w-full max-w-6xl mx-auto mb-10">
-    //   <Link
-    //     to="/teams"
-    //     className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors"
-    //   >
-    //     ← Back to Teams
-    //   </Link>
-
-    //   {teamDetails.id && (
-    //     <>
-    //       <TeamCard />
-    //       <div className="mt-8">
-    //         <TeamTabs />
-    //       </div>
-    //     </>
-    //   )}
-    // </div>
-
     <div className="teams-detail px-4 w-full mx-auto mx-auto mb-10 fadeIn">
       <Link
         to="/teams"
@@ -168,12 +151,8 @@ const TeamDetails = () => {
       >
         ← Back to Teams
       </Link>
-
       {cardData.lastItem && (
         <>
-          {/* <div className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200 relative fadeIn">
-          <Card data={}/>
-          </div> */}
           <div className="bg-white rounded-lg shadow-md  mb-6 border border-gray-200">
             <div className="fadeIn relative ">
               {!edit && (

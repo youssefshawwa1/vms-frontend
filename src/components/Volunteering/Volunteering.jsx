@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import useFetching from "../../Hooks/useFetching";
 import VolunteeringTab from "../Teams/VolunteeringTab";
 import AddTaskTab from "../Tasks/AddTaskTab";
-
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 function Volunteering({ type }) {
   const [volunteering, setVolunteering] = useState(null);
   const { fetchData } = useFetching();
@@ -36,6 +36,7 @@ function Volunteering({ type }) {
 
     fetchVolunteeringData();
   }, [volunteeringFilter]);
+  useDocumentTitle(["Volunteerings"]);
   return (
     <>
       {loaded && (

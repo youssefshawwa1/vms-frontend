@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import useFetching from "../../Hooks/useFetching";
 import TasksTab from "./TasksTab";
-
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 function Tasks({ type }) {
   const [tasks, setTasks] = useState(null);
   const { fetchData } = useFetching();
@@ -35,6 +35,7 @@ function Tasks({ type }) {
 
     fetchVolunteeringData();
   }, [tasksFilter, reFetch]);
+  useDocumentTitle(["Tasks"]);
   return (
     <>
       {loaded && (

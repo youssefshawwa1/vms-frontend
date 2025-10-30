@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import VolunteerForm from "./VolunteerForm";
 import { useOverLay } from "../../Contexts/OverLayContext";
 import { useEffect, useState } from "react";
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 const AddVolunteer = () => {
   const { hideLoading } = useOverLay();
   const [finished, setFinished] = useState(false);
@@ -11,6 +12,7 @@ const AddVolunteer = () => {
       setFinished(true);
     }, 500);
   }, []);
+  useDocumentTitle(["Add new volunteer"]);
   return (
     <>
       {finished && (

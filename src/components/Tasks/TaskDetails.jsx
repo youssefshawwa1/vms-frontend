@@ -7,6 +7,7 @@ import { useOverLay } from "../../Contexts/OverLayContext";
 import { Edit, Cancel, CompleteDocument } from "../Global/Icons";
 import TaskForm from "./TaskForm";
 import CompleteTask from "./CompleteTask";
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 const TaskDetails = () => {
   const { showPopUp, hidePopUp } = useOverLay();
   const [taskDetails, setTaskDetails] = useState(null);
@@ -158,7 +159,6 @@ const TaskDetails = () => {
         data={{
           // fullName: taskDetails.taskTitle,
           taskTitle: data.taskTitle,
-
           taskDescription: data.taskDescription,
           volunteeringHours: data.volunteeringHours,
           startDate: data.startDate,
@@ -181,6 +181,7 @@ const TaskDetails = () => {
   //   const diffDays = diffTime / (1000 * 60 * 60 * 24);
   //   return diffDays <= 7;
   // };
+  useDocumentTitle([data?.taskTitle, "Task"]);
   return (
     <div className="px-4 w-full mx-auto mb-10 fadeIn">
       <Link

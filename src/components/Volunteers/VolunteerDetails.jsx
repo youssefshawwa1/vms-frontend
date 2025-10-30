@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import VolunteerForm from "./VolunteerForm";
 import VolunteerTabs from "./VolunteerTabs";
-
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 import { useVolunteer } from "../../Contexts/VolunteerContext";
 import useFetching from "../../Hooks/useFetching";
 import Card from "../Global/Card";
@@ -226,7 +226,10 @@ const VolunteerDetail = () => {
     fetchVolunteerData();
   }, [reFetchData, teamsFilter, volunteeringFilter, tasksFilter]);
   const [edit, setEdit] = useState(false);
-
+  useDocumentTitle([
+    volunteerDetails?.firstName + " " + volunteerDetails?.lastName,
+    "Volunteer",
+  ]);
   return (
     <div className=" px-5 w-full mx-auto mb-10 fadeIn">
       <Link

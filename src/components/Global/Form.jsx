@@ -9,19 +9,26 @@ const Input = ({
   onBlur,
   show,
   index,
+  classes,
 }) => {
   //   const uniqe = label.replaceAll(" ", "").toLowerCase();
   return (
     <>
       {show && (
         <div
-          className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1 "
+          className={`${
+            !classes
+              ? "grid grid-cols-1 sm:grid-cols-[30%_1fr] gap-2 md:grid-cols-1"
+              : classes
+          }`}
           key={index || ""}
         >
           <div>
-            <label htmlFor={name}>{label}:</label>
+            <label className="font-semibold text-gray-700" htmlFor={name}>
+              {label}:
+            </label>
           </div>
-          <div className="w-70 mx-auto sm:w-full">
+          <div className="w-full mx-auto sm:w-full">
             {type == "textarea" ? (
               <textarea
                 autoComplete="off"
@@ -77,7 +84,7 @@ const SelectInput = ({
       <div>
         <label htmlFor={name}>{label}</label>
       </div>
-      <div className="w-70 mx-auto sm:w-full">
+      <div className="w-full mx-auto sm:w-full">
         <select
           autoComplete="off"
           id={name}
@@ -104,7 +111,7 @@ const InputError = ({ error }) => {
 };
 const SectionHeader = ({ label }) => {
   return (
-    <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text-left ">
+    <h2 className="text-xl font-semibold text-gray-700 mb-4 pb-2 border-b text- ">
       {label}
     </h2>
   );
@@ -114,7 +121,7 @@ const FormSection = ({ children, title, data }) => {
   return (
     <div className="section">
       <SectionHeader label={title} />
-      <div className=" grid sm:grid-cols-1 gap-6 md:grid-cols-2 ">
+      <div className=" grid sm:grid-cols-1 gap-6 md:grid-cols-1 ">
         {data &&
           data.map((item, index) => {
             switch (item.type) {
@@ -156,6 +163,7 @@ const FormSection = ({ children, title, data }) => {
                     holder={item.holder}
                     show={item.show}
                     index={index}
+                    classes={item?.classes || false}
                   />
                 );
             }
@@ -177,7 +185,7 @@ const FormSectionGroup = ({ children, data }) => {
   );
 };
 
-const FormSubmitBtn = ({ text }) => {
+const FormSubmitBtn = ({ text, error }) => {
   return (
     <div className="text-center p-4">
       <button
@@ -186,6 +194,7 @@ const FormSubmitBtn = ({ text }) => {
       >
         {text}
       </button>
+      {error && <InputError error={error} />}
     </div>
   );
 };

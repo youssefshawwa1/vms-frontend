@@ -2,13 +2,11 @@ import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import useFetching from "../../Hooks/useFetching";
 import CertificatesTab from "./CertificatesTab";
-
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 function Certificates({ type }) {
   const [certificates, setCertificates] = useState(null);
   const { fetchData } = useFetching();
   const [loaded, setLoaded] = useState(false);
-  const [tasksFilter, setTasksFilter] = useState("current");
-  const [reFetch, setRefetch] = useState(false);
   const main = useRef(null);
   const [data, setData] = useState(null);
   useEffect(() => {
@@ -27,7 +25,8 @@ function Certificates({ type }) {
     };
 
     fetchCertificates();
-  }, [reFetch]);
+  }, []);
+  useDocumentTitle(["Certificates"]);
   return (
     <>
       {loaded && (

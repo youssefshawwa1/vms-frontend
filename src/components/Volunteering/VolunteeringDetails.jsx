@@ -7,7 +7,7 @@ import Card from "../Global/Card";
 import { Edit, Cancel } from "../Global/Icons";
 import VolunteeringForm from "./VolunteeringForm";
 import VolunteeringTabs from "./VolunteeringTabs";
-
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 const VolunteeringDetails = () => {
   const {
     volunteeringDetails,
@@ -177,7 +177,7 @@ const VolunteeringDetails = () => {
     reFetch();
     setEdit(!edit);
   };
-
+  useDocumentTitle([volunteeringDetails?.volunteerTitle, "Volunteering"]);
   return (
     <div className="px-4 w-full mx-auto mb-10 fadeIn">
       <Link

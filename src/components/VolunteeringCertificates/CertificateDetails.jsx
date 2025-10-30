@@ -5,10 +5,11 @@ import useFetching from "../../Hooks/useFetching";
 import Card from "../Global/Card";
 import { Edit, Cancel, Download } from "../Global/Icons";
 import CertificateForm from "./CertificateForm";
-import { useCertificateGenerator } from "../../Hooks/useCertificateGenerator";
-// import Certificate from "./Certificate";
+import { useCertificateDownloader } from "../../Hooks/useCertificateDownloader";
+import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
+import CertificateViewer from "./CertificateViewer";
 const CertificateDetails = () => {
-  const { generateCertificate, isGenerating } = useCertificateGenerator();
+  const { downloadCertificate, isLoading } = useCertificateDownloader();
   const [certificateDetails, setCertificateDetails] = useState(null);
   const { fetchData } = useFetching();
   const { id } = useParams();
@@ -35,7 +36,6 @@ const CertificateDetails = () => {
         if (shouldFetch) {
           certificateData = await fetchData(`certificates.php?id=${id}`);
         }
-
         if (certificateData) {
           setEdit(false);
           setCertificateDetails(certificateData);
@@ -141,9 +141,19 @@ const CertificateDetails = () => {
     setEdit((prev) => !prev);
     setReFetch((prev) => !prev);
   };
-  const handleGenerate = () => {
-    generateCertificate(data.id);
+  const handleDownload = () => {
+    const fileName =
+      data.fullDetails.volunteer.fullName +
+      "_" +
+      data.certificateType +
+      "_" +
+      data.certificateNumber +
+      "_" +
+      data.issueDate;
+    console.log(fileName);
+    downloadCertificate({ certificateId: data.id, filename: fileName });
   };
+  useDocumentTitle([certificateDetails?.certificateTitle, "Certificate"]);
   return (
     <div className="px-4 w-full mx-auto mb-10 fadeIn">
       <Link
@@ -152,7 +162,7 @@ const CertificateDetails = () => {
       >
         ← Back to Volunteers
       </Link>
-      {cardData?.lastItem && (
+      {data && (
         <div className="bg-white rounded-lg shadow-md mb-6 border border-gray-200">
           <div className="fadeIn relative">
             {!edit && (
@@ -165,19 +175,18 @@ const CertificateDetails = () => {
                     <Edit />
                   </div>
                 )}
-                {!isGenerating && (
+                {
                   <div
                     className={`absolute top-0 right-15 m-2 p-1 z-55 cursor-pointer ${
-                      isGenerating && "animate-pulse"
+                      isLoading && "animate-pulse"
                     }`}
                     onClick={() => {
-                      handleGenerate();
+                      handleDownload();
                     }}
                   >
                     <Download />
                   </div>
-                )}
-
+                }
                 <Card data={cardData} />
                 {/* <Certificate data={data} ref={null} /> */}
               </div>
@@ -206,6 +215,11 @@ const CertificateDetails = () => {
               </div>
             )}
           </div>
+        </div>
+      )}
+      {data && !edit && (
+        <div className="my-10">
+          <CertificateViewer certificateId={data.id} />
         </div>
       )}
     </div>

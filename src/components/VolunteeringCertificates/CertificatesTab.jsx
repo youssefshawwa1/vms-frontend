@@ -1,10 +1,9 @@
 import { View, AddDocument, Download } from "../Global/Icons";
 import { Link } from "react-router-dom";
-import Tab from "../Global/Tab";
 import { useOverLay } from "../../Contexts/OverLayContext";
 import { useEffect } from "react";
 import Table from "../Global/Table";
-import { useCertificateGenerator } from "../../Hooks/useCertificateGenerator";
+import { useCertificateDownloader } from "../../Hooks/useCertificateDownloader";
 const CertificatesTab = ({
   rows,
   type,
@@ -12,11 +11,24 @@ const CertificatesTab = ({
   handleAddCertificate,
   details,
 }) => {
-  const { generateCertificate, isGenerating } = useCertificateGenerator();
+  const { downloadCertificate } = useCertificateDownloader();
   const { hideLoading } = useOverLay();
 
-  const handleDwonload = (id) => {
-    generateCertificate(id);
+  // $cleanName . "_" . $cleanType . "_" . $cleanNum . "_" . $cleanDate . ".pdf";
+  const handleDownload = (params) => {
+    console.log(params);
+    console.log(details);
+    const fileName =
+      params?.row?.name ||
+      details.name +
+        "_" +
+        params.certificateType +
+        "_" +
+        params.row.certificateNumber +
+        "_" +
+        params.row.issueDate;
+    console.log(fileName);
+    downloadCertificate({ certificateId: params.id, filename: fileName });
   };
 
   useEffect(() => {
@@ -30,7 +42,6 @@ const CertificatesTab = ({
   if (type == "forCertificates") {
     columns.push(
       { field: "name", headerName: "Volunteer Name:", width: 130 },
-
       {
         field: "email",
         headerName: "Email",
@@ -111,7 +122,7 @@ const CertificatesTab = ({
         return (
           <button
             onClick={() => {
-              handleDwonload(params.id);
+              handleDownload(params);
             }}
             className="w-full h-full text-center flex justify-center items-center"
           >

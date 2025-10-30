@@ -174,7 +174,10 @@ const VolunteerTabs = () => {
             // whenVisible={goToTables}
             handleAddCertificate={handleAddCertificate}
             whenVisible={goToTables}
-            details={volunteerHours}
+            details={{
+              ...volunteerHours,
+              name: `${volunteerDetails.firstName}_${volunteerDetails.lastName}`,
+            }}
           />
         )}
         {/* Tasks Tab */}

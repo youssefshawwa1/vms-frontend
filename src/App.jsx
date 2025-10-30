@@ -1,5 +1,5 @@
 // App.jsx
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Home from "./Pages/Home";
 import Volunteers from "./Components/Volunteers/Volunteers";
@@ -20,10 +20,25 @@ import Tasks from "./Components/Tasks/Tasks";
 import TaskDetails from "./Components/Tasks/TaskDetails";
 import Certificates from "./Components/VolunteeringCertificates/Certificates";
 import CertificateDetails from "./Components/VolunteeringCertificates/CertificateDetails";
+import { useAuth } from "./Contexts/AuthContext";
+import ProtectedRoute from "./Components/Auth/ProtectedRoute";
+import Login from "./Pages/Login";
 const App = () => {
+  const { isAuthenticated, loading } = useAuth();
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route
+        path="/login"
+        element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Home />} />
 
         {/* Volunteer routes */}

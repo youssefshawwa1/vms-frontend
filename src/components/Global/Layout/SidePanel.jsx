@@ -1,15 +1,34 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation, matchPath } from "react-router-dom";
 import "./SidePanel.css";
-import { MdVolunteerActivism, MdOutlineSubtitles } from "react-icons/md";
+import { MdVolunteerActivism } from "react-icons/md";
 import { FaUsersCog, FaTasks } from "react-icons/fa";
 import { BiSolidDashboard } from "react-icons/bi";
 import { FaPeopleCarryBox, FaPeopleGroup } from "react-icons/fa6";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { PiCertificateBold } from "react-icons/pi";
-const SidePanel = (props) => {
+import { useAuth } from "../../../Contexts/AuthContext";
+const SidePanel = () => {
+  const sideBarRef = useRef(null);
+  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   const location = useLocation();
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sideBarRef.current && !sideBarRef.current.contains(event.target)) {
+        setIsExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  const isActive = (path) => {
+    return (
+      location.pathname === path || location.pathname.startsWith(path + "/")
+    );
+  };
   const navItems = [
     { path: "/", label: "Dashboard", icon: <BiSolidDashboard /> },
     { path: "/volunteers", label: "Volunteers", icon: <FaPeopleGroup /> },
@@ -27,14 +46,13 @@ const SidePanel = (props) => {
     },
     { path: "/users", label: "Users", icon: <FaUsersCog /> },
   ];
-
   const togglePanel = () => {
     setIsExpanded(!isExpanded);
   };
-
   return (
     <div
       className={`side-panel ${isExpanded ? "expanded" : "collapsed"} fixed`}
+      ref={sideBarRef}
     >
       <div className="panel-header text-center">
         {isExpanded && <h2>Navigation</h2>}
@@ -46,9 +64,7 @@ const SidePanel = (props) => {
         {navItems.map((item, index) => (
           <Link
             to={item.path}
-            className={`nav-item ${
-              location.pathname == item.path ? "active" : ""
-            }`}
+            className={`nav-item ${isActive(item.path) ? "active" : ""}`}
             key={index}
           >
             <span className="nav-icon">{item.icon}</span>
@@ -58,14 +74,16 @@ const SidePanel = (props) => {
       </nav>
 
       {isExpanded && (
-        <div className="panel-footer">
-          <div className="user-info">
-            <div className="user-avatar">{props.userAvatar}</div>
-            <div className="user-details">
-              <p className="user-name">{props.userName}</p>
-              <p className="user-role">{props.userRole}</p>
+        <div className="panel-footer hover:bg-[#ffffff0c] transition-colors cursor-pointer">
+          <Link to={"/profile"} className="user-info ">
+            <div className="user-avatar uppercase">
+              {user.username.substring(0, 2)}
             </div>
-          </div>
+            <div className="user-details ">
+              <p className="user-name">{user.username}</p>
+              <p className="user-role">{user.role}</p>
+            </div>
+          </Link>
         </div>
       )}
     </div>

@@ -1,16 +1,25 @@
 // hooks/useFetching.js
 import { useOverLay } from "../Contexts/OverLayContext";
 import { API, LoadingTime, MessageTime } from "../Components/Global/Global";
-
 const useFetching = () => {
   const { hideLoading, showMessage, hideMessage, showLoading } = useOverLay();
 
-  const fetchData = async (where, callBack) => {
+  const fetchData = async (where, callBack, normal) => {
     showLoading();
     try {
       const url = `${API}${where}`;
       const response = await fetch(url);
-
+      if (!response.ok) {
+        showMessage("Server can't be Reached!", "Internal Error");
+        setTimeout(() => {
+          hideLoading();
+        }, LoadingTime);
+        return;
+      }
+      if (normal) {
+        setTimeout(() => hideLoading(), LoadingTime);
+        return response;
+      }
       const resp = await response.json();
 
       if (resp.result) {
@@ -28,7 +37,7 @@ const useFetching = () => {
       }
     } catch (error) {
       console.error(error);
-      showMessage("Server can't be Reached!", "Internal Error");
+      showMessage("Server Error!", "Internal Error");
       setTimeout(() => {
         hideLoading();
       }, LoadingTime);

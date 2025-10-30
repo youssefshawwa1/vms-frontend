@@ -3,6 +3,7 @@ import { Message, Loading } from "./Components/Global/OverLay.jsx";
 import PopUp from "./Components/Global/PopUp.jsx";
 import App from "./App";
 import { useEffect } from "react";
+import { AuthProvider } from "./Contexts/AuthContext";
 
 const AppWrapper = () => {
   const { isLoading, isMessageVisible, hideLoading, popUpConfig } =
@@ -13,12 +14,12 @@ const AppWrapper = () => {
     }, 2000);
   }, []);
   return (
-    <>
+    <AuthProvider>
       {isLoading && <Loading />}
       {isMessageVisible && <Message />}
       {popUpConfig.isVisible && <PopUp />}
       <App />
-    </>
+    </AuthProvider>
   );
 };
 export default AppWrapper;

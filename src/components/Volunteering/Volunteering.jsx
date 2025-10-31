@@ -44,18 +44,18 @@ function Volunteering({ type }) {
           className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10 fadeIn"
           ref={main}
         >
-          {!type && (
+          {/* {!type && (
             <div className="py-10 flex justify-between">
               <div className="">Add a Volunteer</div>
               <div className="">
-                {/* <LinkBtn to="volunteers/add" text="Add a Volunteer" /> */}
                 <Link
                   to="add"
                   className="w-full h-full text-center flex justify-center items-center"
                 ></Link>
               </div>
             </div>
-          )}
+          )} */}
+
           <div className="w-full fadeIn">
             <VolunteeringTab
               rows={volunteering?.[volunteeringFilter]?.volunteering || []}

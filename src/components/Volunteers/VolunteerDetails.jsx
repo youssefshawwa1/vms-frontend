@@ -1,6 +1,6 @@
 // components/VolunteerDetail.jsx
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import VolunteerForm from "./VolunteerForm";
 import VolunteerTabs from "./VolunteerTabs";
 import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
@@ -19,7 +19,6 @@ const VolunteerDetail = () => {
     volunteerVolunteering,
     volunteerHours,
     volunteerCertificates,
-    // Message states
     setVolunteerDetails,
     setVolunteerTeams,
     setVolunteerTasks,
@@ -224,7 +223,14 @@ const VolunteerDetail = () => {
     };
 
     fetchVolunteerData();
-  }, [reFetchData, teamsFilter, volunteeringFilter, tasksFilter]);
+  }, [
+    reFetchData,
+    teamsFilter,
+    volunteeringFilter,
+    tasksFilter,
+    volunteerCertificates,
+    volunteerTasks,
+  ]);
   const [edit, setEdit] = useState(false);
   useDocumentTitle([
     volunteerDetails?.firstName + " " + volunteerDetails?.lastName,
@@ -232,13 +238,6 @@ const VolunteerDetail = () => {
   ]);
   return (
     <div className=" px-5 w-full mx-auto mb-10 fadeIn">
-      <Link
-        to="/volunteers"
-        className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors"
-      >
-        ← Back to Volunteers
-      </Link>
-
       {cardData.lastItem && (
         <>
           <div className="bg-white rounded-lg shadow-md  mb-6 border border-gray-200">

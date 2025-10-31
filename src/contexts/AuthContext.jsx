@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 const AuthContext = createContext();
-
+import { API } from "../Components/Global/Global";
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log("Checking auth status...");
       const response = await fetch(
-        "http://localhost/vms/backend/api/validate-session.php",
+        `http://localhost/vms/backend/api/validate-session.php`,
         {
           credentials: "include",
         }
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
       username: userName,
       password: password,
     };
-    const response = await fetch("http://localhost/vms/backend/api/login.php", {
+    const response = await fetch(`http://localhost/vms/backend/api/login.php`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +76,6 @@ export const AuthProvider = ({ children }) => {
           credentials: "include",
         }
       );
-
       if (response.ok) {
         // Clear both session and localStorage
         localStorage.removeItem("user");

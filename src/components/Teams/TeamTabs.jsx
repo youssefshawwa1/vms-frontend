@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useTeam } from "../../Contexts/TeamContext";
 import TabBtns from "../Global/TabBtns";
 import TasksTab from "../Tasks/TasksTab";
@@ -49,6 +49,9 @@ const TeamTabs = () => {
   const handleAddTeamVolunteer = () => {
     setActiveTab("addTeamVolunteer");
   };
+  useEffect(() => {
+    goToTables();
+  }, [activeTab]);
   const goToTables = () => {
     setTimeout(() => {
       tablesSection.current?.scrollIntoView({
@@ -84,7 +87,7 @@ const TeamTabs = () => {
             type="forTeam"
             handleAddTeamVolunteer={handleAddTeamVolunteer}
             handleAddTask={handleAddTask}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
 
@@ -97,7 +100,7 @@ const TeamTabs = () => {
             details={teamDetails}
             reFetch={reFetch}
             type="forTeam"
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
         {activeTab === "addTeamVolunteer" && (
@@ -107,7 +110,7 @@ const TeamTabs = () => {
               teamId: teamDetails.id,
             }}
             reFetch={reFetch}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
         {activeTab === "addTask" && (
@@ -116,7 +119,7 @@ const TeamTabs = () => {
             callBack={reFetch}
             cancel={handleChangeSelection}
             ref={null}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
       </div>

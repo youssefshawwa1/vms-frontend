@@ -105,8 +105,8 @@ function Volunteers({ type, onRowDoubleClick }) {
       {!isLoading && (
         <div className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10 fadeIn">
           {!type && (
-            <div className="py-10 flex justify-between">
-              <div className="">Add a Volunteer</div>
+            <div className="py-10 flex justify-end">
+              {/* <div className="">Add a Volunteer</div> */}
               <div className="">
                 {/* <LinkBtn to="volunteers/add" text="Add a Volunteer" /> */}
                 <Link

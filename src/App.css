@@ -5,10 +5,16 @@
   }
 }
 .overlay {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  /* background: rgba(255, 255, 255, 0.1); */
+  /* background-color: red; */
+  /* backdrop-filter: blur(10px); */
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 30vw;
+  height: 30vh;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
 }
 header {
   margin-left: 70px;

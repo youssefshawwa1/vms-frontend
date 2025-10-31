@@ -132,6 +132,22 @@ const validators = {
       else if (value.length > maxLength) return message3;
       return "";
     },
+  nbBetween:
+    (
+      min,
+      max,
+      message1 = `This field is required`,
+      message2 = `Must be at least ${min}!!`,
+      message3 = `Must be at max ${max}!!`
+    ) =>
+    (value) => {
+      if (!value) return message1;
+      else if (value < min) return message2;
+      if (max && value > max) {
+        return message3;
+      }
+      return "";
+    },
   futureDate:
     (
       message = `This field is required`,

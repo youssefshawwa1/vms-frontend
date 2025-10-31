@@ -17,9 +17,7 @@ const Input = ({
       {show && (
         <div
           className={`${
-            !classes
-              ? "grid grid-cols-1 sm:grid-cols-[30%_1fr] gap-2 md:grid-cols-1"
-              : classes
+            !classes ? "grid grid-cols-1 sm:grid-cols-[30%_1fr] gap-2" : classes
           }`}
           key={index || ""}
         >
@@ -28,7 +26,7 @@ const Input = ({
               {label}:
             </label>
           </div>
-          <div className="w-full mx-auto sm:w-full">
+          <div className="w-full mx-auto">
             {type == "textarea" ? (
               <textarea
                 autoComplete="off"
@@ -78,7 +76,7 @@ const SelectInput = ({
 
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 md:grid-cols-1"
+      className="grid grid-cols-1 sm:grid-cols-[30%_1fr] grid gap-2 "
       key={index || ""}
     >
       <div>

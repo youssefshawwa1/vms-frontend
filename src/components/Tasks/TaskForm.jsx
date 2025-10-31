@@ -3,12 +3,13 @@ import useFetching from "../../Hooks/useFetching";
 import { FormSubmitBtn, FormSectionGroup, FormSection } from "../Global/Form";
 import { useValidateForm, validators } from "../../Hooks/useValidateForm";
 const TaskForm = ({ teamVolunteerId, callBack, task }) => {
+  console.log(task);
   const validationRules = {
     taskTitle: validators.required(),
     taskDescription: validators.required(),
     startDate: validators.required(),
     endDate: validators.required(),
-    volunteeringHours: validators.dateWithStartEnd(),
+    volunteeringHours: validators.nbBetween(0.5, 15),
     completionDate: () => {
       if (!formData.completionDate) return "This field is required";
       else if (new Date(formData.completionDate) > new Date())
@@ -138,6 +139,8 @@ const TaskForm = ({ teamVolunteerId, callBack, task }) => {
       : validationRules.currentValidationRules ??
         delete validationRules.completionDate;
     if (validateForm()) {
+      console.log(task);
+
       const data = {
         action: task ? "updateTask" : "addTask",
         data: {
@@ -147,12 +150,15 @@ const TaskForm = ({ teamVolunteerId, callBack, task }) => {
           startDate: formData.startDate,
           endDate: formData.endDate,
           volunteeringHours: formData.volunteeringHours,
-          teamVolunteerId: teamVolunteerId,
+          teamVolunteerId:
+            task?.fullDetails?.volunteering?.volunteeringId || teamVolunteerId,
           completed: complete,
           completionDate: complete ? formData.completionDate : "",
-          taskId: task?.taskId || "",
+          taskId: task?.id || "",
         },
       };
+      // console.log(data);
+      // return;
       const handleRefetch = () => {
         resetForm();
         callBack();

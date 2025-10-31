@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useFetching from "../../Hooks/useFetching";
 import Card from "../Global/Card";
@@ -15,7 +14,6 @@ const TaskDetails = () => {
   const { id } = useParams();
   const [cardData, setCardData] = useState(null);
   const [edit, setEdit] = useState(false);
-  const [refetch, setReFetch] = useState(false);
   const [data, setData] = useState(null);
   useEffect(() => {
     const fetchVolunteeringData = async () => {
@@ -129,7 +127,7 @@ const TaskDetails = () => {
                   {
                     type: "last",
                     label: "Updated:",
-                    text: taskData.fullDetails.updatedAt,
+                    text: taskData.updatedAt,
                   },
                   {
                     type: "last",
@@ -147,9 +145,10 @@ const TaskDetails = () => {
     };
 
     fetchVolunteeringData();
-  }, [refetch]);
+  }, [taskDetails]);
 
   const handleRefetch = () => {
+    setTaskDetails(null);
     setEdit(!edit);
   };
   const handleComplete = () => {
@@ -168,7 +167,6 @@ const TaskDetails = () => {
         callBack={() => {
           hidePopUp();
           setTaskDetails(null);
-          setReFetch((prev) => !prev);
         }}
         onCancel={hidePopUp}
       />
@@ -184,13 +182,6 @@ const TaskDetails = () => {
   useDocumentTitle([data?.taskTitle, "Task"]);
   return (
     <div className="px-4 w-full mx-auto mb-10 fadeIn">
-      <Link
-        to="/volunteers"
-        className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors"
-      >
-        ← Back to Volunteers
-      </Link>
-      {/* {cardData && <Card data={cardData} />} */}
       {cardData?.lastItem && (
         <div className="bg-white rounded-lg shadow-md mb-6 border border-gray-200">
           <div className="fadeIn relative">

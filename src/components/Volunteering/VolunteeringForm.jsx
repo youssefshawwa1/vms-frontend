@@ -164,7 +164,10 @@ const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
         },
       };
       console.log(volunteeringDetails);
-      await sendData("teams.php", data, type ? callBack : resetForm);
+      await sendData("teams.php", data, () => {
+        if (callBack) callBack();
+        resetForm();
+      });
     }
   };
 

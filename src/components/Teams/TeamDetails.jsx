@@ -145,12 +145,6 @@ const TeamDetails = () => {
   };
   return (
     <div className="teams-detail px-4 w-full mx-auto mx-auto mb-10 fadeIn">
-      <Link
-        to="/teams"
-        className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors"
-      >
-        ← Back to Teams
-      </Link>
       {cardData.lastItem && (
         <>
           <div className="bg-white rounded-lg shadow-md  mb-6 border border-gray-200">

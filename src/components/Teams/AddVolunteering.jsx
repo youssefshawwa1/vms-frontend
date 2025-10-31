@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Teams from "./Teams";
 import VolunteeringForm from "../Volunteering/VolunteeringForm";
 import Volunteers from "../Volunteers/Volunteers";
@@ -86,10 +86,12 @@ const AddVolunteering = ({ type, details, reFetch, whenVisible }) => {
           <div className="mt-5">
             <VolunteeringForm
               volunteeringDetails={{
-                volunteerId: details.volunteerId
-                  ? details.volunteerId
-                  : selectedItem.id,
-                teamId: details.teamId ? details.teamId : selectedItem.id,
+                volunteer: {
+                  volunteerId: details?.volunteerId || selectedItem.id,
+                },
+                team: {
+                  teamId: details?.teamId || selectedItem.id,
+                },
               }}
               callBack={reFetch}
             />

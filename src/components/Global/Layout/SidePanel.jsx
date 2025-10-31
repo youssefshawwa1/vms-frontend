@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation, matchPath } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./SidePanel.css";
 import { MdVolunteerActivism } from "react-icons/md";
 import { FaUsersCog, FaTasks } from "react-icons/fa";
@@ -8,6 +8,7 @@ import { FaPeopleCarryBox, FaPeopleGroup } from "react-icons/fa6";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { PiCertificateBold } from "react-icons/pi";
 import { useAuth } from "../../../Contexts/AuthContext";
+import BackButton from "./BackButton";
 const SidePanel = () => {
   const sideBarRef = useRef(null);
   const { user } = useAuth();
@@ -54,6 +55,7 @@ const SidePanel = () => {
       className={`side-panel ${isExpanded ? "expanded" : "collapsed"} fixed`}
       ref={sideBarRef}
     >
+      <BackButton showBackTo={isExpanded} />
       <div className="panel-header text-center">
         {isExpanded && <h2>Navigation</h2>}
         <button className="toggle-btn" onClick={togglePanel}>
@@ -64,7 +66,7 @@ const SidePanel = () => {
         {navItems.map((item, index) => (
           <Link
             to={item.path}
-            className={`nav-item ${isActive(item.path) ? "active" : ""}`}
+            className={` nav-item ${isActive(item.path) ? " active" : ""}`}
             key={index}
           >
             <span className="nav-icon">{item.icon}</span>
@@ -76,10 +78,10 @@ const SidePanel = () => {
       {isExpanded && (
         <div className="panel-footer hover:bg-[#ffffff0c] transition-colors cursor-pointer">
           <Link to={"/profile"} className="user-info ">
-            <div className="user-avatar uppercase">
+            <div className="user-avatar uppercase bg-main">
               {user.username.substring(0, 2)}
             </div>
-            <div className="user-details ">
+            <div className="user-details  ">
               <p className="user-name">{user.username}</p>
               <p className="user-role">{user.role}</p>
             </div>

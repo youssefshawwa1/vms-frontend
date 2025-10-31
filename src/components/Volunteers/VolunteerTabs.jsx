@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useVolunteer } from "../../Contexts/VolunteerContext";
 import Tab from "../Global/Tab";
 import TabBtns from "../Global/TabBtns";
@@ -56,6 +56,7 @@ const VolunteerTabs = () => {
     volunteeringFilter,
     volunteerDetails,
     volunteerCertificates,
+    setVolunteerCertificates,
     volunteerHours,
     tasksFilter,
     reFetch,
@@ -85,6 +86,9 @@ const VolunteerTabs = () => {
   const handleAddCertificate = () => {
     setActiveTab("addCertificate");
   };
+  useEffect(() => {
+    goToTables();
+  }, [activeTab]);
   const goToTables = () => {
     setTimeout(() => {
       tablesSection.current?.scrollIntoView({
@@ -164,16 +168,15 @@ const VolunteerTabs = () => {
             type="forVolunteer"
             handleAddTask={handleAddTask}
             handleAddTeamVolunteer={handleAddToTeam}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
         {activeTab === "certificates" && (
           <CertificatesTab
             rows={volunteerCertificates}
             type="forVolunteer"
-            // whenVisible={goToTables}
             handleAddCertificate={handleAddCertificate}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
             details={{
               ...volunteerHours,
               name: `${volunteerDetails.firstName}_${volunteerDetails.lastName}`,
@@ -189,7 +192,6 @@ const VolunteerTabs = () => {
             details={volunteerDetails}
             reFetch={reFetch}
             type="forVolunteer"
-            whenVisible={goToTables}
           />
         )}
         {activeTab === "teams" && (
@@ -198,7 +200,7 @@ const VolunteerTabs = () => {
             rows={volunteerTeams[teamsFilter]}
             filter={teamsFilter}
             setFilter={setTeamsFilter}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
 
@@ -209,7 +211,7 @@ const VolunteerTabs = () => {
               volunteerId: volunteerDetails.id,
             }}
             reFetch={reFetch}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
         {activeTab === "addTask" && (
@@ -218,7 +220,7 @@ const VolunteerTabs = () => {
             callBack={reFetch}
             cancel={handleChangeSelection}
             hide="volunteer"
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
           />
         )}
         {activeTab === "addCertificate" && (
@@ -230,9 +232,12 @@ const VolunteerTabs = () => {
               totalHours: volunteerHours.totalHours,
               currentHours: volunteerHours.currentHours,
             }}
-            callBack={null}
+            callBack={() => {
+              setVolunteerCertificates({});
+              reFetch();
+            }}
             // hide={true}
-            whenVisible={goToTables}
+            // whenVisible={goToTables}
             cancel={() => {
               setActiveTab("certificates");
             }}

@@ -14,7 +14,7 @@ const useFetching = () => {
         setTimeout(() => {
           hideLoading();
         }, LoadingTime);
-        return;
+        return response;
       }
       if (normal) {
         setTimeout(() => hideLoading(), LoadingTime);
@@ -57,6 +57,9 @@ const useFetching = () => {
         },
         body: JSON.stringify(data),
       });
+      // const respons = await response.text();
+      // console.log(respons);
+      // return;
       const resp = await response.json();
       if (resp.result) {
         setTimeout(() => {
@@ -67,8 +70,10 @@ const useFetching = () => {
           callBack();
         }
       } else {
+        console.log(resp);
         setTimeout(() => {
           showMessage(resp.message, "Internal Error");
+
           hideLoading();
         }, LoadingTime);
       }

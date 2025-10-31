@@ -50,8 +50,7 @@ function Teams({ type, onRowDoubleClick }) {
       {!isLoading && (
         <div className=" h-full w-full  grid grid-cols-1 px-4 mx-auto mb-10 fadeIn">
           {!type && (
-            <div className="py-10 flex justify-between">
-              <div className="">All Teams</div>
+            <div className="py-10 flex justify-end">
               <div className="">
                 <Link
                   to="add"

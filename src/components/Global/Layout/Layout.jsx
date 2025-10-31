@@ -26,7 +26,7 @@ const Layout = () => {
           <SidePanel />
           <Header />
 
-          <div className="main-content flex mx-0 px-0">
+          <div className="main-content flex mx-0 px-0 mt-4">
             <Outlet />
           </div>
         </>

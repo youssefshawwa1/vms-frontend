@@ -79,8 +79,8 @@ const Login = () => {
     }
   };
   return (
-    <div className="login-container flex  flex-col justify-center h-screen items-center relative">
-      <div className="w-30 absolute top-20">
+    <div className="login-container flex  flex-col justify-center h-screen items-center">
+      <div className="w-30">
         <img src={fekra} alt="fekra's logo" />
       </div>
       <div className=" p-5 items-center content-center h-100 rounded-xl shadow-2xl w-80 border-gray-200">

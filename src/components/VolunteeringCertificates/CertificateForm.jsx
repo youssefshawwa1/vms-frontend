@@ -123,17 +123,10 @@ const CertificateForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     formData.certificateKind == "withHours"
-      ? (validationRules.volunteeringHours = () => {
-          if (!formData.volunteeringHours) return "This field is required.";
-          else if (formData.volunteeringHours <= 0)
-            return "Must be greater than 0.";
-          else if (
-            volunteerrDetails?.currentHours &&
-            formData.volunteeringHours > volunteerrDetails.currentHours
-          )
-            return "Can't Issue Hours greater than current hours.";
-          else "";
-        })
+      ? (validationRules.volunteeringHours = validators.nbBetween(
+          1,
+          volunteerrDetails?.currentHours
+        ))
       : validationRules.volunteeringHours ??
         delete validationRules.volunteeringHours;
 
@@ -155,11 +148,10 @@ const CertificateForm = ({
         },
       };
       console.log(data);
-      await sendData(
-        "volunteers.php",
-        data,
-        certificateDetails ? callBack : resetForm
-      );
+      await sendData("volunteers.php", data, () => {
+        if (callBack) callBack();
+        resetForm();
+      });
     }
   };
 

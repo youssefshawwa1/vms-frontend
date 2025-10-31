@@ -43,7 +43,7 @@ function Tasks({ type }) {
           className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10 fadeIn"
           ref={main}
         >
-          {!type && (
+          {/* {!type && (
             <div className="py-10 flex justify-between">
               <div className="">Add a Volunteer</div>
               <div className="">
@@ -53,7 +53,7 @@ function Tasks({ type }) {
                 ></Link>
               </div>
             </div>
-          )}
+          )} */}
 
           <div className="w-full fadeIn">
             <TasksTab

@@ -156,12 +156,6 @@ const CertificateDetails = () => {
   useDocumentTitle([certificateDetails?.certificateTitle, "Certificate"]);
   return (
     <div className="px-4 w-full mx-auto mb-10 fadeIn">
-      <Link
-        to="/volunteers"
-        className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors"
-      >
-        ← Back to Volunteers
-      </Link>
       {data && (
         <div className="bg-white rounded-lg shadow-md mb-6 border border-gray-200">
           <div className="fadeIn relative">

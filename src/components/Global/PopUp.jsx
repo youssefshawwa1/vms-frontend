@@ -24,7 +24,7 @@ const PopUp = () => {
     <>
       {popUpConfig.isVisible && (
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center overlay ${
+          className={`fixed inset-0 z-50 flex items-center justify-center min-w-250 overlay ${
             shouldRender ? "fadeIn" : "fadeOut"
           }`}
         >

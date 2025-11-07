@@ -6,12 +6,16 @@ import {
   MdOutlineAssignmentTurnedIn,
   MdOutlineAssignmentReturned,
   MdCloudDownload,
+  MdEmail,
 } from "react-icons/md";
 import { BsPersonFillAdd } from "react-icons/bs";
 const style =
   "text-main-500 text-4xl cursor-pointer hover:text-yellow-500 transition-colors";
 const View = () => {
   return <MdReadMore className={`${style}`} />;
+};
+const Email = () => {
+  return <MdEmail className={`${style}`} />;
 };
 const Edit = () => {
   return <MdEdit className={`${style}`} />;
@@ -49,4 +53,5 @@ export {
   AddNormal,
   CompleteDocument,
   Download,
+  Email,
 };

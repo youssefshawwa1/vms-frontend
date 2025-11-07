@@ -58,11 +58,11 @@ const CardItem = ({ label, text, type }) => {
   }`;
 
   const getDisplayValue = () => {
-    if (text == null) return "N/A";
+    if (text == null || text == "") return "N/A";
     if (typeof text === "string") {
       const date = new Date(text);
       if (!isNaN(date.getTime())) {
-        return date.toLocaleDateString();
+        return date.toLocaleString();
       }
     }
     return text.toString();

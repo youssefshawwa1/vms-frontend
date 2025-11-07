@@ -3,20 +3,23 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useFetching from "../../Hooks/useFetching";
 import Card from "../Global/Card";
-import { Edit, Cancel, Download } from "../Global/Icons";
+import { Edit, Cancel, Download, Email } from "../Global/Icons";
 import CertificateForm from "./CertificateForm";
 import { useCertificateDownloader } from "../../Hooks/useCertificateDownloader";
 import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 import CertificateViewer from "./CertificateViewer";
+import { useOverLay } from "../../Contexts/OverLayContext";
 const CertificateDetails = () => {
+  const { showPopUp, hidePopUp } = useOverLay();
   const { downloadCertificate, isLoading } = useCertificateDownloader();
   const [certificateDetails, setCertificateDetails] = useState(null);
-  const { fetchData } = useFetching();
+  const { fetchData, sendData } = useFetching();
   const { id } = useParams();
   const [cardData, setCardData] = useState(null);
   const [edit, setEdit] = useState(false);
   const [refetch, setReFetch] = useState(false);
   const [data, setData] = useState(null);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const canEdit = () => {
     const certificateDate = new Date(data.issueDate);
     const currentDate = new Date();
@@ -40,7 +43,6 @@ const CertificateDetails = () => {
           setEdit(false);
           setCertificateDetails(certificateData);
           setData(certificateData);
-          console.log(certificateData);
           setCardData({
             label: certificateData.certificateTitle,
             description: certificateData.certificateDescription,
@@ -74,11 +76,23 @@ const CertificateDetails = () => {
                   },
                   {
                     label: "Volunteering Hours:",
-                    text: `${certificateData.volunteeringHours || "N/A"} Hr`,
+                    text: certificateData.volunteeringHours,
                   },
                   {
                     label: "Total Hours at Issue:",
-                    text: `${certificateData.volunteeringHours || "N/A"} Hr`,
+                    text: certificateData.totalHoursAtIssue,
+                  },
+                  {
+                    label: "Email Sent:",
+                    text: certificateData.emailSendCount,
+                  },
+                  {
+                    label: "Last Email Sent:",
+                    text: certificateData.firstEmailSentAt,
+                  },
+                  {
+                    label: "First Email Sent:",
+                    text: certificateData.lastEmailSentAt,
                   },
                 ],
               },
@@ -120,8 +134,7 @@ const CertificateDetails = () => {
                   {
                     type: "last",
                     label: "By:",
-                    text:
-                      certificateData.fullDetails.updatedBy?.userName || "N/A",
+                    text: certificateData.fullDetails.updatedBy?.userName,
                   },
                 ],
               },
@@ -153,6 +166,50 @@ const CertificateDetails = () => {
     console.log(fileName);
     downloadCertificate({ certificateId: data.id, filename: fileName });
   };
+  const handleSendByEmail = () => {
+    console.log(data);
+    const handleSend = async () => {
+      setIsSendingEmail(true);
+      const d = {
+        action: "sendByEmail",
+        data: {
+          certificateId: data.id,
+        },
+      };
+      await sendData("certificates.php", d, () => {
+        handleRefetch();
+        hidePopUp();
+        setIsSendingEmail(false);
+      });
+    };
+    showPopUp(
+      "Send By Email",
+      <>
+        <div className="p-3 space-y-0">
+          <p className="block text-sm font-medium text-gray-500 ">
+            Do you really want to send this certificate to:
+            <br />
+            <b>{data.fullDetails.volunteer.email}</b>.
+          </p>
+          {data.emailSendCount > 0 && (
+            <p className="block text-sm font-medium text-gray-500 ">
+              Already sent: {data.emailSendCount} time
+              {data.emailSendCount > 1 && "s"}.
+            </p>
+          )}
+        </div>
+        <div className="flex justify-end space-x-3 p-6 border-t border-gray-300">
+          <button
+            type="button"
+            onClick={handleSend}
+            className="px-4 py-2 bg-main text-white rounded-md hover:bg-main-500 focus:outline-none focus:ring-2 focus:ring-yellow-200"
+          >
+            Send
+          </button>
+        </div>
+      </>
+    );
+  };
   useDocumentTitle([certificateDetails?.certificateTitle, "Certificate"]);
   return (
     <div className="px-4 w-full mx-auto mb-10 fadeIn">
@@ -169,20 +226,29 @@ const CertificateDetails = () => {
                     <Edit />
                   </div>
                 )}
-                {
-                  <div
-                    className={`absolute top-0 right-15 m-2 p-1 z-55 cursor-pointer ${
-                      isLoading && "animate-pulse"
-                    }`}
-                    onClick={() => {
-                      handleDownload();
-                    }}
-                  >
-                    <Download />
-                  </div>
-                }
+
+                <div
+                  className={`absolute top-0 right-1 m-2 p-1 z-55 cursor-pointer ${
+                    isLoading && "animate-pulse"
+                  }`}
+                  onClick={() => {
+                    handleDownload();
+                  }}
+                >
+                  <Download />
+                </div>
+                <div
+                  className={`absolute top-0 right-12 m-2 p-1 z-55 cursor-pointer ${
+                    isSendingEmail && "animate-pulse"
+                  }`}
+                  onClick={() => {
+                    handleSendByEmail();
+                  }}
+                >
+                  <Email />
+                </div>
+
                 <Card data={cardData} />
-                {/* <Certificate data={data} ref={null} /> */}
               </div>
             )}
             {edit && canEdit() && (

@@ -8,7 +8,13 @@ const useFetching = () => {
     showLoading();
     try {
       const url = `${API}${where}`;
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include", // This is CRUCIAL
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) {
         showMessage("Server can't be Reached!", "Internal Error");
         setTimeout(() => {
@@ -52,6 +58,7 @@ const useFetching = () => {
       const url = `${API}${where}`;
       const response = await fetch(url, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -70,7 +77,6 @@ const useFetching = () => {
           callBack();
         }
       } else {
-        console.log(resp);
         setTimeout(() => {
           showMessage(resp.message, "Internal Error");
 

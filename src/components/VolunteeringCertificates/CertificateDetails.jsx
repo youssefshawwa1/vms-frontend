@@ -212,12 +212,12 @@ const CertificateDetails = () => {
   };
   useDocumentTitle([certificateDetails?.certificateTitle, "Certificate"]);
   return (
-    <div className="px-4 w-full mx-auto mb-10 fadeIn">
+    <div className="px-4 w-full mx-auto mb-10  animate-slide-up">
       {data && (
         <div className="bg-white rounded-lg shadow-md mb-6 border border-gray-200">
-          <div className="fadeIn relative">
+          <div className=" animate-slide-up relative">
             {!edit && (
-              <div className="fadeIn p-6">
+              <div className=" animate-slide-up p-6">
                 {canEdit() && (
                   <div
                     className="absolute top-0 right-0 m-2 p-1 z-55 cursor-pointer"
@@ -252,7 +252,7 @@ const CertificateDetails = () => {
               </div>
             )}
             {edit && canEdit() && (
-              <div className="fadeIn p-6">
+              <div className=" animate-slide-up p-6">
                 <p className="text-red-400 text-xs pr-6 mb-4">
                   <span className="font-bold">Note:</span> If you are chaning
                   the volunteering hours, they will be changed also to the

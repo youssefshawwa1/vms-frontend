@@ -31,7 +31,7 @@ const AddCertificate = ({
   return (
     <>
       {show && (
-        <div className={`${fadeIn ? "fadeIn" : "fadeOut"}`} ref={ref}>
+        <div className={`${fadeIn ? "animate-slide-up" : "fadeOut"}`} ref={ref}>
           <div className="mt-4">
             {!selectedVolunteeringHide && (
               <div className=" rounded-lg p-4">

@@ -19,3 +19,10 @@
 header {
   margin-left: 70px;
 }
+stat-card {
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}

@@ -7,12 +7,17 @@ import {
   MdOutlineAssignmentReturned,
   MdCloudDownload,
   MdEmail,
+  MdBlock,
+  MdCheckCircle,
 } from "react-icons/md";
 import { BsPersonFillAdd } from "react-icons/bs";
 const style =
   "text-main-500 text-4xl cursor-pointer hover:text-yellow-500 transition-colors";
 const View = () => {
   return <MdReadMore className={`${style}`} />;
+};
+const Block = () => {
+  return <MdBlock className={`${style}`} />;
 };
 const Email = () => {
   return <MdEmail className={`${style}`} />;
@@ -42,7 +47,9 @@ const AddGroup = () => {
 const CompleteDocument = () => {
   return <MdOutlineAssignmentTurnedIn className={`${style}`} />;
 };
-
+const Activate = () => {
+  return <MdCheckCircle className={`${style}`} />;
+};
 export {
   View,
   AddDocument,
@@ -54,4 +61,6 @@ export {
   CompleteDocument,
   Download,
   Email,
+  Block,
+  Activate,
 };

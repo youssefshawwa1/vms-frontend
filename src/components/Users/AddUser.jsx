@@ -1,32 +1,30 @@
-import { Link } from "react-router-dom";
-import TeamForm from "./TeamForm";
+import UserForm from "./UserForm";
 import { useOverLay } from "../../Contexts/OverLayContext";
 import { useEffect, useState } from "react";
-import { LoadingTime } from "../Global/Global";
 import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
-const AddTeam = () => {
+const AddUser = () => {
   const { hideLoading } = useOverLay();
   const [finished, setFinished] = useState(false);
   useEffect(() => {
     setTimeout(() => {
       hideLoading();
       setFinished(true);
-    }, LoadingTime);
+    }, 500);
   }, []);
-  useDocumentTitle(["Add new team"]);
+  useDocumentTitle(["Add new volunteer"]);
   return (
     <>
       {finished && (
-        <div className="add-teams h-full   px-4 max-w-6xl w-6xl mx-auto mb-10  animate-slide-up">
-          <div className="form-container  rounded-lg shadow-xl  p-4 w-full m-auto m-5 mb-10">
+        <div className="add-volunteer w-6xl mx-auto  animate-slide-up">
+          <div className="form-container  rounded-lg shadow-xl  p-4   mx-auto m-5 mb-10">
             <h2 className="text-center text-3xl font-bold text-gray-700 mb-10">
-              Add a Team
+              Add a User
             </h2>
-            <TeamForm />
+            <UserForm />
           </div>
         </div>
       )}
     </>
   );
 };
-export default AddTeam;
+export default AddUser;

@@ -144,13 +144,13 @@ const TeamDetails = () => {
     setEdit(!edit);
   };
   return (
-    <div className="teams-detail px-4 w-full mx-auto mx-auto mb-10 fadeIn">
+    <div className="teams-detail px-4 w-full mx-auto mx-auto mb-10  animate-slide-up">
       {cardData.lastItem && (
         <>
           <div className="bg-white rounded-lg shadow-md  mb-6 border border-gray-200">
-            <div className="fadeIn relative ">
+            <div className=" animate-slide-up relative ">
               {!edit && (
-                <div className="fadeIn p-6">
+                <div className=" animate-slide-up p-6">
                   <div
                     className="absolute top-0 right-0 m-2 p-1 z-55"
                     onClick={() => setEdit(!edit)}
@@ -161,7 +161,7 @@ const TeamDetails = () => {
                 </div>
               )}
               {edit && (
-                <div className="fadeIn p-6">
+                <div className=" animate-slide-up p-6">
                   <div
                     className="absolute top-0 right-0 m-2 p-1  z-55"
                     onClick={() => setEdit(!edit)}
@@ -178,7 +178,7 @@ const TeamDetails = () => {
             </div>
           </div>
           {/* <VolunteerCard /> */}
-          <div className="mt-8 fadeIn">
+          <div className="mt-8  animate-slide-up">
             <TeamTabs />
           </div>
         </>

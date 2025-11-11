@@ -48,7 +48,7 @@ function Teams({ type, onRowDoubleClick }) {
   return (
     <>
       {!isLoading && (
-        <div className=" h-full w-full  grid grid-cols-1 px-4 mx-auto mb-10 fadeIn">
+        <div className=" h-full w-full  grid grid-cols-1 px-4 mx-auto mb-10  animate-slide-up">
           {!type && (
             <div className="py-10 flex justify-end">
               <div className="">

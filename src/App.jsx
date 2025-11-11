@@ -1,7 +1,7 @@
 // App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import Home from "./Pages/Home";
+import Dashboard from "./Pages/Dashboard";
 import Volunteers from "./Components/Volunteers/Volunteers";
 import VolunteerDetails from "./Components/Volunteers/VolunteerDetails";
 import AddVolunteer from "./Components/Volunteers/AddVolunteer";
@@ -23,6 +23,10 @@ import CertificateDetails from "./Components/VolunteeringCertificates/Certificat
 import { useAuth } from "./Contexts/AuthContext";
 import ProtectedRoute from "./Components/Auth/ProtectedRoute";
 import Login from "./Pages/Login";
+import Profile from "./Components/Users/Profile";
+import Users from "./Components/Users/Users";
+import AddUser from "./Components/Users/AddUser";
+import UserDetails from "./Components/Users/UserDetails";
 const App = () => {
   const { isAuthenticated, loading } = useAuth();
   return (
@@ -39,9 +43,16 @@ const App = () => {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Home />} />
-
+        <Route index element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/users" element={<Users />} />
         {/* Volunteer routes */}
+
+        <Route path="users" element={<Outlet />}>
+          <Route index element={<Users />} />
+          <Route path=":id" element={<UserDetails />} />
+          <Route path="add" element={<AddUser />} />
+        </Route>
         <Route
           path="volunteers"
           element={
@@ -79,17 +90,14 @@ const App = () => {
         >
           <Route index element={<Volunteering />} />
           <Route path=":id" element={<VolunteeringDetails />} />
-          {/* <Route path="add" element={<AddVolun />} /> */}
         </Route>
         <Route path="tasks" element={<Outlet />}>
           <Route index element={<Tasks />} />
           <Route path=":id" element={<TaskDetails />} />
-          {/* <Route path="add" element={<AddVolun />} /> */}
         </Route>
         <Route path="certificates" element={<Outlet />}>
           <Route index element={<Certificates />} />
           <Route path=":id" element={<CertificateDetails />} />
-          {/* <Route path="add" element={<AddVolun />} /> */}
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Route>

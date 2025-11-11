@@ -41,7 +41,7 @@ function Volunteering({ type }) {
     <>
       {loaded && (
         <div
-          className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10 fadeIn"
+          className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10  animate-slide-up"
           ref={main}
         >
           {/* {!type && (
@@ -56,7 +56,7 @@ function Volunteering({ type }) {
             </div>
           )} */}
 
-          <div className="w-full fadeIn">
+          <div className="w-full  animate-slide-up">
             <VolunteeringTab
               rows={volunteering?.[volunteeringFilter]?.volunteering || []}
               filter={volunteeringFilter}

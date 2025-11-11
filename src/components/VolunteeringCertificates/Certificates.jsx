@@ -31,7 +31,7 @@ function Certificates({ type }) {
     <>
       {loaded && (
         <div
-          className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10 fadeIn"
+          className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10  animate-slide-up"
           ref={main}
         >
           {/* {!type && (

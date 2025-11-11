@@ -2,84 +2,46 @@ import Table from "../Global/Table";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useOverLay } from "../../Contexts/OverLayContext";
-
-import { AddPerson, View } from "../Global/Icons";
+import { AddPerson } from "../Global/Icons";
+import { View } from "../Global/Icons";
 import useFetching from "../../Hooks/useFetching";
-function Volunteers({ type, onRowDoubleClick }) {
-  const [volunteers, setVolunteers] = useState([]);
+import { useAuth } from "../../Contexts/AuthContext";
+function Users({ type, onRowDoubleClick }) {
+  const { user } = useAuth();
+  const [users, setUsers] = useState([]);
   const { isLoading } = useOverLay();
   const { fetchData } = useFetching();
   useEffect(() => {
-    const fetchVolunteers = async () => {
-      await fetchData("volunteers.php", setVolunteers);
+    const fetchUsers = async () => {
+      await fetchData("users.php", (users) => {
+        setUsers(
+          users.filter((item) => {
+            console.log(
+              `User: ${item.userName}     current user: ${user.username}`
+            );
+            return item.userName != user.username;
+          })
+        );
+      });
     };
 
-    fetchVolunteers();
+    fetchUsers();
   }, []);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "firstName", headerName: "First name", width: 100 },
-    { field: "lastName", headerName: "Last name", width: 100 },
+    { field: "userName", headerName: "Username", width: 100 },
+    { field: "userEmail", headerName: "Email", width: 300 },
     {
-      field: "email",
-      headerName: "Email",
-      width: 200,
-      sortable: true,
+      field: "status",
+      headerName: "Status",
+      width: 90,
+      valueGetter: (value, row) => {
+        return row.status ? "Active" : "Disactive";
+      },
     },
-    {
-      field: "phone",
-      headerName: "Phone",
-      width: 100,
-      sortable: true,
-    },
-    {
-      field: "birthDate",
-      headerName: "Birth Date",
-      width: 100,
-      sortable: true,
-    },
-    {
-      field: "gender",
-      headerName: "Gender",
-      width: 80,
-      sortable: true,
-    },
-    {
-      field: "major",
-      headerName: "Major",
-      width: 100,
-      sortable: true,
-    },
-    {
-      field: "university",
-      headerName: "University",
-      width: 100,
-      sortable: true,
-    },
-    // {
-    //   field: "delete",
-    //   headerName: "Delete",
-    //   description: "This column is to delete.",
-    //   sortable: false,
-    //   width: 100,
-    //   // Use `valueGetter` to combine multiple values
-    //   renderCell: (params) => {
-    //     // This is the key function
-
-    //     return (
-    //       <Button
-    //         // onClick={handleClick}
-    //         variant="contained"
-    //         color="error"
-    //         size="small"
-    //       >
-    //         Delete
-    //       </Button>
-    //     );
-    //   },
-    // },
   ];
-  if (!type) {
+  //temp permistion (role based)
+  if (user.role.toLowerCase() == "admin") {
     columns.push({
       field: "view",
       headerName: "View",
@@ -104,7 +66,7 @@ function Volunteers({ type, onRowDoubleClick }) {
     <>
       {!isLoading && (
         <div className=" h-full grid grid-cols-1 w-full px-4 mx-auto mb-10  animate-slide-up">
-          {!type && (
+          {!type && user.role.toLowerCase() == "admin" && (
             <div className="py-10 flex justify-end">
               {/* <div className="">Add a Volunteer</div> */}
               <div className="">
@@ -120,7 +82,7 @@ function Volunteers({ type, onRowDoubleClick }) {
           )}
           <div className="w-full  animate-slide-up">
             <Table
-              rows={volunteers}
+              rows={users}
               columns={columns}
               onRowDoubleClick={onRowDoubleClick}
             />
@@ -131,4 +93,4 @@ function Volunteers({ type, onRowDoubleClick }) {
   );
 }
 
-export default Volunteers;
+export default Users;

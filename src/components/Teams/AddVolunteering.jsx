@@ -65,7 +65,7 @@ const AddVolunteering = ({ type, details, reFetch, whenVisible }) => {
     <div>
       {showTable && (
         <>
-          <h1 className="text-xl font-semibold text-gray-700 mb-3 fadeIn">
+          <h1 className="text-xl font-semibold text-gray-700 mb-3  animate-slide-up">
             Choose a {type == "forTeam" ? "Volunteer" : "Team"}
             <span className="text-gray-400 text-xs font-normal ml-2">
               (Double click any row)
@@ -81,7 +81,7 @@ const AddVolunteering = ({ type, details, reFetch, whenVisible }) => {
       )}
 
       {selectedItem && (
-        <div className="mt-4 fadeIn">
+        <div className="mt-4  animate-slide-up">
           <SelectionCard data={selectedItem} />
           <div className="mt-5">
             <VolunteeringForm

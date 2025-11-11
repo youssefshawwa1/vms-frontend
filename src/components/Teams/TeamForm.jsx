@@ -67,7 +67,11 @@ const TeamForm = ({ type, team, reFetch }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} autoComplete="off" className="fadeIn">
+    <form
+      onSubmit={handleSubmit}
+      autoComplete="off"
+      className=" animate-slide-up"
+    >
       <FormSectionGroup>
         <FormSection title="Team Information" data={structure} />
       </FormSectionGroup>

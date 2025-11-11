@@ -101,9 +101,10 @@ const validators = {
 
   minLength:
     (min, message = `Must be at least ${min} characters`) =>
-    (value) =>
-      value && value.length < min ? message : "",
-
+    (value) => {
+      if (!value) return "This field is required";
+      if (value.length < min) return message;
+    },
   maxLength:
     (max, message = `Must be less than ${max} characters`) =>
     (value) =>

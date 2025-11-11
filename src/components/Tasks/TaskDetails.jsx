@@ -181,12 +181,12 @@ const TaskDetails = () => {
   // };
   useDocumentTitle([data?.taskTitle, "Task"]);
   return (
-    <div className="px-4 w-full mx-auto mb-10 fadeIn">
+    <div className="px-4 w-full mx-auto mb-10  animate-slide-up">
       {cardData?.lastItem && (
         <div className="bg-white rounded-lg shadow-md mb-6 border border-gray-200">
-          <div className="fadeIn relative">
+          <div className=" animate-slide-up relative">
             {!edit && (
-              <div className="fadeIn p-6">
+              <div className=" animate-slide-up p-6">
                 <div
                   className="absolute top-0 right-0 m-2 p-1 z-55 cursor-pointer"
                   onClick={() => setEdit(!edit)}
@@ -205,7 +205,7 @@ const TaskDetails = () => {
               </div>
             )}
             {edit && (
-              <div className="fadeIn p-6">
+              <div className=" animate-slide-up p-6">
                 <p className="text-red-400 text-xs pr-6 mb-4">
                   <span className="font-bold">Note:</span> if you need to change
                   the volunteering, you will have to end this task, or try to

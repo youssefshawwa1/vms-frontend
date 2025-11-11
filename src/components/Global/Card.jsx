@@ -14,7 +14,7 @@ const Card = ({ data }) => {
     <>
       {ready && (
         // <div className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200">
-        <div>
+        <div className=" animate-slide-up">
           <CardHeader label={data.label} description={data.description} />
           <div>
             {data.sections.map((section, index) =>

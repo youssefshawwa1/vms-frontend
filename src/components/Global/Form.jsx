@@ -187,7 +187,7 @@ const FormSubmitBtn = ({ text, error }) => {
   return (
     <div className="text-center p-4">
       <button
-        className="bg-main min-w-50  h-full p-4 text-white rounded-lg hover:bg-main-500 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl cursor-pointer"
+        className="bg-main min-w-30  h-full p-3 text-white rounded-lg hover:bg-main-500 focus:bg-yellow-400 transition-color duration-200 ease-linear font-bold shadow-xl cursor-pointer"
         type="submit"
       >
         {text}

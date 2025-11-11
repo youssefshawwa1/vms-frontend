@@ -15,12 +15,12 @@ const PageNotFound = () => {
       <div className="max-w-md w-full space-y-8 text-center fadeIn">
         {/* 404 Graphic */}
         <div className="relative">
-          <div className="text-9xl font-bold text-gray-300">404</div>
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className=" inset-0 flex items-center justify-center">
             <div className="text-4xl font-bold text-[#f59e0b]">
               Page Not Found
             </div>
           </div>
+          <div className="text-9xl font-bold text-gray-300">404</div>
         </div>
 
         {/* Error Message */}
@@ -75,19 +75,6 @@ const PageNotFound = () => {
             </svg>
             Go Back
           </button>
-        </div>
-
-        {/* Additional Help */}
-        <div className="pt-8">
-          <p className="text-sm text-gray-500">
-            If you believe this is an error, please{" "}
-            <a
-              href="/contact"
-              className="text-[#f59e0b] hover:text-[#f7c878] font-medium"
-            >
-              contact support
-            </a>
-          </p>
         </div>
       </div>
     </div>

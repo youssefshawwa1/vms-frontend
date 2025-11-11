@@ -1,10 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
-const AuthContext = createContext();
 import { API } from "../Components/Global/Global";
+const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true); // For initial auth check
+  const [verificationRequired, setVerificationRequired] = useState(false);
+  const [pendingUserId, setPendingUserId] = useState(null);
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -37,30 +40,92 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+  const resetVerification = () => {
+    setVerificationRequired(false);
+    setPendingUserId(null);
+  };
   const login = async (userName, password) => {
-    const data = {
-      username: userName,
-      password: password,
-    };
+    setLoading(true);
+    const data = { username: userName, password: password };
     const response = await fetch(`http://localhost/vms/backend/api/login.php`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(data),
     });
+
     if (!response.ok) {
+      setLoading(false);
       return { message: "Login Failed!" };
     }
+
     const result = await response.json();
+
+    if (result.requiresVerification) {
+      // Show verification code input modal
+      setVerificationRequired(true);
+      setPendingUserId(result.userId); // Store for verification
+      setLoading(false);
+      return result;
+    }
+
     if (result.success) {
       setTimeout(() => {
         setUser(result.data.user);
         setIsAuthenticated(true);
       }, 1000);
     }
+    setLoading(false);
     return result;
+  };
+  const verifyTheCode = async (code) => {
+    setLoading(true);
+    const data = {
+      code: code,
+      userId: pendingUserId,
+    };
+    const response = await fetch(
+      `http://localhost/vms/backend/api/verifyCode.php`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!response.ok) {
+      setLoading(false);
+      return { message: "Verification Failed!" };
+    }
+    const result = await response.json();
+
+    if (result.success) {
+      setUser(result.data.user);
+      setIsAuthenticated(true);
+      setVerificationRequired(false);
+    }
+    setLoading(false);
+    return result;
+  };
+  const resendCode = async () => {
+    setLoading(true);
+    const data = { userId: pendingUserId };
+    const response = await fetch(
+      `http://localhost/vms/backend/api/resendCode.php`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      }
+    );
+    if (!response.ok) {
+      setLoading(false);
+      return { message: "Faild to resend code!" };
+    }
+    setLoading(false);
+    return await response.json();
   };
 
   const logout = async () => {
@@ -111,6 +176,11 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
+    verificationRequired,
+    pendingUserId,
+    verifyTheCode,
+    resetVerification,
+    resendCode,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

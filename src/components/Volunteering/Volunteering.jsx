@@ -26,9 +26,6 @@ function Volunteering({ type }) {
           ...prev,
           [volunteeringFilter]: data,
         }));
-        console.log("yes you should fetch");
-      } else {
-        console.log("no you shouldn't");
       }
 
       setLoaded(true);
@@ -71,7 +68,7 @@ function Volunteering({ type }) {
                 }, 200);
               }}
               handleAddTeamVolunteer={(dd) => {
-                console.log(dd);
+                return;
               }}
               type="all"
             />

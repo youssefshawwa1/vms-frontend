@@ -10,7 +10,7 @@ import {
   FormSection,
 } from "../Components/Global/Form";
 const Login = () => {
-  const [timeLeft, setTimeLeft] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(120);
   const [verifyCode, setVerifyCode] = useState("");
   const validationRules = {
     username: validators.required("Username is required!"),
@@ -75,7 +75,6 @@ const Login = () => {
           setError(result.message);
         }
       } catch (err) {
-        console.log(err);
         setError("Can't Reach Server!");
       }
     }
@@ -87,8 +86,6 @@ const Login = () => {
       return;
     }
     const response = await verifyTheCode(verifyCode);
-    console.log(response);
-    console.log("lksjdflkjdslkfj");
     if (!response.result) {
       setVerifyError(response.message);
     }

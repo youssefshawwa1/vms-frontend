@@ -13,19 +13,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
   const checkAuthStatus = async () => {
     try {
-      console.log("Checking auth status...");
-      const response = await fetch(
-        `http://localhost/vms/backend/api/validate-session.php`,
-        {
-          credentials: "include",
-        }
-      );
-
-      console.log("Auth check response status:", response.status);
+      const response = await fetch(`${API}validate-session.php`, {
+        credentials: "include",
+      });
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Auth check result:", result);
+
         if (result.isAuthenticated) {
           setUser(result.user);
           setIsAuthenticated(true);
@@ -35,7 +29,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Auth check failed:", error);
-      console.error("Error details:", error.message);
     } finally {
       setLoading(false);
     }
@@ -47,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (userName, password) => {
     setLoading(true);
     const data = { username: userName, password: password };
-    const response = await fetch(`http://localhost/vms/backend/api/login.php`, {
+    const response = await fetch(`${API}login.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -84,15 +77,12 @@ export const AuthProvider = ({ children }) => {
       code: code,
       userId: pendingUserId,
     };
-    const response = await fetch(
-      `http://localhost/vms/backend/api/verifyCode.php`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`${API}verifyCode.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
 
     if (!response.ok) {
       setLoading(false);
@@ -111,15 +101,12 @@ export const AuthProvider = ({ children }) => {
   const resendCode = async () => {
     setLoading(true);
     const data = { userId: pendingUserId };
-    const response = await fetch(
-      `http://localhost/vms/backend/api/resendCode.php`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`${API}resendCode.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
     if (!response.ok) {
       setLoading(false);
       return { message: "Faild to resend code!" };
@@ -131,16 +118,13 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        "http://localhost/vms/backend/api/logout.php",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${API}logout.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
       if (response.ok) {
         // Clear both session and localStorage
         localStorage.removeItem("user");

@@ -101,7 +101,6 @@ const VolunteerDetail = () => {
           tasksData ||
           certificatesData;
         if (!finalData) {
-          console.log("Error: No data received");
           return;
         }
 
@@ -218,7 +217,7 @@ const VolunteerDetail = () => {
           setVolunteerHours(certificatesData.volunteeringHours);
         }
       } catch (error) {
-        console.log("Fetch error:", error);
+        return;
       }
     };
 

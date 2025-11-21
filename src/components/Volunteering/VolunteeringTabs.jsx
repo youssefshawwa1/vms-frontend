@@ -77,7 +77,6 @@ const VolunteeringTabs = () => {
             type="forVolunteering"
           />
         )}
-
         {activeTab === "addTask" && !volunteeringDetails.endDate && (
           <AddTaskTab
             selectedVolunteeringHide={true}

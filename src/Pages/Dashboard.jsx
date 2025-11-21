@@ -20,7 +20,7 @@ const Dashboard = () => {
           label: "Total Volunteers",
           value: data.totalVolunteers,
           icon: "👥",
-          color: "#0d4461",
+          color: "#0b4e70",
           width: "30%",
         },
         {
@@ -34,14 +34,14 @@ const Dashboard = () => {
           label: "Active Volunteering",
           value: data.activeVolunteering,
           icon: "📊",
-          color: "#0d4461",
+          color: "#0b4e70",
           width: "60%",
         },
         {
           label: "Total Teams",
           value: data.totalTeams,
           icon: "🏢",
-          color: "#0d4461",
+          color: "#0b4e70",
           width: "30%",
         },
         {
@@ -55,7 +55,7 @@ const Dashboard = () => {
           label: "Active Tasks",
           value: data.activeTasks,
           icon: "🔥",
-          color: "#0d4461",
+          color: "#0b4e70",
           width: "40%",
         },
         {

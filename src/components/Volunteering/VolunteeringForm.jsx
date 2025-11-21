@@ -163,7 +163,6 @@ const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
           endDate: complete == true ? formData.endDate : "",
         },
       };
-      console.log(volunteeringDetails);
       await sendData("teams.php", data, () => {
         if (callBack) callBack();
         resetForm();

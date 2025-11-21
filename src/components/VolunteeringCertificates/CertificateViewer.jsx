@@ -39,7 +39,6 @@ function CertificateViewer({ certificateId }) {
         setPdfUrl(objectUrl);
       } catch (err) {
         setError(err.message);
-        console.error("Error fetching PDF:", err);
       } finally {
         setIsLoading(false);
       }

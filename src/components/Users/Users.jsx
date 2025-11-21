@@ -16,9 +16,6 @@ function Users({ type, onRowDoubleClick }) {
       await fetchData("users.php", (users) => {
         setUsers(
           users.filter((item) => {
-            console.log(
-              `User: ${item.userName}     current user: ${user.username}`
-            );
             return item.userName != user.username;
           })
         );
@@ -31,36 +28,38 @@ function Users({ type, onRowDoubleClick }) {
     { field: "id", headerName: "ID", width: 70 },
     { field: "userName", headerName: "Username", width: 100 },
     { field: "userEmail", headerName: "Email", width: 300 },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 90,
-      valueGetter: (value, row) => {
-        return row.status ? "Active" : "Disactive";
-      },
-    },
   ];
   //temp permistion (role based)
   if (user.role.toLowerCase() == "admin") {
-    columns.push({
-      field: "view",
-      headerName: "View",
-      description: "This column is to View.",
-      sortable: false,
-      width: 100,
-      // Use `valueGetter` to combine multiple values
-      renderCell: (params) => {
-        // This is the key function
-        return (
-          <Link
-            to={`${params.id}`}
-            className="w-full h-full text-center flex justify-center items-center"
-          >
-            <View />
-          </Link>
-        );
+    columns.push(
+      {
+        field: "status",
+        headerName: "Status",
+        width: 90,
+        valueGetter: (value, row) => {
+          return row.status ? "Active" : "Disactive";
+        },
       },
-    });
+      {
+        field: "view",
+        headerName: "View",
+        description: "This column is to View.",
+        sortable: false,
+        width: 100,
+        // Use `valueGetter` to combine multiple values
+        renderCell: (params) => {
+          // This is the key function
+          return (
+            <Link
+              to={`${params.id}`}
+              className="w-full h-full text-center flex justify-center items-center"
+            >
+              <View />
+            </Link>
+          );
+        },
+      }
+    );
   }
   return (
     <>

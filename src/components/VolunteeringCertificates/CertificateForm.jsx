@@ -131,8 +131,6 @@ const CertificateForm = ({
         delete validationRules.volunteeringHours;
 
     if (validateForm()) {
-      console.log("can fuck");
-
       const data = {
         action: certificateDetails ? "updateCertificate" : "issueCertificate",
         data: {
@@ -147,7 +145,6 @@ const CertificateForm = ({
           certificateId: formData.certificateId,
         },
       };
-      console.log(data);
       await sendData("volunteers.php", data, () => {
         if (callBack) callBack();
         resetForm();

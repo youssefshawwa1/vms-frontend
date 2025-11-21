@@ -66,7 +66,6 @@ const VolunteeringDetails = () => {
         // Use the data from the combined fetch if it happened, otherwise use individual fetches
         const finalData = volunteeringData || tasksData;
         if (!finalData) {
-          console.log("Error: No data received");
           return;
         }
 
@@ -166,7 +165,7 @@ const VolunteeringDetails = () => {
           }));
         }
       } catch (error) {
-        console.log("Fetch error:", error);
+        return;
       }
     };
 

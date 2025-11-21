@@ -16,8 +16,6 @@ const CertificatesTab = ({
 
   // $cleanName . "_" . $cleanType . "_" . $cleanNum . "_" . $cleanDate . ".pdf";
   const handleDownload = (params) => {
-    console.log(params);
-    console.log(details);
     const fileName =
       params?.row?.name ||
       details.name +
@@ -27,7 +25,6 @@ const CertificatesTab = ({
         params.row.certificateNumber +
         "_" +
         params.row.issueDate;
-    console.log(fileName);
     downloadCertificate({ certificateId: params.id, filename: fileName });
   };
 

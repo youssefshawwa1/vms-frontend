@@ -174,7 +174,6 @@ const VolunteeringTab = ({
       },
     }
   );
-
   return (
     <div className="relative">
       <Tab
@@ -188,9 +187,14 @@ const VolunteeringTab = ({
         }}
         whenVisible={whenVisible}
       />
-      <div className="absolute top-0 right-0" onClick={handleAddTeamVolunteer}>
-        <AddPerson />
-      </div>
+      {type !== "all" && (
+        <div
+          className="absolute top-0 right-0"
+          onClick={handleAddTeamVolunteer}
+        >
+          <AddPerson />
+        </div>
+      )}
     </div>
   );
 };

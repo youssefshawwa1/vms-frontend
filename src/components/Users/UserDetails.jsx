@@ -76,7 +76,6 @@ const UserDetails = ({ userId }) => {
           status: !userData?.details?.status,
         },
       };
-      console.log(d);
       await sendData("users.php", d, () => {
         setUserData(null);
         hidePopUp();

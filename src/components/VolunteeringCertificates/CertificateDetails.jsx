@@ -142,7 +142,7 @@ const CertificateDetails = () => {
           });
         }
       } catch (error) {
-        console.log("Fetch error:", error);
+        return;
       }
     };
 
@@ -163,11 +163,10 @@ const CertificateDetails = () => {
       data.certificateNumber +
       "_" +
       data.issueDate;
-    console.log(fileName);
+
     downloadCertificate({ certificateId: data.id, filename: fileName });
   };
   const handleSendByEmail = () => {
-    console.log(data);
     const handleSend = async () => {
       setIsSendingEmail(true);
       const d = {
@@ -228,7 +227,7 @@ const CertificateDetails = () => {
                 )}
 
                 <div
-                  className={`absolute top-0 right-1 m-2 p-1 z-55 cursor-pointer ${
+                  className={`absolute top-0 right-12 m-2 p-1 z-55 cursor-pointer ${
                     isLoading && "animate-pulse"
                   }`}
                   onClick={() => {
@@ -238,7 +237,7 @@ const CertificateDetails = () => {
                   <Download />
                 </div>
                 <div
-                  className={`absolute top-0 right-12 m-2 p-1 z-55 cursor-pointer ${
+                  className={`absolute top-0 right-24 m-2 p-1 z-55 cursor-pointer ${
                     isSendingEmail && "animate-pulse"
                   }`}
                   onClick={() => {

@@ -78,7 +78,7 @@ A modern, responsive Volunteering Management System built with React.js and Tail
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/volunteering-management-system.git
+   git clone https://github.com/youssefshawwa1/vms-frontend.git
    cd volunteering-management-system
    npm install
    npm run dev / npm start

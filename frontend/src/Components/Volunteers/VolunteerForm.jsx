@@ -92,23 +92,35 @@ const VolunteerForm = ({ type, volunteer, reFetch }) => {
 
     if (validateForm()) {
       const data = {
-        action: type ? type : "create",
-        data: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          birthDate: formData.birthDate,
-          major: formData.major,
-          university: formData.university,
-          phone: formData.phone,
-          email: formData.email,
-          gender: formData.gender,
-          nationality: formData.nationality,
-          residentCountry: formData.residentCountry,
-          volunteerId: volunteer ? volunteer.id : "",
-          userId: 1001,
-        },
+        // action: type ? type : "create",
+        // data: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        birthDate: formData.birthDate,
+        major: formData.major,
+        university: formData.university,
+        phone: formData.phone,
+        email: formData.email,
+        gender: formData.gender,
+        nationality: formData.nationality,
+        residentCountry: formData.residentCountry,
+        // volunteerId: volunteer ? volunteer.id : "",
+        userId: 1001,
+        // },
       };
-      await sendData("volunteers.php", data, reFetch ? reFetch : resetForm);
+
+      // await sendData("volunteers.php", data, reFetch ? reFetch : resetForm);
+      const response = await fetch(
+        "http://localhost:5000/volunteers/update/1023",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      console.log(await response);
     }
   };
   const structure = useMemo(

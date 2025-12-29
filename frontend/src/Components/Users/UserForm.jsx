@@ -2,6 +2,7 @@ import useFetching from "../../Hooks/useFetching";
 import { useValidateForm, validators } from "../../Hooks/useValidateForm";
 import { FormSubmitBtn, FormSectionGroup, FormSection } from "../Global/Form";
 import { useMemo, useState } from "react";
+import axios from "axios";
 const UserForm = ({ type, user, reFetch }) => {
   const [active, setActive] = useState(
     user?.details?.status ? user?.details?.status : true
@@ -128,19 +129,37 @@ const UserForm = ({ type, user, reFetch }) => {
     e.preventDefault();
     if (validateForm()) {
       const data = {
-        action: type ? type : "create",
-        data: {
-          userName: formData.userName,
-          password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          userEmail: formData.email,
-          status: active,
-          userId: user?.details?.id || "",
-          oldPassword: formData?.oldPassword || "",
-        },
+        // action: type ? type : "create",
+        // data: {
+        userName: formData.userName,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        userEmail: formData.email,
+        status: active,
+        // userId: 1016
+        // userId: user?.details?.id || "",
+        // oldPassword: formData?.oldPassword || "",
+        // },
       };
-      await sendData("users.php", data, reFetch ? reFetch : resetForm);
+      // const response = await fetch("http://localhost:5000/users/update/1016", {
+      //   method: "PATCH",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
+      try {
+        const response = await axios.delete(
+          "http://localhost:5000/users/delete/1016"
+        );
+        console.log("deleted:");
+        console.log(response);
+      } catch (error) {
+        console.error("Delete failed:", error);
+      }
+      // const response = await axios.get();
+      // console.log(await response);
     }
   };
 

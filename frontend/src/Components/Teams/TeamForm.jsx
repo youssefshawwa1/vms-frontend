@@ -54,15 +54,23 @@ const TeamForm = ({ type, team, reFetch }) => {
 
     if (validateForm()) {
       const data = {
-        action: type ? type : "create",
-        data: {
-          userId: 1001,
-          teamName: formData.teamName,
-          description: formData.description,
-          teamId: team ? team.id : "",
-        },
+        // action: type ? type : "create",
+        // data: {
+        userId: 1001,
+        teamName: formData.teamName,
+        description: formData.description,
+        // teamId: team ? team.id : "",
+        // },
       };
-      await sendData("teams.php", data, reFetch ? reFetch : resetForm);
+      const response = await fetch("http://localhost:5000/teams/update/1010", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      console.log(await response);
+      // await sendData("teams.php", data, reFetch ? reFetch : resetForm);
     }
   };
 

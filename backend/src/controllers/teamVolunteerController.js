@@ -1,5 +1,5 @@
 import TeamVolunteer from "../models/TeamVolunteer.js";
-
+import Task from "../models/Task.js";
 const getAllTeamVolunteers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -68,7 +68,7 @@ const getAllTeamVolunteers = async (req, res) => {
 };
 const getTeamVolunteer = async (req, res) => {
   try {
-    const teamVolunteerId = req.params.id;
+    const teamVolunteerId = req.params.teamVolunteerId;
     if (
       !Number.isInteger(Number(teamVolunteerId)) ||
       Number(teamVolunteerId) <= 999
@@ -221,6 +221,75 @@ const updateVolunteer = async (req, res) => {
     });
   }
 };
+const getTeamVolunteerTasks = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const teamVolunteerId = req.params.teamVolunteerId;
+    const filters = {};
+    const allowedFilters = ["completed", "teamId", "volunteerId"];
+    allowedFilters.forEach((key) => {
+      if (req.query[key]) {
+        filters[key] = req.query[key];
+      }
+    });
+    if (req.query.createdAtFrom) {
+      filters.createdAtFrom = req.query.createdAtFrom;
+    }
+    if (req.query.createdAtTo) {
+      filters.createdAtTo = req.query.createdAtTo;
+    }
+    if (req.query.search) {
+      filters.search = req.query.search;
+    }
+    if (req.query.startDateFrom) {
+      filters.startDateFrom = req.query.startDateFrom;
+    }
+    if (req.query.startDateTo) {
+      filters.startDateTo = req.query.startDateTo;
+    }
+    if (req.query.endDateFrom) {
+      filters.endDateFrom = req.query.endDateFrom;
+    }
+    if (req.query.endDateTo) {
+      filters.endDateTo = req.query.endDateTo;
+    }
+    if (req.query.completionDateFrom) {
+      filters.completionDateFrom = req.query.completionDateFrom;
+    }
+    if (req.query.completionDateTo) {
+      filters.completionDateTo = req.query.completionDateTo;
+    }
+    filters.teamVolunteerId = teamVolunteerId;
+    const sortBy = req.query.sortBy || "taskId";
+    const orderBy = req.query.orderBy || "ASC";
+    const result = await Task.findAll({
+      page,
+      limit,
+      filters,
+      sortBy,
+      orderBy,
+    });
+    if (result.data) {
+      res.status(200).json({
+        success: true,
+        message: "Tasks retrived successfully",
+        ...result,
+      });
+    }
+    res.status(404).json({
+      success: false,
+      message: "No Tasks found",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching Tasks",
+      error: error.message,
+    });
+  }
+};
+
 // controller/volunteerController.js
 const searchVolunteers = async (req, res) => {
   try {
@@ -260,6 +329,7 @@ export {
   getAllTeamVolunteers,
   getTeamVolunteer,
   createTeamVolunteer,
+  getTeamVolunteerTasks,
   //   updateVolunteer,
   //   searchVolunteers,
 };

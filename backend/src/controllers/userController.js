@@ -99,10 +99,8 @@ const createUser = async (req, res) => {
 };
 const updateUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const updateData = req.body;
-    console.log(updateData);
-    console.log(userId);
     const allowedUpdates = [
       "userName",
       "firstName",
@@ -146,7 +144,7 @@ const updateUser = async (req, res) => {
 };
 const getUser = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     if (!Number.isInteger(Number(userId)) || Number(userId) <= 999) {
       res.status(400).json({
         success: false,
@@ -171,8 +169,7 @@ const getUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id;
-    console.log(userId);
+    const userId = req.params.userId;
     if (!userId) {
       return res.status(400).json({
         success: false,

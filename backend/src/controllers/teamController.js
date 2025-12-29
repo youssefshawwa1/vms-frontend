@@ -1,4 +1,6 @@
 import Team from "../models/Team.js";
+import TeamVolunteer from "../models/TeamVolunteer.js";
+import Task from "../models/Task.js";
 const getAllTeams = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -70,7 +72,7 @@ const createTeam = async (req, res) => {
 };
 const updateTeam = async (req, res) => {
   try {
-    const teamId = req.params.id;
+    const teamId = req.params.teamId;
     const updateData = req.body;
     console.log(updateData);
     console.log(teamId);
@@ -111,7 +113,7 @@ const updateTeam = async (req, res) => {
 };
 const getTeam = async (req, res) => {
   try {
-    const teamId = req.params.id;
+    const teamId = req.params.teamId;
     if (!Number.isInteger(Number(teamId)) || Number(teamId) <= 999) {
       res.status(400).json({
         success: false,
@@ -133,4 +135,146 @@ const getTeam = async (req, res) => {
     });
   }
 };
-export { getAllTeams, createTeam, updateTeam, getTeam };
+const getTeamVolunteering = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const teamId = req.params.teamId;
+    const filters = {};
+    const allowedFilters = [
+      "active",
+      "roleId",
+      "volunteerId",
+      "volunteerTitle",
+    ];
+    allowedFilters.forEach((key) => {
+      if (req.query[key]) {
+        filters[key] = req.query[key];
+      }
+    });
+    if (req.query.startDateFrom) {
+      filters.startDateFrom = req.query.startDateFrom;
+    }
+    if (req.query.startDateto) {
+      filters.startDateto = req.query.startDateto;
+    }
+    if (req.query.endDateFrom) {
+      filters.endDateFrom = req.query.endDateFrom;
+    }
+    if (req.query.endDateTo) {
+      filters.endDateTo = req.query.endDateTo;
+    }
+    if (req.query.createdAtFrom) {
+      filters.createdAtFrom = req.query.createdAtFrom;
+    }
+    if (req.query.createdAtTo) {
+      filters.createdAtTo = req.query.createdAtTo;
+    }
+    if (req.query.search) {
+      filters.search = req.query.search;
+    }
+    filters.teamId = teamId;
+    const sortBy = req.query.sortBy || "teamVolunteerId";
+    const orderBy = req.query.orderBy || "ASC";
+    const result = await TeamVolunteer.findAll({
+      page,
+      limit,
+      filters,
+      sortBy,
+      orderBy,
+    });
+    if (result.data) {
+      res.status(200).json({
+        success: true,
+        message: "Volunteering retrived successfully",
+        ...result,
+      });
+    }
+    res.status(404).json({
+      success: false,
+      message: "No Volunteering found",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching Volunteering",
+      error: error.message,
+    });
+  }
+};
+const getTeamTasks = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const teamId = req.params.teamId;
+    const filters = {};
+    const allowedFilters = ["completed", "volunteerId", "teamVolunteerId"];
+    allowedFilters.forEach((key) => {
+      if (req.query[key]) {
+        filters[key] = req.query[key];
+      }
+    });
+    if (req.query.createdAtFrom) {
+      filters.createdAtFrom = req.query.createdAtFrom;
+    }
+    if (req.query.createdAtTo) {
+      filters.createdAtTo = req.query.createdAtTo;
+    }
+    if (req.query.search) {
+      filters.search = req.query.search;
+    }
+    if (req.query.startDateFrom) {
+      filters.startDateFrom = req.query.startDateFrom;
+    }
+    if (req.query.startDateTo) {
+      filters.startDateTo = req.query.startDateTo;
+    }
+    if (req.query.endDateFrom) {
+      filters.endDateFrom = req.query.endDateFrom;
+    }
+    if (req.query.endDateTo) {
+      filters.endDateTo = req.query.endDateTo;
+    }
+    if (req.query.completionDateFrom) {
+      filters.completionDateFrom = req.query.completionDateFrom;
+    }
+    if (req.query.completionDateTo) {
+      filters.completionDateTo = req.query.completionDateTo;
+    }
+    filters.teamId = teamId;
+    const sortBy = req.query.sortBy || "taskId";
+    const orderBy = req.query.orderBy || "ASC";
+    const result = await Task.findAll({
+      page,
+      limit,
+      filters,
+      sortBy,
+      orderBy,
+    });
+    if (result.data) {
+      res.status(200).json({
+        success: true,
+        message: "Tasks retrived successfully",
+        ...result,
+      });
+    }
+    res.status(404).json({
+      success: false,
+      message: "No Tasks found",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching Tasks",
+      error: error.message,
+    });
+  }
+};
+export {
+  getAllTeams,
+  createTeam,
+  updateTeam,
+  getTeam,
+  getTeamVolunteering,
+  getTeamTasks,
+};

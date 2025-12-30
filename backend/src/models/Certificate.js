@@ -109,22 +109,22 @@ const Certificate = {
       return e;
     }
   },
-  //   findById: async ({ userId }) => {
-  //     const [rows] = await db.query(
-  //       `SELECT userId, userName, status, firstName, lastName, createdAt, updatedAt, userEmail FROM users WHERE userId = ?`,
-  //       [userId]
-  //     );
-  //     if (!rows[0]) throw new Error("User not found");
-  //     return rows[0];
-  //   },
-  //   findByUserName: async ({ userName }) => {
-  //     const [rows] = await db.query("SELECT * FROM users WHERE username = ?", [
-  //       userName,
-  //     ]);
-  //     // console.log(userName);
-  //     return rows[0];
-  //   },
-
+  findById: async ({ certificateId, volunteerId }) => {
+    const [rows] = await db.query(
+      `
+      SELECT c.*, v.firstName, v.lastName, v.volunteerId, v.phone, v.email,
+        u.userId, u.userName, u2.userId as updatedById, u2.userName as updatedBy 
+        FROM volunteeringcertificate c 
+        JOIN volunteer v ON c.volunteerId = v.volunteerId 
+        JOIN users u ON u.userId = c.issuedBy 
+        LEFT JOIN users u2 ON u2.userId = c.updatedBy
+        WHERE c.certificateId= ? AND v.volunteerId = ? LIMIT 0,2
+        `,
+      [certificateId, volunteerId]
+    );
+    if (!rows[0]) throw new Error("Certificate not found");
+    return rows[0];
+  },
   create: async ({ certificate }) => {
     const [result] = await db.query(
       "INSERT INTO 	volunteeringcertificate SET ?",
@@ -137,59 +137,84 @@ const Certificate = {
       certificate,
     };
   },
-  //   update: async ({ user, userId }) => {
-  //     try {
-  //       const { userName, userEmail, firstName, lastName, status } = user;
+  update: async ({ certificate, certificateId, volunteerId }) => {
+    try {
+      const {
+        certificateTitle,
+        certificateDescription,
+        volunteeringHours,
+        customMessage,
+        certificateType,
+        certificateKind,
+        userId,
+      } = certificate;
 
-  //       const updates = [];
-  //       const values = [];
-  //       if (userName !== undefined) {
-  //         const existingUser = await User.findByUserName({ userName: userName });
-  //         if (existingUser && existingUser.userId != userId) {
-  //           throw new Error("User already exists");
-  //         }
-  //         updates.push("userName = ?");
-  //         values.push(userName);
-  //       }
-  //       if (userEmail !== undefined) {
-  //         updates.push("userEmail = ?");
-  //         values.push(userEmail);
-  //       }
-  //       if (firstName !== undefined) {
-  //         updates.push("firstName = ?");
-  //         values.push(firstName);
-  //       }
-  //       if (lastName !== undefined) {
-  //         updates.push("lastName = ?");
-  //         values.push(lastName);
-  //       }
-  //       if (status !== undefined) {
-  //         updates.push("status = ?");
-  //         values.push(status);
-  //       }
+      const updates = [];
+      const values = [];
+      if (certificateTitle !== undefined) {
+        updates.push("certificateTitle = ?");
+        values.push(certificateTitle);
+      }
+      if (certificateDescription !== undefined) {
+        updates.push("certificateDescription = ?");
+        values.push(certificateDescription);
+      }
+      if (volunteeringHours !== undefined) {
+        updates.push("volunteeringHours = ?");
+        values.push(volunteeringHours);
+      }
+      if (customMessage !== undefined) {
+        updates.push("customMessage = ?");
+        values.push(customMessage);
+      }
+      if (certificateType !== undefined) {
+        updates.push("certificateType = ?");
+        values.push(certificateType);
+      }
+      if (certificateKind !== undefined) {
+        updates.push("certificateKind = ?");
+        values.push(certificateKind);
+      }
+      updates.push("updatedBy = ?");
+      values.push(userId);
+      if (updates.length === 0)
+        throw new Error("No valid fields provided for update");
+      values.push(certificateId);
+      values.push(volunteerId);
+      const [result] = await db.query(
+        `
+        UPDATE volunteeringcertificate set ${updates.join(", ")} 
+        WHERE certificateId = ? AND volunteerId = ?`,
+        values
+      );
 
-  //       if (updates.length === 0)
-  //         throw new Error("No valid fields provided for update");
+      if (result.affectedRows === 0) throw new Error("User not found");
 
-  //       values.push(userId);
-  //       const [result] = await db.query(
-  //         `
-  //       UPDATE users set ${updates.join(", ")}
-  //       WHERE userId = ?`,
-  //         values
-  //       );
+      const updatedCertificate = await Certificate.findById({
+        certificateId,
+        volunteerId,
+      });
+      return updatedCertificate;
+    } catch (error) {
+      throw error;
+    }
+  },
 
-  //       if (result.affectedRows === 0) throw new Error("User not found");
+  registerSendByEmail: async ({ certificateId, volunteerId }) => {
+    const [rows] = await db.query(
+      `
+        UPDATE volunteeringcertificate
+            SET emailSendCount = emailSendCount + 1,
+            lastEmailSentAt = NOW(),
+            firstEmailSentAt = COALESCE(firstEmailSentAt, NOW())
+            WHERE certificateId = ? AND volunteerId = ?
+        `,
+      [certificateId, volunteerId]
+    );
 
-  //       const updatedUser = await User.findById({ userId });
-  //       return updatedUser;
-  //     } catch (error) {
-  //       if (error.code === "ER_DUP_ENTRY") {
-  //         throw new Error("Username already exists");
-  //       }
-  //       throw error;
-  //     }
-  //   },
+    if (!rows.affectedRows) throw new Error("Certificate not found");
+    return true;
+  },
   //   delete: async ({ userId }) => {
   //     const [result] = await db.query("DELETE FROM users WHERE userId=?", userId);
   //     if (!result) {

@@ -147,19 +147,16 @@ const CertificateForm = ({
         // },
       };
       try {
+        console.log(formData);
+
         const response = await axios.post(
-          `http://localhost:5000/volunteers/${formData.volunteerId}/certificates/create`,
-          data
+          `http://localhost:5000/volunteers/${formData.volunteerId}/certificates/${formData.certificateId}/send`
         );
         console.log("ended:");
         console.log(response);
       } catch (error) {
         console.error("Ending failed:", error);
       }
-      // await sendData("volunteers.php", data, () => {
-      //   if (callBack) callBack();
-      //   resetForm();
-      // });
     }
   };
 

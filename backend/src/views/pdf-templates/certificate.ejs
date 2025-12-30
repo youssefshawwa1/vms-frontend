@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <style>
+      /* --- 1. FONTS & VARIABLES --- */
+      @font-face {
+        font-family: "BrittanySignature";
+        src: url("<%- brittanyFont %>") format("truetype");
+      }
+      @font-face {
+        font-family: "Radley-Regular";
+        src: url("<%- radleyFont %>") format("truetype");
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      :root {
+        --text-color: #20438e;
+        --second-color: #20438eb5;
+      }
+
+      html,
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+      }
+
+      body {
+        font-family: "Radley-Regular", sans-serif;
+        color: var(--text-color);
+        background: #ffffff;
+      }
+
+      .certificate {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 100vh !important;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
+        padding: 0 !important;
+      }
+
+      /* Use mm units for decorative images */
+      .upleft,
+      .bottomright {
+        position: absolute;
+        width: 180mm !important;
+        height: 180mm !important;
+        z-index: 1;
+      }
+
+      .upleft {
+        top: -50mm;
+        left: -50mm;
+      }
+
+      .bottomright {
+        bottom: -55mm;
+        right: -55mm;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 1mm;
+        padding-top: 15mm;
+        position: relative;
+        z-index: 2;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 6mm;
+        margin-bottom: 4mm;
+      }
+
+      .logo img {
+        width: 30mm;
+        height: auto;
+      }
+
+      .date {
+        position: absolute;
+        top: 10%;
+        right: 10%;
+        font-size: 4mm;
+        color: var(--second-color);
+        z-index: 2;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-family: "Radley-Regular", serif;
+        font-size: 12mm;
+        margin: 4mm 0 0;
+        letter-spacing: 0.5mm;
+      }
+
+      h2 {
+        font-family: "Radley-Regular", serif;
+        font-size: 7mm;
+        margin: 2mm 0 6mm;
+        font-weight: 500;
+      }
+
+      .certify {
+        text-align: center;
+        font-size: 5mm;
+        letter-spacing: 0.4mm;
+        margin-bottom: 0;
+        position: relative;
+        z-index: 2;
+      }
+
+      .name {
+        font-family: "BrittanySignature", cursive;
+        font-size: 18mm;
+        text-align: center;
+        color: var(--text-color);
+        margin: 5mm 0 0 0;
+        position: relative;
+        z-index: 2;
+      }
+
+      .under-name {
+        left: 0;
+        width: 90%;
+        height: 0.3mm;
+        background: var(--second-color);
+      }
+
+      .description {
+        text-align: center;
+        margin: 6mm auto 0 auto;
+        font-size: 4mm;
+        line-height: 1.6;
+        color: var(--second-color);
+        padding: 0 15mm;
+        position: relative;
+        z-index: 2;
+        width: 70%;
+        height: 18%;
+        font-weight: bold;
+        text-transform: uppercase !important;
+        /* background-color: red; */
+      }
+
+      .signatures {
+        display: flex;
+        width: 60%;
+        justify-content: center;
+
+        margin: auto;
+      }
+
+      .signature-block {
+        /* display: flex; */
+        width: 25%;
+        text-align: center;
+        font-size: 1rem;
+      }
+
+      .signature-line {
+        width: 80%;
+        height: 0.3mm;
+        background: var(--second-color);
+        margin: 0 auto;
+      }
+
+      .signature-name {
+        width: 100px;
+        height: 10mm;
+        display: flex;
+        margin: 0 auto;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .title {
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-top: 12%;
+        color: var(--second-color);
+        line-height: 1.4;
+      }
+
+      .signature {
+        width: 100%;
+        height: auto;
+      }
+
+      img {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      @page {
+        margin: 0 !important;
+        padding: 0 !important;
+        size: A4 landscape;
+      }
+      .content {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+      }
+      .type {
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0;
+      }
+      #certificate-id {
+        font-size: 1rem;
+        font-weight: 500;
+        position: absolute;
+        bottom: 10%;
+        left: 10%;
+        color: var(--second-color);
+        text-transform: uppercase !important;
+      }
+      .under {
+        width: 60%;
+        height: 1px;
+        margin: 0 auto;
+        display: flex;
+        padding: 10;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+      }
+      .circles {
+        width: 10px;
+        height: 10px;
+        background-color: 1px var(--second-color);
+        border: 1px var(--second-color) solid;
+        border-radius: 50%;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="certificate">
+      <img src="<%- designImage %>" class="upleft" />
+      <img src="<%- designImage %>" class="bottomright" />
+
+      <div id="certificate-id">ID: <%= certificateId %></div>
+
+      <div class="content">
+        <div class="date">DATE: <%= issueDate %></div>
+
+        <div class="header">
+          <div class="logo"><img src="<%- logoImage %>" alt="Logo" /></div>
+          <h1>CERTIFICATE</h1>
+          <h2 class="type">OF <%= certificateType %></h2>
+        </div>
+        <div class="certify">THIS IS TO CERTIFY THAT</div>
+        <div class="name"><%= volunteerName %></div>
+
+        <div class="under">
+          <div class="circles"></div>
+          <div class="under-name"></div>
+          <div class="circles"></div>
+        </div>
+
+        <div class="description"><%= certificateDescription %></div>
+
+        <div class="signatures">
+          <div class="signature-block">
+            <div class="signature-name">
+              <img src="<%- sigIbrahim %>" class="signature" />
+            </div>
+            <div class="signature-line"></div>
+            <div class="title">Ibrahim Mohammad <br />Founder</div>
+          </div>
+
+          <div class="signature-block">
+            <div class="signature-name">
+              <img src="<%- sigJalilah %>" class="signature" />
+            </div>
+            <div class="signature-line"></div>
+            <div class="title">Al-Jalilah Shreih <br />Founder</div>
+          </div>
+
+          <div class="signature-block">
+            <div class="signature-name">
+              <img src="<%- sigYoussef %>" class="signature" />
+            </div>
+            <div class="signature-line"></div>
+            <div class="title">Youssef Shawwa <br />CEO</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

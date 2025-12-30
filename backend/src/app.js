@@ -17,6 +17,10 @@ import {
   getVolunteerTasks,
   getVolunteerCertificates,
   createCertificate,
+  updateCertificate,
+  getCertificate,
+  getCertificatePdf,
+  sendCertificateByEmail,
 } from "./controllers/volunteerController.js";
 import {
   getAllTeams,
@@ -59,9 +63,20 @@ app.get("/users", getAllUsers);
 app.post("/users/create", createUser);
 
 app.post("/volunteers/:volunteerId/certificates/create", createCertificate);
-// app.patch("/volunteers/:volunteerId/certificates/:certificateId/update", updateCertificate)
-// app.get("/volunteers/:volunteerId/certificates/:certificateId", getCertificate)
-// app.get("/volunteers/:volunteerId/certificates/:certificateId/pdf", getCertificatePdf)
+app.patch(
+  "/volunteers/:volunteerId/certificates/:certificateId/update",
+  updateCertificate
+);
+app.post(
+  "/volunteers/:volunteerId/certificates/:certificateId/send",
+  sendCertificateByEmail
+);
+app.get(
+  "/volunteers/:volunteerId/certificates/:certificateId/pdf",
+  getCertificatePdf
+);
+app.get("/volunteers/:volunteerId/certificates/:certificateId", getCertificate);
+
 // app.post("/volunteers/:volunteerId/certificates/:certificateId/send", sendCertificate)
 app.get("/volunteers/:volunteerId/certificates", getVolunteerCertificates);
 

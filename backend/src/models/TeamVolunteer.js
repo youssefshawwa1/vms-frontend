@@ -66,9 +66,9 @@ const TeamVolunteer = {
         `
         SELECT * FROM teamvolunteer 
         ${whereClause}
-        ORDER BY ${sortBy} ${orderBy} 
+        ORDER BY ? ? 
         LIMIT ? OFFSET ?`,
-        [...values, limit, offset]
+        [...values, sortBy, orderBy, limit, offset]
       );
       const [[{ total }]] = await db.query(
         `SELECT COUNT(*) as total FROM 	teamvolunteer ${whereClause}`,
@@ -131,7 +131,6 @@ const TeamVolunteer = {
         volunteerTitle,
         active,
       } = teamVolunteer;
-
       const updates = [];
       const values = [];
 
@@ -177,7 +176,7 @@ const TeamVolunteer = {
 
       if (result.affectedRows === 0) throw new Error("Volunteering not found");
 
-      const updatedTeam = await Team.findById({ teamId });
+      const updatedTeam = await TeamVolunteer.findById({ teamVolunteerId });
       return updatedTeam;
     } catch (error) {
       throw error;

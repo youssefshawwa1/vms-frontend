@@ -68,9 +68,9 @@ const Volunteer = {
         `
         SELECT volunteerId, firstName, lastName, birthDate, email, phone, gender, major, university  FROM volunteer 
         ${whereClause}
-        ORDER BY ${sortBy} ${orderBy} 
+        ORDER BY ? ? 
         LIMIT ? OFFSET ?`,
-        [...values, limit, offset]
+        [...values, sortBy, orderBy, limit, offset]
       );
       const [[{ total }]] = await db.query(
         `SELECT COUNT(*) as total FROM volunteer ${whereClause}`,
@@ -112,128 +112,7 @@ const Volunteer = {
       volunteer,
     };
   },
-  // search: async ({
-  //   search = "",
-  //   filters = {},
-  //   page = 1,
-  //   limit = 5,
-  //   sortBy = "insertedAt",
-  //   order = "DESC",
-  // }) => {
-  //   try {
-  //     const offset = (page - 1) * limit;
-  //     const conditions = [];
-  //     const values = [];
 
-  //     // Full-text search across multiple fields
-  //     if (search && search.trim()) {
-  //       const searchTerm = `%${search.toLowerCase()}%`;
-  //       conditions.push(`
-  //   (LOWER(firstName) LIKE ? OR
-  //    LOWER(lastName) LIKE ? OR
-  //    LOWER(email) LIKE ? OR
-  //    LOWER(phone) LIKE ? OR
-  //    LOWER(major) LIKE ? OR
-  //    LOWER(university) LIKE ? OR
-  //    LOWER(nationality) LIKE ? OR
-  //    LOWER(residentCountry) LIKE ?)
-  // `);
-  //       // Add search term for each field
-  //       values.push(...Array(8).fill(searchTerm));
-  //     }
-
-  //     // Exact match filters
-  //     const filterableFields = [
-  //       "birthDate",
-  //       "major",
-  //       "university",
-  //       "userId",
-  //       "gender",
-  //       "nationality",
-  //       "residentCountry",
-  //       // "status", // If you have status field
-  //     ];
-
-  //     filterableFields.forEach((field) => {
-  //       if (filters[field] !== undefined && filters[field] !== "") {
-  //         if (Array.isArray(filters[field])) {
-  //           // Handle multiple values (e.g., gender: ['male', 'female'])
-  //           const placeholders = filters[field].map(() => "?").join(", ");
-  //           conditions.push(`${field} IN (${placeholders})`);
-  //           values.push(...filters[field]);
-  //         } else {
-  //           conditions.push(`${field} = ?`);
-  //           values.push(filters[field]);
-  //         }
-  //       }
-  //     });
-
-  //     // Date range filters
-  //     if (filters.birthDateFrom) {
-  //       conditions.push("birthDate >= ?");
-  //       values.push(filters.birthDateFrom);
-  //     }
-
-  //     if (filters.birthDateTo) {
-  //       conditions.push("birthDate <= ?");
-  //       values.push(filters.birthDateTo);
-  //     }
-
-  //     if (filters.insertionDateFrom) {
-  //       conditions.push("insertionDate >= ?");
-  //       values.push(filters.insertionDateFrom);
-  //     }
-
-  //     if (filters.insertionDateTo) {
-  //       conditions.push("insertionDate <= ?");
-  //       values.push(filters.insertionDateTo);
-  //     }
-
-  //     // Build WHERE clause
-  //     const whereClause =
-  //       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-
-  //     // Count total for pagination
-  //     const [[{ total }]] = await db.query(
-  //       `SELECT COUNT(*) as total FROM volunteer ${whereClause}`,
-  //       values
-  //     );
-
-  //     // Add pagination to values
-  //     const queryValues = [...values, limit, offset];
-
-  //     // Main search query
-  //     const [rows] = await db.query(
-  //       `SELECT * FROM volunteer
-  //      ${whereClause}
-  //      ORDER BY ${sortBy} ${order}
-  //      LIMIT ? OFFSET ?`,
-  //       queryValues
-  //     );
-
-  //     const totalPages = Math.ceil(total / limit);
-
-  //     return {
-  //       success: true,
-  //       pagination: {
-  //         page: parseInt(page),
-  //         limit: parseInt(limit),
-  //         total: parseInt(total),
-  //         totalPages,
-  //         hasNextPage: page < totalPages,
-  //         hasPrevPage: page > 1,
-  //       },
-  //       filters: {
-  //         search,
-  //         ...filters,
-  //       },
-  //       data: rows,
-  //     };
-  //   } catch (error) {
-  //     console.error("Search error:", error);
-  //     throw error;
-  //   }
-  // },
   update: async ({ volunteer, volunteerId }) => {
     try {
       const {
@@ -249,7 +128,6 @@ const Volunteer = {
         nationality,
         residentCountry,
       } = volunteer;
-
       const updates = [];
       const values = [];
       if (userId == undefined || !userId || !Number.isInteger(Number(userId)))
@@ -314,5 +192,54 @@ const Volunteer = {
       throw error;
     }
   },
+  readVolunteeringHours: async ({ volunteerId }) => {
+    const [rows] = await db.query(
+      `SELECT 
+                (SELECT COALESCE(SUM(tas.volunteeringHours), 0)
+                FROM tasks tas 
+                JOIN teamvolunteer tv ON tas.teamVolunteerId = tv.teamVolunteerId
+                WHERE  tv.volunteerId = ? AND tas.completed = 1) as totalHours,
+                
+                (SELECT COALESCE(SUM(cer.volunteeringHours), 0) 
+                FROM volunteeringcertificate cer
+                WHERE cer.volunteerId = ?) as issuedHours;`,
+      [volunteerId, volunteerId]
+    );
+    if (!rows[0]) throw new Error("User not found");
+    return rows[0];
+  },
+
+  canIssueCertificate: async ({ certificate, volunteerId }) => {
+    try {
+      if (certificate.certificateKind == "withHours") {
+        const result = await Volunteer.readVolunteeringHours({ volunteerId });
+        if (
+          certificate.volunteeringHours >
+          result.totalHours - result.issuedHours
+        )
+          return false;
+      }
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  },
+  //   public function canIssueCertificate($certificate) {
+
+  //     if($certificate->certificateKind == "withHours"){
+
+  //         $res = $this->getVolunteeringHours();
+  //         if($res){
+  //             $row = $res->fetch(PDO::FETCH_ASSOC);
+  //             extract(($row));
+  //            if($certificate->volunteeringHours >($totalHours - $issuedHours)  ){
+  //                 return false;
+  //             }
+  //         $certificate->totalHoursAtIssue = $totalHours - $issuedHours;
+  //         }
+
+  //     }
+  //     return true;
+  // }
 };
 export default Volunteer;

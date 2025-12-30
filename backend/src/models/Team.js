@@ -22,12 +22,12 @@ const Team = {
         values.push(...Object.values(filters));
       }
 
-      values.push(limit, offset);
+      values.push(sortBy, orderBy, limit, offset);
       const [rows] = await db.query(
         `
         SELECT * FROM team 
         ${whereClause}
-        ORDER BY ${sortBy} ${orderBy} 
+        ORDER BY ? ? 
         LIMIT ? OFFSET ?`,
         values
       );

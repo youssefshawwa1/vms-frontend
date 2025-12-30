@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import useFetching from "../../Hooks/useFetching";
 import { FormSubmitBtn, FormSectionGroup, FormSection } from "../Global/Form";
 import { useValidateForm, validators } from "../../Hooks/useValidateForm";
+import axios from "axios";
 const CertificateForm = ({
   certificateDetails,
   volunteerrDetails,
@@ -132,23 +133,33 @@ const CertificateForm = ({
 
     if (validateForm()) {
       const data = {
-        action: certificateDetails ? "updateCertificate" : "issueCertificate",
-        data: {
-          volunteerId: formData.volunteerId,
-          certificateTitle: formData.certificateTitle,
-          certificateDescription: formData.certificateDescription,
-          certificateType: formData.certificateType,
-          certificateKind: formData.certificateKind,
-          volunteeringHours: formData.volunteeringHours,
-          customMessage: formData.customMessage,
-          updatedBy: 1001,
-          certificateId: formData.certificateId,
-        },
+        // action: certificateDetails ? "updateCertificate" : "issueCertificate",
+        // data: {
+        volunteerId: formData.volunteerId,
+        certificateTitle: formData.certificateTitle,
+        certificateDescription: formData.certificateDescription,
+        certificateType: formData.certificateType,
+        certificateKind: formData.certificateKind,
+        volunteeringHours: formData.volunteeringHours,
+        customMessage: formData.customMessage,
+        userId: 1001,
+        certificateId: formData.certificateId,
+        // },
       };
-      await sendData("volunteers.php", data, () => {
-        if (callBack) callBack();
-        resetForm();
-      });
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/volunteers/${formData.volunteerId}/certificates/create`,
+          data
+        );
+        console.log("ended:");
+        console.log(response);
+      } catch (error) {
+        console.error("Ending failed:", error);
+      }
+      // await sendData("volunteers.php", data, () => {
+      //   if (callBack) callBack();
+      //   resetForm();
+      // });
     }
   };
 

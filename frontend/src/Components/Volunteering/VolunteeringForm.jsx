@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import useFetching from "../../Hooks/useFetching";
 import { FormSubmitBtn, FormSectionGroup, FormSection } from "../Global/Form";
 import { useValidateForm, validators } from "../../Hooks/useValidateForm";
+import axios from "axios";
 const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
   const [complete, setComplete] = useState(false);
   const validationRules = {
@@ -163,10 +164,28 @@ const VolunteeringForm = ({ volunteeringDetails, callBack, type }) => {
           endDate: complete == true ? formData.endDate : "",
         },
       };
-      await sendData("teams.php", data, () => {
-        if (callBack) callBack();
-        resetForm();
-      });
+
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/volunteering/${formData.teamVolunteerId}/end`,
+          {
+            // volunteerTitle: formData.volunteerTitle,
+            endDate: formData.startDate,
+            // roleId: formData.roleId,
+            // description: formData.description,
+            userId: 1001,
+          }
+        );
+        console.log("ended:");
+        console.log(response);
+      } catch (error) {
+        console.error("Ending failed:", error);
+      }
+
+      // await sendData("teams.php", data, () => {
+      //   if (callBack) callBack();
+      //   resetForm();
+      // });
     }
   };
 

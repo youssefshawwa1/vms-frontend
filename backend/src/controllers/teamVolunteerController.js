@@ -153,36 +153,26 @@ const createTeamVolunteer = async (req, res) => {
   }
 };
 
-const updateVolunteer = async (req, res) => {
-  // expecting:
-  //         firstName:
-  //     lastName:
-  //     birthDate:
-  //     major:
-  //     university:
-  //     phone:
-  //     email:
-  //     gender:
-  //     nationality:
-  //     residentCountry:
-  //     userId:
-  //    id (params.id)
+const updateTeamVolunteer = async (req, res) => {
+  //   volunteerId,
+  // startDate,
+  // roleId,
+  // userId,
+  // description,
+  // volunteerTitle,
+  // teamId,
+  // active,
   try {
-    const volunteerId = req.params.id;
+    const teamVolunteerId = req.params.teamVolunteerId;
     const updateData = req.body;
-    console.log(updateData);
     const allowedUpdates = [
-      "firstName",
-      "lastName",
-      "birthDate",
-      "major",
-      "university",
+      "startDate",
+      "endDate",
+      "roleId",
+      "description",
+      "volunteerTitle",
+      "active",
       "userId",
-      "phone",
-      "email",
-      "gender",
-      "nationality",
-      "residentCountry",
     ];
     const updates = {};
     allowedUpdates.forEach((field) => {
@@ -198,25 +188,25 @@ const updateVolunteer = async (req, res) => {
       });
     }
 
-    const updatedVolunteer = await Volunteer.update({
-      volunteerId: volunteerId,
-      volunteer: updates,
+    const updatedTeamVolunteer = await TeamVolunteer.update({
+      teamVolunteerId: teamVolunteerId,
+      teamVolunteer: updates,
     });
-    if (!updatedVolunteer) {
+    if (!updatedTeamVolunteer) {
       return res.status(404).json({
         success: false,
-        message: "Volunteer not found",
+        message: "Volunteering not found",
       });
     }
     res.status(200).json({
       success: true,
-      message: "Volunteer updated successfully",
-      data: { volunteer: updatedVolunteer },
+      message: "Volunteering updated successfully",
+      data: { volunteering: updatedTeamVolunteer },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error updating volunteer",
+      message: "Error updating Volunteering",
       error: error.message,
     });
   }
@@ -228,38 +218,54 @@ const getTeamVolunteerTasks = async (req, res) => {
     const teamVolunteerId = req.params.teamVolunteerId;
     const filters = {};
     const allowedFilters = ["completed", "teamId", "volunteerId"];
+    const allowedSpecialFlters = [
+      "createdAtFrom",
+      "createdAtTo",
+      "search",
+      "startDateFrom",
+      "startDateTo",
+      "endDateFrom",
+      "endDateTo",
+      "completionDateFrom",
+      "completionDateTo",
+    ];
     allowedFilters.forEach((key) => {
       if (req.query[key]) {
         filters[key] = req.query[key];
       }
     });
-    if (req.query.createdAtFrom) {
-      filters.createdAtFrom = req.query.createdAtFrom;
-    }
-    if (req.query.createdAtTo) {
-      filters.createdAtTo = req.query.createdAtTo;
-    }
-    if (req.query.search) {
-      filters.search = req.query.search;
-    }
-    if (req.query.startDateFrom) {
-      filters.startDateFrom = req.query.startDateFrom;
-    }
-    if (req.query.startDateTo) {
-      filters.startDateTo = req.query.startDateTo;
-    }
-    if (req.query.endDateFrom) {
-      filters.endDateFrom = req.query.endDateFrom;
-    }
-    if (req.query.endDateTo) {
-      filters.endDateTo = req.query.endDateTo;
-    }
-    if (req.query.completionDateFrom) {
-      filters.completionDateFrom = req.query.completionDateFrom;
-    }
-    if (req.query.completionDateTo) {
-      filters.completionDateTo = req.query.completionDateTo;
-    }
+    allowedSpecialFlters.forEach((key) => {
+      if (req.query[key]) {
+        filters[key] = req.query[key];
+      }
+    });
+    // if (req.query.createdAtFrom) {
+    //   filters.createdAtFrom = req.query.createdAtFrom;
+    // }
+    // if (req.query.createdAtTo) {
+    //   filters.createdAtTo = req.query.createdAtTo;
+    // }
+    // if (req.query.search) {
+    //   filters.search = req.query.search;
+    // }
+    // if (req.query.startDateFrom) {
+    //   filters.startDateFrom = req.query.startDateFrom;
+    // }
+    // if (req.query.startDateTo) {
+    //   filters.startDateTo = req.query.startDateTo;
+    // }
+    // if (req.query.endDateFrom) {
+    //   filters.endDateFrom = req.query.endDateFrom;
+    // }
+    // if (req.query.endDateTo) {
+    //   filters.endDateTo = req.query.endDateTo;
+    // }
+    // if (req.query.completionDateFrom) {
+    //   filters.completionDateFrom = req.query.completionDateFrom;
+    // }
+    // if (req.query.completionDateTo) {
+    //   filters.completionDateTo = req.query.completionDateTo;
+    // }
     filters.teamVolunteerId = teamVolunteerId;
     const sortBy = req.query.sortBy || "taskId";
     const orderBy = req.query.orderBy || "ASC";
@@ -289,47 +295,258 @@ const getTeamVolunteerTasks = async (req, res) => {
     });
   }
 };
-
-// controller/volunteerController.js
-const searchVolunteers = async (req, res) => {
+const endVolunteering = async (req, res) => {
   try {
-    const {
-      q = "", // search term
-      page = 1,
-      limit = 5,
-      sortBy = "insertionDate",
-      order = "DESC",
-      ...filters // all other query params become filters
-    } = req.query;
+    const teamVolunteerId = req.params.teamVolunteerId;
+    const updateData = req.body;
+    const allowedUpdates = ["endDate", "userId"];
+    const updates = {};
 
-    const result = await Volunteer.search({
-      search: q,
-      filters,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      sortBy,
-      order: order.toUpperCase(),
+    allowedUpdates.forEach((field) => {
+      if (updateData[field] === undefined) {
+        return res.status(400).json({
+          success: false,
+          message: "No valid fields provided for ending the volunteering",
+        });
+      }
+      updates[field] = updateData[field];
     });
 
+    updates["active"] = 0;
+
+    const updatedTeamVolunteer = await TeamVolunteer.update({
+      teamVolunteerId: teamVolunteerId,
+      teamVolunteer: updates,
+    });
+    if (!updatedTeamVolunteer) {
+      return res.status(404).json({
+        success: false,
+        message: "Volunteering not found",
+      });
+    }
     res.status(200).json({
       success: true,
-      message: "Search volunteers",
-      data: result,
+      message: "Volunteering put as ended successfully",
+      data: {
+        volunteering: {
+          teamVolunteerId: updatedTeamVolunteer.teamVolunteerId,
+          status: updatedTeamVolunteer.active,
+        },
+      },
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error searching volunteers",
+      message: "Error ending Volunteering",
       error: error.message,
     });
   }
 };
 
+const createTask = async (req, res) => {
+  try {
+    const teamVolunteerId = req.body.teamVolunteerId || 0;
+    const {
+      taskTitle,
+      taskDescription,
+      startDate,
+      endDate,
+      volunteeringHours,
+      userId,
+      completed,
+      completionDate,
+    } = req.body;
+    console.log(req.body);
+
+    if (
+      !taskTitle ||
+      !taskDescription ||
+      !userId ||
+      !startDate ||
+      !endDate ||
+      !volunteeringHours ||
+      !teamVolunteerId
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+    const task = {
+      taskTitle,
+      taskDescription,
+      userId,
+      startDate,
+      endDate,
+      volunteeringHours,
+      teamVolunteerId,
+    };
+    if (completed !== undefined && completed) {
+      if (completionDate !== undefined && completionDate) {
+        task.completed = completed;
+        task.completionDate = completionDate;
+      } else
+        return res.status(400).json({
+          success: false,
+          message: "All fields are required",
+        });
+    }
+    const newTeam = await Task.create({
+      task,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Task created",
+      data: newTeam,
+    });
+  } catch (error) {
+    // console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error creating task",
+      error: error.message,
+    });
+  }
+};
+const updateTask = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const teamVolunteerId = req.params.teamVolunteerId;
+    const updateData = req.body;
+    const allowedUpdates = [
+      "taskTitle",
+      "taskDescription",
+      "startDate",
+      "endDate",
+      "volunteeringHours",
+      "completed",
+      "completionDate",
+      "userId",
+    ];
+
+    const updates = {};
+    allowedUpdates.forEach((field) => {
+      if (updateData[field] !== undefined) {
+        updates[field] = updateData[field];
+      }
+    });
+
+    if (
+      Object.keys(updates).length === 0 ||
+      updates.userId === undefined ||
+      updates.userId === "" ||
+      updates.userId <= 999
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields provided for update",
+      });
+    }
+    const updatedTask = await Task.update({
+      taskId: taskId,
+      task: updates,
+      teamVolunteerId: teamVolunteerId,
+    });
+    if (!updatedTask) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Task updated successfully",
+      data: { task: updatedTask },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating task",
+      error: error.message,
+    });
+  }
+};
+
+const getTask = async (req, res) => {
+  try {
+    const taskId = req.params.taskId || 0;
+    const teamVolunteerId = req.params.teamVolunteerId || 0;
+    if (!Number.isInteger(Number(taskId)) || Number(taskId) <= 999) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid task id format. must be a positive integer.",
+      });
+    }
+    const result = await Task.findById({ taskId });
+
+    res.status(200).json({
+      success: true,
+      message: "Task retrived successfully",
+      data: { ...result },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching Task",
+      error: error.message,
+    });
+  }
+};
+const completeTask = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const teamVolunteerId = req.params.teamVolunteerId;
+    const updateData = req.body;
+    const allowedUpdates = ["completionDate", "userId"];
+
+    const updates = {};
+    allowedUpdates.forEach((field) => {
+      if (updateData[field] === undefined) {
+        return res.status(400).json({
+          success: false,
+          message: "No valid fields provided for complete this task",
+        });
+      }
+      updates[field] = updateData[field];
+    });
+    updates["completed"] = 1;
+
+    const updatedTask = await Task.update({
+      taskId: taskId,
+      task: updates,
+      teamVolunteerId: teamVolunteerId,
+    });
+    if (!updatedTask) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Task put as completed successfully",
+      data: { task: updatedTask },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error completing this task",
+      error: error.message,
+    });
+  }
+};
+const deleteTask = async (req, res) => {};
 export {
   getAllTeamVolunteers,
   getTeamVolunteer,
   createTeamVolunteer,
   getTeamVolunteerTasks,
-  //   updateVolunteer,
-  //   searchVolunteers,
+  updateTeamVolunteer,
+  endVolunteering,
+  createTask,
+  updateTask,
+  deleteTask,
+  getTask,
+  completeTask,
 };

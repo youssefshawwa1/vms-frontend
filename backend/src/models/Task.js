@@ -89,9 +89,9 @@ const Task = {
             JOIN volunteer v ON tv.volunteerId = v.volunteerId
             JOIN team te ON te.teamId = tv.teamId
         ${whereClause}
-        ORDER BY ${sortBy} ${orderBy} 
+        ORDER BY > ? 
         LIMIT ? OFFSET ?`,
-        [...values, limit, offset]
+        [...values, sortBy, orderBy, limit, offset]
       );
 
       const [[{ total }]] = await db.query(
@@ -141,14 +141,91 @@ const Task = {
     return rows[0];
   },
   create: async ({ task }) => {
-    const [result] = await db.query(`INSERT INTO team SET ? `, [task]);
+    const [result] = await db.query(`INSERT INTO tasks SET ? `, [task]);
     if (!result) {
       throw new Error("Task not created!");
     }
     return {
-      team,
+      taskId: result.insertId,
+      ...task,
     };
   },
+
+  update: async ({ task, taskId, teamVolunteerId }) => {
+    try {
+      const {
+        taskTitle,
+        taskDescription,
+        startDate,
+        endDate,
+        volunteeringHours,
+        completed,
+        completionDate,
+        userId,
+      } = task;
+
+      const updates = [];
+      const values = [];
+
+      if (userId == undefined || !userId || !Number.isInteger(Number(userId)))
+        throw new Error("Must provide current user");
+
+      if (taskTitle !== undefined) {
+        updates.push("taskTitle = ?");
+        values.push(taskTitle);
+      }
+      if (taskDescription !== undefined) {
+        updates.push("taskDescription = ?");
+        values.push(taskDescription);
+      }
+
+      if (startDate !== undefined) {
+        updates.push("startDate = ?");
+        values.push(startDate);
+      }
+      if (endDate !== undefined) {
+        updates.push("endDate = ?");
+        values.push(endDate);
+      }
+
+      if (volunteeringHours !== undefined) {
+        updates.push("volunteeringHours = ?");
+        values.push(volunteeringHours);
+      }
+      if (completed !== undefined) {
+        updates.push("completed = ?");
+        values.push(completed);
+      }
+
+      if (completionDate !== undefined) {
+        updates.push("completionDate = ?");
+        values.push(completionDate);
+      }
+
+      updates.push("updatedBy = ?");
+      values.push(userId);
+
+      if (updates.length === 0)
+        throw new Error("No valid fields provided for update");
+
+      values.push(taskId);
+      values.push(teamVolunteerId);
+      const [result] = await db.query(
+        `
+      UPDATE tasks set ${updates.join(", ")}
+      WHERE taskId = ? AND teamVolunteerId = ?`,
+        values
+      );
+
+      if (result.affectedRows === 0) throw new Error("Task not found");
+
+      const updatedTask = await Task.findById({ taskId });
+      return updatedTask;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   // update: async ({ task, taskId }) => {
   //   try {
   //     const { teamName, description, userId } = task;

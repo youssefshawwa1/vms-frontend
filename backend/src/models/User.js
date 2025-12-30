@@ -53,9 +53,9 @@ const User = {
         `
         SELECT * FROM users 
         ${whereClause}
-        ORDER BY ${sortBy} ${orderBy} 
+        ORDER BY ? ? 
         LIMIT ? OFFSET ?`,
-        [...values, limit, offset]
+        [...values, sortBy, orderBy, limit, offset]
       );
       const [[{ total }]] = await db.query(
         `SELECT COUNT(*) as total FROM users ${whereClause}`,

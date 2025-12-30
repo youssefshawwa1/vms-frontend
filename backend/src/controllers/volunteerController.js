@@ -1,6 +1,7 @@
 import Volunteer from "../models/Volunteer.js";
 import TeamVolunteer from "../models/TeamVolunteer.js";
 import Task from "../models/Task.js";
+import Certificate from "../models/Certificate.js";
 // import Team from "../models/Team.js";
 const getAllVolunteers = async (req, res) => {
   try {
@@ -51,7 +52,6 @@ const getAllVolunteers = async (req, res) => {
       orderBy,
     });
     if (result) {
-      console.log(result);
       res.status(200).json({
         success: true,
         message: "Volunteers retrived successfully",
@@ -152,7 +152,6 @@ const createVolunteer = async (req, res) => {
       data: newVolunteer,
     });
   } catch (error) {
-    // console.log(error);
     res.status(500).json({
       success: false,
       message: "Error creating volunteer",
@@ -178,7 +177,6 @@ const updateVolunteer = async (req, res) => {
   try {
     const volunteerId = req.params.volunteerId;
     const updateData = req.body;
-    console.log(updateData);
     const allowedUpdates = [
       "firstName",
       "lastName",
@@ -361,8 +359,148 @@ const getVolunteerTasks = async (req, res) => {
     });
   }
 };
-const getVolunteerCertificates = async (req, res) => {};
 
+const getVolunteerCertificates = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const volunteerId = req.params.volunteerId;
+    const filters = {};
+    const allowedFilters = [
+      "volunteerId",
+      "certificateKind",
+      "certificateType",
+      "volunteeringHours",
+      "emailSentCount",
+    ];
+
+    allowedFilters.forEach((key) => {
+      if (req.query[key]) {
+        filters[key] = req.query[key];
+      }
+    });
+    if (req.query.issueDateFrom) {
+      filters.issueDateFrom = req.query.issueDateFrom;
+    }
+    if (req.query.issueDateTo) {
+      filters.issueDateTo = req.query.issueDateTo;
+    }
+    if (req.query.search) {
+      filters.search = req.query.search;
+    }
+    if (req.query.volunteeringHoursAbove) {
+      filters.volunteeringHoursAbove = req.query.volunteeringHoursAbove;
+    }
+    if (req.query.volunteeringHoursBelow) {
+      filters.volunteeringHoursBelow = req.query.volunteeringHoursBelow;
+    }
+    if (req.query.totalHoursAtIssueAbove) {
+      filters.totalHoursAtIssueAbove = req.query.totalHoursAtIssueAbove;
+    }
+    if (req.query.totalHoursAtIssueBelow) {
+      filters.totalHoursAtIssueBelow = req.query.totalHoursAtIssueBelow;
+    }
+    filters.volunteerId = volunteerId;
+    const sortBy = req.query.sortBy || "issueDate";
+    const orderBy = req.query.orderBy || "ASC";
+
+    const result = await Certificate.findAll({
+      page,
+      limit,
+      filters,
+      sortBy,
+      orderBy,
+    });
+    if (result.data)
+      res.status(200).json({
+        success: true,
+        message: "Certificates retrived successfully",
+        ...result,
+      });
+    else
+      res.status(404).json({
+        success: false,
+        message: "No certificates found",
+        some: result,
+      });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching certificates",
+      error: error.message,
+    });
+  }
+};
+
+const createCertificate = async (req, res) => {
+  try {
+    const {
+      certificateTitle,
+      certificateDescription,
+      volunteeringHours,
+      customMessage,
+      certificateType,
+      certificateKind,
+      userId,
+    } = req.body;
+    const volunteerId = req.params.volunteerId;
+    if (
+      !certificateTitle ||
+      !certificateDescription ||
+      !customMessage ||
+      !certificateType ||
+      !certificateKind ||
+      !userId ||
+      (certificateKind == "withHours" &&
+        (volunteeringHours === undefined || volunteeringHours == 0))
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const certificate = {
+      certificateTitle,
+      certificateDescription,
+      customMessage,
+      certificateType,
+      certificateKind,
+      issuedBy: userId,
+      volunteerId,
+    };
+    if (certificateKind == "withHours") {
+      certificate.volunteeringHours = volunteeringHours;
+      certificate.totalHoursAtIssue = (
+        await Volunteer.readVolunteeringHours({ volunteerId })
+      ).totalHours;
+    }
+    const canIssue = await Volunteer.canIssueCertificate({
+      volunteerId,
+      certificate,
+    });
+    if (!canIssue)
+      return res.status(400).json({
+        success: false,
+        message: "Can't issue this certificate!",
+      });
+
+    const newVolunteer = await Certificate.create({ certificate });
+
+    res.status(201).json({
+      success: true,
+      message: "Certificate created",
+      data: newVolunteer,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error creating certificate",
+      error: error.message,
+    });
+  }
+};
+const updateCertificate = (req, res) => {};
 export {
   getAllVolunteers,
   getVolunteer,
@@ -370,5 +508,6 @@ export {
   updateVolunteer,
   getVolunteerVolunteering,
   getVolunteerTasks,
-  // searchVolunteers,
+  getVolunteerCertificates,
+  createCertificate,
 };

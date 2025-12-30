@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import useFetching from "../../Hooks/useFetching";
 import { FormSubmitBtn, FormSectionGroup, FormSection } from "../Global/Form";
 import { useValidateForm, validators } from "../../Hooks/useValidateForm";
+import axios from "axios";
 const TaskForm = ({ teamVolunteerId, callBack, task }) => {
   console.log(task);
   const validationRules = {
@@ -141,21 +142,29 @@ const TaskForm = ({ teamVolunteerId, callBack, task }) => {
     if (validateForm()) {
       console.log(task);
 
+      //       taskTitle,
+      // taskDescription,
+      // startDate,
+      // endDate,
+      // volunteeringHours,
+      // userId,
+      // completed,
+      // completionDate,
       const data = {
-        action: task ? "updateTask" : "addTask",
-        data: {
-          userId: 1001,
-          taskTitle: formData.taskTitle,
-          taskDescription: formData.taskDescription,
-          startDate: formData.startDate,
-          endDate: formData.endDate,
-          volunteeringHours: formData.volunteeringHours,
-          teamVolunteerId:
-            task?.fullDetails?.volunteering?.volunteeringId || teamVolunteerId,
-          completed: complete,
-          completionDate: complete ? formData.completionDate : "",
-          taskId: task?.id || "",
-        },
+        // action: task ? "updateTask" : "addTask",
+        // data: {
+        userId: 1001,
+        taskTitle: formData.taskTitle,
+        taskDescription: formData.taskDescription,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        volunteeringHours: formData.volunteeringHours,
+        teamVolunteerId:
+          task?.fullDetails?.volunteering?.volunteeringId || teamVolunteerId,
+        completed: complete,
+        completionDate: complete ? formData.completionDate : null,
+        taskId: task?.id || "",
+        // },
       };
       // console.log(data);
       // return;
@@ -163,7 +172,17 @@ const TaskForm = ({ teamVolunteerId, callBack, task }) => {
         resetForm();
         callBack();
       };
-      await sendData("teamVolunteers.php", data, handleRefetch);
+      // await sendData("teamVolunteers.php", data, handleRefetch);
+      try {
+        const response = await axios.patch(
+          `http://localhost:5000/volunteering/1005/tasks/${task?.id}/complete`,
+          data
+        );
+        console.log("ended:");
+        console.log(response);
+      } catch (error) {
+        console.error("Ending failed:", error);
+      }
     }
   };
 

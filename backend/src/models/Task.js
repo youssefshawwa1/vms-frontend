@@ -89,9 +89,9 @@ const Task = {
             JOIN volunteer v ON tv.volunteerId = v.volunteerId
             JOIN team te ON te.teamId = tv.teamId
         ${whereClause}
-        ORDER BY > ? 
+        ORDER BY ${sortBy} ${orderBy} 
         LIMIT ? OFFSET ?`,
-        [...values, sortBy, orderBy, limit, offset]
+        [...values, limit, offset]
       );
 
       const [[{ total }]] = await db.query(

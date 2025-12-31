@@ -68,9 +68,9 @@ const Volunteer = {
         `
         SELECT volunteerId, firstName, lastName, birthDate, email, phone, gender, major, university  FROM volunteer 
         ${whereClause}
-        ORDER BY ? ? 
+        ORDER BY ${sortBy} ${orderBy} 
         LIMIT ? OFFSET ?`,
-        [...values, sortBy, orderBy, limit, offset]
+        [...values, limit, offset]
       );
       const [[{ total }]] = await db.query(
         `SELECT COUNT(*) as total FROM volunteer ${whereClause}`,

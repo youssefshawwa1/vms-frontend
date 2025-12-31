@@ -1,77 +1,30 @@
-import Table from "../Global/Table";
-import { useState, useEffect } from "react";
 import { useOverLay } from "../../Contexts/OverLayContext";
-import { Link } from "react-router-dom";
-import { AddGroup, View } from "../Global/Icons";
-import useFetching from "../../Hooks/useFetching";
+import GenericTable from "../Global/GenericTable";
+import { useNavigate } from "react-router-dom";
+import { teamsColumns as columns } from "../Global/Columns";
 
-function Teams({ type, onRowDoubleClick }) {
-  const { fetchData } = useFetching();
-  const [teams, setTeams] = useState([]);
-  const { isLoading } = useOverLay();
-  useEffect(() => {
-    const fetchTeams = async () => {
-      await fetchData("teams.php", setTeams);
-    };
-    fetchTeams();
-  }, []);
-  const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "teamName", headerName: "Team Name", width: 130 },
-    {
-      field: "description",
-      headerName: "description",
-      width: 400,
-      sortable: true,
-    },
-  ];
-  if (!type) {
-    columns.push({
-      field: "view",
-      headerName: "View",
-      description: "This column is to View.",
-      sortable: false,
-      width: 100,
+function Teams() {
+  const { hideLoading } = useOverLay();
+  const navigate = useNavigate();
 
-      renderCell: (params) => {
-        return (
-          <Link
-            to={`${params.id}`}
-            className="w-full h-full text-center flex justify-center items-center"
-          >
-            <View />
-          </Link>
-        );
-      },
-    });
-  }
+  hideLoading();
+  const handleRowDoulbeClick = (row) => {
+    navigate(`/teams/${row.teamId}`);
+  };
+  const handleAddNew = () => {
+    navigate("/teams/add");
+  };
   return (
-    <>
-      {!isLoading && (
-        <div className=" h-full w-full  grid grid-cols-1 px-4 mx-auto mb-10  animate-slide-up">
-          {!type && (
-            <div className="py-10 flex justify-end">
-              <div className="">
-                <Link
-                  to="add"
-                  className="w-full h-full text-center flex justify-center items-center"
-                >
-                  <AddGroup />
-                </Link>
-              </div>
-            </div>
-          )}
-
-          <div className="w-full">
-            <Table
-              rows={teams}
-              columns={columns}
-              onRowDoubleClick={onRowDoubleClick}
-            />
-          </div>
-        </div>
-      )}
-    </>
+    <GenericTable
+      columns={columns}
+      apiEndpoint={"/teams"}
+      title={"Teams"}
+      searchPlaceholder="Search Teams..."
+      description="Explore teams data, click on a row to show more details"
+      onRowDoubleClick={handleRowDoulbeClick}
+      rowId="teamId"
+      addNew={handleAddNew}
+    />
   );
 }
 

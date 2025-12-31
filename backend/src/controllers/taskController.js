@@ -42,9 +42,11 @@ const getAllTasks = async (req, res) => {
     if (req.query.completionDateTo) {
       filters.completionDateTo = req.query.completionDateTo;
     }
-    const sortBy = req.query.sortBy || "taskId";
-    const orderBy = req.query.orderBy || "ASC";
 
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy) ? rawSortBy : "taskId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
     const result = await Task.findAll({
       page,
       limit,

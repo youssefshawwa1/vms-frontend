@@ -12,24 +12,42 @@ const Team = {
       const offset = (page - 1) * limit;
       let whereClause = "";
       const values = [];
+      const conditions = [];
+      const simpleFilters = {};
+      Object.keys(filters).forEach((key) => {
+        if (key.includes("From") || key.includes("To") || key == "search") {
+          return;
+        }
+        simpleFilters[key] = filters[key];
+      });
 
-      if (Object.keys(filters).length > 0) {
-        whereClause =
-          "WHERE " +
-          Object.keys(filters)
-            .map((key) => `${key} = ?`)
-            .join(" AND ");
-        values.push(...Object.values(filters));
+      if (Object.keys(simpleFilters).length > 0) {
+        Object.keys(simpleFilters).forEach((key) => {
+          conditions.push(`${key} = ?`);
+          values.push(simpleFilters[key]);
+        });
       }
 
-      values.push(sortBy, orderBy, limit, offset);
+      if (filters.search) {
+        const searchTerm = `%${filters.search.toLowerCase()}%`;
+        conditions.push(`
+          ( LOWER(teamId) LIKE ? OR 
+          LOWER(teamName) LIKE ? OR 
+          LOWER(description) LIKE ? )`);
+
+        values.push(searchTerm, searchTerm, searchTerm);
+      }
+
+      if (conditions.length > 0)
+        whereClause = "WHERE " + conditions.join(" AND ");
+
       const [rows] = await db.query(
         `
         SELECT * FROM team 
         ${whereClause}
-        ORDER BY ? ? 
+        ORDER BY ${sortBy} ${orderBy} 
         LIMIT ? OFFSET ?`,
-        values
+        [...values, limit, offset]
       );
       const [[{ total }]] = await db.query(
         `SELECT COUNT(*) as total FROM 	team ${whereClause}`,

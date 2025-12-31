@@ -10,24 +10,33 @@ const TeamVolunteer = {
   } = {}) => {
     try {
       const offset = (page - 1) * limit;
-      let whereClause = "";
       const values = [];
       const conditions = [];
 
-      const simpleFilters = {};
+      // 1. Define which columns are allowed to be filtered directly
+      // This protects your DB from malicious query keys
+      const allowedFilters = [
+        "roleId",
+        "volunteerId",
+        "teamId",
+        "active",
+        "teamVolunteerId",
+        "startDate",
+        "endDate",
+        "teamName",
+        "roleType",
+        "email",
+      ];
+
+      // 2. Handle Simple Filters
       Object.keys(filters).forEach((key) => {
-        if (key.includes("From") || key.includes("To") || key == "search") {
-          return;
+        if (allowedFilters.includes(key) && filters[key] !== undefined) {
+          conditions.push(`${key} = ?`);
+          values.push(filters[key]);
         }
-        simpleFilters[key] = filters[key];
       });
 
-      if (Object.keys(simpleFilters).length > 0) {
-        Object.keys(simpleFilters).forEach((key) => {
-          conditions.push(`${key} = ?`);
-          values.push(simpleFilters[key]);
-        });
-      }
+      // 3. Handle Range/Date Filters (No prefixes needed!)
       if (filters.startDateFrom) {
         conditions.push("startDate >= ?");
         values.push(filters.startDateFrom);
@@ -52,29 +61,67 @@ const TeamVolunteer = {
         conditions.push("createdAt <= ?");
         values.push(filters.createdAtTo);
       }
+
+      // 4. Handle Search
       if (filters.search) {
-        const searchTerm = `%${filters.search.toLowerCase()}$`;
-        conditions.push(`
-        LOWER(volunteerTitle) LIKE ? OR
-        LOWER(description) LIKE ? 
-          `);
-        values.push(searchTerm, searchTerm);
+        const searchTerm = `%${filters.search.toLowerCase()}%`;
+        conditions.push(`(
+          LOWER(teamName) LIKE ? OR 
+          LOWER(firstName) LIKE ? OR 
+          LOWER(lastName) LIKE ? OR 
+          LOWER(email) LIKE ? OR 
+          LOWER(volunteerDescription) LIKE ?
+        )`);
+        values.push(...Array(5).fill(searchTerm));
       }
-      if (conditions.length > 0)
-        whereClause = "WHERE " + conditions.join(" AND ");
-      const [rows] = await db.query(
-        `
-        SELECT * FROM teamvolunteer 
+
+      const whereClause =
+        conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+      // 5. The Main Query using a Derived Table (Subquery)
+      const baseQuery = `
+        SELECT * FROM (
+          SELECT 
+            tv.*, 
+            r.roleTitle, 
+            r.description AS roleDescription,
+            v.firstName, 
+            v.lastName, 
+            CONCAT(v.firstName, ' ', v.lastName) AS volunteerName, 
+            v.email, 
+            v.phone, 
+            t.teamName,
+            tv.description AS volunteerDescription -- Alias this to avoid conflict with role.description
+          FROM teamvolunteer tv
+          JOIN role r ON r.roleId = tv.roleId
+          JOIN volunteer v ON v.volunteerId = tv.volunteerId
+          JOIN team t ON t.teamId = tv.teamId
+        ) AS flattened_data
         ${whereClause}
-        ORDER BY ? ? 
-        LIMIT ? OFFSET ?`,
-        [...values, sortBy, orderBy, limit, offset]
-      );
-      const [[{ total }]] = await db.query(
-        `SELECT COUNT(*) as total FROM 	teamvolunteer ${whereClause}`,
-        values
-      );
+        ORDER BY ${sortBy} ${orderBy}
+        LIMIT ? OFFSET ?
+      `;
+
+      const [rows] = await db.query(baseQuery, [
+        ...values,
+        parseInt(limit),
+        offset,
+      ]);
+
+      // 6. Count Query using the same logic
+      const countQuery = `
+        SELECT COUNT(*) as total FROM (
+          SELECT tv.*, v.firstName, v.lastName, v.email, t.teamName, tv.description as volunteerDescription
+          FROM teamvolunteer tv
+          JOIN volunteer v ON v.volunteerId = tv.volunteerId
+          JOIN team t ON t.teamId = tv.teamId
+        ) AS flattened_data 
+        ${whereClause}`;
+
+      const [[{ total }]] = await db.query(countQuery, values);
+
       const totalPages = Math.ceil(total / limit);
+
       return {
         pagination: {
           page: parseInt(page),
@@ -85,11 +132,11 @@ const TeamVolunteer = {
           hasPrevPage: page > 1,
         },
         filters,
-
         data: rows,
       };
     } catch (e) {
-      return e;
+      console.error(e);
+      throw e;
     }
   },
   findById: async ({ teamVolunteerId }) => {

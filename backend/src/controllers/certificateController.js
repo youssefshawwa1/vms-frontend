@@ -27,22 +27,22 @@ const getAllCertificates = async (req, res) => {
     if (req.query.search) {
       filters.search = req.query.search;
     }
-    if (req.query.volunteeringHoursAbove) {
-      filters.volunteeringHoursAbove = req.query.volunteeringHoursAbove;
+    if (req.query.volunteeringHoursFrom) {
+      filters.volunteeringHoursFrom = req.query.volunteeringHoursFrom;
     }
-    if (req.query.volunteeringHoursBelow) {
-      filters.volunteeringHoursBelow = req.query.volunteeringHoursBelow;
+    if (req.query.volunteeringHoursTo) {
+      filters.volunteeringHoursTo = req.query.volunteeringHoursTo;
     }
-    if (req.query.totalHoursAtIssueAbove) {
-      filters.totalHoursAtIssueAbove = req.query.totalHoursAtIssueAbove;
+    if (req.query.totalHoursAtIssueFrom) {
+      filters.totalHoursAtIssueFrom = req.query.totalHoursAtIssueFrom;
     }
-    if (req.query.totalHoursAtIssueBelow) {
-      filters.totalHoursAtIssueBelow = req.query.totalHoursAtIssueBelow;
+    if (req.query.totalHoursAtIssueTo) {
+      filters.totalHoursAtIssueTo = req.query.totalHoursAtIssueTo;
     }
-
-    const sortBy = req.query.sortBy || "issueDate";
-    const orderBy = req.query.orderBy || "ASC";
-
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy) ? rawSortBy : "issueDate";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
     const result = await Certificate.findAll({
       page,
       limit,

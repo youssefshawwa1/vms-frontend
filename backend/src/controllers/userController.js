@@ -22,9 +22,10 @@ const getAllUsers = async (req, res) => {
       filters.search = req.query.search;
     }
 
-    const sortBy = req.query.sortBy || "userId";
-    const orderBy = req.query.orderBy || "ASC";
-
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy) ? rawSortBy : "userId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
     const result = await User.findAll({
       page,
       limit,

@@ -21,6 +21,8 @@ const getAllVolunteers = async (req, res) => {
       "gender",
       "nationality",
       "residentCountry",
+      "firstName",
+      "lastName",
     ];
     allowedFilters.forEach((key) => {
       if (req.query[key]) {
@@ -47,14 +49,20 @@ const getAllVolunteers = async (req, res) => {
       filters.search = req.query.search;
     }
 
-    const sortBy = req.query.sortBy || "volunteerId";
-    const orderBy = req.query.orderBy || "ASC";
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy)
+      ? rawSortBy
+      : "volunteerId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
+
     const result = await Volunteer.findAll({
       page,
       limit,
       filters,
       sortBy,
       orderBy,
+      allowedFilters,
     });
     if (result) {
       res.status(200).json({
@@ -267,8 +275,13 @@ const getVolunteerVolunteering = async (req, res) => {
       filters.search = req.query.search;
     }
     filters.volunteerId = volunteerId;
-    const sortBy = req.query.sortBy || "teamVolunteerId";
-    const orderBy = req.query.orderBy || "ASC";
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy)
+      ? rawSortBy
+      : "teamVolunteerId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
+
     const result = await TeamVolunteer.findAll({
       page,
       limit,
@@ -336,8 +349,12 @@ const getVolunteerTasks = async (req, res) => {
       filters.completionDateTo = req.query.completionDateTo;
     }
     filters.volunteerId = volunteerId;
-    const sortBy = req.query.sortBy || "taskId";
-    const orderBy = req.query.orderBy || "ASC";
+
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy) ? rawSortBy : "taskId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
+
     const result = await Task.findAll({
       page,
       limit,
@@ -406,8 +423,11 @@ const getVolunteerCertificates = async (req, res) => {
       filters.totalHoursAtIssueBelow = req.query.totalHoursAtIssueBelow;
     }
     filters.volunteerId = volunteerId;
-    const sortBy = req.query.sortBy || "issueDate";
-    const orderBy = req.query.orderBy || "ASC";
+
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy) ? rawSortBy : "issueDate";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
     const result = await Certificate.findAll({
       page,

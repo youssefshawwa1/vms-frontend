@@ -43,21 +43,21 @@ const Certificate = {
         conditions.push("c.issueDate <= ?");
         values.push(filters.issueDateTo);
       }
-      if (filters.volunteeringHoursAbove) {
+      if (filters.volunteeringHoursFrom) {
         conditions.push("c.volunteeringHours >= ? ");
-        values.push(filters.volunteeringHoursAbove);
+        values.push(filters.volunteeringHoursFrom);
       }
-      if (filters.volunteeringHoursBelow) {
+      if (filters.volunteeringHoursTo) {
         conditions.push("c.volunteeringHours <= ? ");
-        values.push(filters.volunteeringHoursBelow);
+        values.push(filters.volunteeringHoursTo);
       }
-      if (filters.totalHoursAtIssueAbove) {
+      if (filters.totalHoursAtIssueFrom) {
         conditions.push("c.totalHoursAtIssue >= ? ");
-        values.push(filters.totalHoursAtIssueAbove);
+        values.push(filters.totalHoursAtIssueFrom);
       }
-      if (filters.totalHoursAtIssueBelow) {
+      if (filters.totalHoursAtIssueTo) {
         conditions.push("c.totalHoursAtIssue <= ? ");
-        values.push(filters.totalHoursAtIssueBelow);
+        values.push(filters.totalHoursAtIssueTo);
       }
 
       if (filters.search) {
@@ -83,9 +83,9 @@ const Certificate = {
             FROM  volunteeringcertificate c
             JOIN volunteer v ON c.volunteerId = v.volunteerId
         ${whereClause}
-        ORDER BY ? ? 
+        ORDER BY c.${sortBy} ${orderBy} 
         LIMIT ? OFFSET ?`,
-        [...values, "c." + sortBy, orderBy, limit, offset]
+        [...values, limit, offset]
       );
 
       const [[{ total }]] = await db.query(

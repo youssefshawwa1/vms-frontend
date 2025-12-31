@@ -6,11 +6,25 @@ const getAllTeams = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const filters = {};
-
+    const allowedFilters = ["teamId", "teamName", "description"];
+    allowedFilters.forEach((key) => {
+      if (req.query[key]) {
+        filters[key] = req.query[key];
+      }
+    });
+    if (req.query.search) {
+      filters.search = req.query.search;
+    }
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy) ? rawSortBy : "teamId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
     const result = await Team.findAll({
       page: page,
       limit: limit,
       filters: filters,
+      sortBy: sortBy,
+      orderBy: orderBy,
     });
     if (result.totalItems == 0)
       res.status(404).json({
@@ -174,8 +188,13 @@ const getTeamVolunteering = async (req, res) => {
       filters.search = req.query.search;
     }
     filters.teamId = teamId;
-    const sortBy = req.query.sortBy || "teamVolunteerId";
-    const orderBy = req.query.orderBy || "ASC";
+
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy)
+      ? rawSortBy
+      : "teamVolunteerId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
     const result = await TeamVolunteer.findAll({
       page,
       limit,
@@ -242,8 +261,11 @@ const getTeamTasks = async (req, res) => {
       filters.completionDateTo = req.query.completionDateTo;
     }
     filters.teamId = teamId;
-    const sortBy = req.query.sortBy || "taskId";
-    const orderBy = req.query.orderBy || "ASC";
+
+    const rawSortBy = req.query.sortBy;
+    const rawOrderBy = req.query.orderBy;
+    const sortBy = allowedFilters.includes(rawSortBy) ? rawSortBy : "taskId";
+    const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
     const result = await Task.findAll({
       page,
       limit,

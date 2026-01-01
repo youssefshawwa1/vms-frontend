@@ -3,11 +3,14 @@ import GenericTable from "../Components/Global/GenericTable";
 import { volunteeringColumnsForVolunteer as volunteeringColumns } from "../tableConfig/volunteeringConfig";
 import { certificatesColumnsForVolunteer as certificatesColumns } from "../tableConfig/certificateConfig";
 import GenericEditPage from "../Components/GenericEditPage";
+import GenericCreatePage from "../Components/GenericCreatePage";
+import { certificateFormFields } from "./certificateConfig";
 import {
   tasksColumnsForVolunteer as tasksColumns,
   getRowClassName,
   columnsStyles,
 } from "../tableConfig/taskConfig";
+
 export const volunteerFormFieldConfig = [
   {
     name: "firstName",
@@ -153,7 +156,11 @@ export const volunteerTabsConfig = {
       component: GenericTable,
       props: {
         columns: volunteeringColumns,
-
+        onRowDoubleClick: (row, navigate) => {
+          if (row.teamVolunteerId) {
+            navigate(`/volunteering/${row.teamVolunteerId}`);
+          }
+        },
         apiEndpoint: "/volunteers/:id/volunteering",
         title: "Volunteering",
         initialFilters: {
@@ -180,7 +187,11 @@ export const volunteerTabsConfig = {
         getRowClassName: getRowClassName,
         customStyles: columnsStyles,
         columns: tasksColumns,
-
+        onRowDoubleClick: (row, navigate) => {
+          if (row.taskId) {
+            navigate(`/tasks/${row.taskId}`);
+          }
+        },
         apiEndpoint: "/volunteers/:id/tasks",
         title: "Tasks",
         initialFilters: {
@@ -205,7 +216,11 @@ export const volunteerTabsConfig = {
       component: GenericTable,
       props: {
         columns: certificatesColumns,
-
+        onRowDoubleClick: (row, navigate) => {
+          if (row.certificateId) {
+            navigate(`/certificates/${row.certificateId}`);
+          }
+        },
         apiEndpoint: "/volunteers/:id/certificates",
         title: "Certificates",
         searchPlaceholder: "Search certificates...",
@@ -223,6 +238,17 @@ export const volunteerTabsConfig = {
         apiEndpoint: "/volunteers",
         title: "Volunteer",
         redirectPath: "/volunteers",
+      },
+    },
+    {
+      label: "Add Certificate",
+      path: "certificates/add",
+      component: GenericCreatePage, // Use the wrapper, not just the form
+      props: {
+        config: certificateFormFields,
+        apiEndpoint: "/volunteers/:id/certificates",
+        title: "Certtificate",
+        redirectPath: "/volunteers/:id/certificates",
       },
     },
   ],

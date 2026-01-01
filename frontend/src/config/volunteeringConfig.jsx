@@ -75,10 +75,6 @@ export const volunteeringFormFieldConfig = [
   },
 ];
 
-const Combonentsss = (props) => {
-  console.log(props);
-  return <h1>creating a task for this one</h1>;
-};
 export const volunteeringFieldsConfig = {
   titleField: "firstName",
   subTitleField: "email",
@@ -126,7 +122,12 @@ export const volunteeringTabsConfig = {
       label: "General Details",
       path: "",
       component: DetailOverview,
-      props: { config: volunteeringFieldsConfig }, // Passes the fields config above to the overview
+      props: {
+        config: volunteeringFieldsConfig,
+        onClickButton: (data) => {
+          console.log(data);
+        },
+      }, // Passes the fields config above to the overview
     },
 
     {
@@ -134,6 +135,11 @@ export const volunteeringTabsConfig = {
       path: "tasks",
       component: GenericTable,
       props: {
+        onRowDoubleClick: (row, navigate) => {
+          if (row.teamVolunteerId) {
+            navigate(`/tasks/${row.taskId}`);
+          }
+        },
         getRowClassName: getRowClassName,
         customStyles: columnsStyles,
         columns: tasksColumns,
@@ -161,6 +167,7 @@ export const volunteeringTabsConfig = {
       path: "edit",
       component: GenericEditPage, // Use the wrapper, not just the form
       props: {
+        getRoles: true,
         config: volunteeringFormFieldConfig,
         apiEndpoint: "/volunteering",
         title: "Volunteering",

@@ -30,7 +30,7 @@ const DetailViewShell = ({ config, fetchFn, idName }) => {
         Array.isArray(value.data)
       ) {
         const isTrue = value.data[0] === 1;
-        sanitized[key] = isTrue ? "Active" : "Inactive";
+        sanitized[key] = isTrue ? "YES" : "NO";
       } else if (typeof value === "object" && value !== null) {
         sanitized[key] = sanitizeData(value);
       } else {

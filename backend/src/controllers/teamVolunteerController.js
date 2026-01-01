@@ -552,7 +552,7 @@ const completeTask = async (req, res) => {
     });
   }
 };
-const deleteTask = async (req, res) => {};
+
 export {
   getAllTeamVolunteers,
   getTeamVolunteer,
@@ -562,7 +562,6 @@ export {
   endVolunteering,
   createTask,
   updateTask,
-  deleteTask,
   getTask,
   completeTask,
 };

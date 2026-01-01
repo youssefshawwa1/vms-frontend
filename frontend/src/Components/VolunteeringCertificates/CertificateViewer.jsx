@@ -1,83 +1,123 @@
-import { useState, useEffect } from "react";
-import useFetching from "../../Hooks/useFetching";
-// This component fetches the PDF from your PHP script
-// and displays it in an iframe.
-function CertificateViewer({ certificateId }) {
-  const { fetchData } = useFetching();
-  // pdfUrl will hold the temporary blob URL (e.g., "blob:http://...")
-  const [pdfUrl, setPdfUrl] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; // Import useParams
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Paper,
+  Button,
+} from "@mui/material";
+import { Download } from "@mui/icons-material";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:5000";
+
+const CertificateViewer = ({ data }) => {
+  const { id } = useParams(); // Get ID from URL /certificates/:id/view
+  const [previewData, setPreviewData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Determine the ID: URL param takes priority, fallback to prop data
+  const certificateId = id || data?.certificateId || data?.id;
+
   useEffect(() => {
-    // 1. Define the URL for your PHP endpoint
+    const fetchImage = async () => {
+      // If we still don't have an ID, we can't fetch
+      if (!certificateId) return;
 
-    // Create a variable to hold the blob URL so we can clean it up
-    let objectUrl = null;
-
-    const fetchPdf = async () => {
       try {
-        // 2. Fetch the PDF
-
-        const response = await fetchData(
-          `certificates.php?id=${certificateId}&action=view`,
-          null,
-          true
+        setLoading(true);
+        const response = await axios.get(
+          `${BASE_URL}/certificates/${certificateId}/preview`
         );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch PDF: ${response.statusText}`);
+        if (response.data.success) {
+          setPreviewData(response.data.data);
         }
-        const pdfBlob = await response.blob();
-
-        // 4. Create a temporary URL for this blob
-        // This creates a special URL that points to the data
-        // in the browser's memory.
-        objectUrl = URL.createObjectURL(pdfBlob);
-
-        // 5. Set this temporary URL in our state
-        setPdfUrl(objectUrl);
       } catch (err) {
-        setError(err.message);
+        console.error("Preview Fetch Error:", err);
+        setError("Failed to load certificate preview.");
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
-    fetchPdf();
+    fetchImage();
+  }, [certificateId]); // Re-run if ID changes
 
-    // 6. Cleanup Function (This is very important!)
-    // This function runs when the component is unmounted.
-    return () => {
-      if (objectUrl) {
-        // We must revoke the URL to prevent memory leaks
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [certificateId]); // Re-run this whole effect if the certificateId changes
+  const handleDownload = () => {
+    if (!previewData) return;
+    const { imageInfo, preview } = previewData.image;
+    const link = document.createElement("a");
+    link.href = `data:${imageInfo.imageType};base64,${preview}`;
+    link.download = `${imageInfo.fileName || "certificate"}.jpg`;
+    link.click();
+  };
 
-  // --- Render Logic ---
+  if (loading)
+    return (
+      <Box className="flex flex-col items-center justify-center p-20">
+        <CircularProgress sx={{ color: "var(--color-main)" }} />
+        <Typography sx={{ mt: 2, fontWeight: 700, color: "text.secondary" }}>
+          Generating Preview...
+        </Typography>
+      </Box>
+    );
 
-  if (isLoading) {
-    return <div className="text-center">Loading certificate...</div>;
-  }
+  if (error || !previewData)
+    return (
+      <Box className="p-10 text-center text-red-500 font-bold">
+        {error || "No preview available for this certificate."}
+      </Box>
+    );
 
-  if (error) {
-    return <div className="text-center">Error</div>;
-  }
+  const { imageInfo, preview } = previewData.image;
 
   return (
-    <iframe
-      className="certificate-iframe"
-      src={pdfUrl}
-      width="100%"
-      height="700px" // Set a good height
-      title="Certificate Viewer"
-      style={{
-        border: "1px solid #ffffffff",
-      }}
-    />
+    <Box className="animate-slide-up">
+      <Box className="flex justify-between items-center mb-4">
+        <Typography variant="h6" sx={{ fontWeight: 800 }}>
+          Certificate Preview
+        </Typography>
+        <Button
+          startIcon={<Download />}
+          onClick={handleDownload}
+          sx={{
+            color: "var(--color-main)",
+            fontWeight: 700,
+            "&:hover": { backgroundColor: "rgba(var(--color-main-rgb), 0.05)" },
+          }}
+        >
+          Download JPG
+        </Button>
+      </Box>
+
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          backgroundColor: "#f3f4f6",
+          borderRadius: "24px",
+          display: "flex",
+          justifyContent: "center",
+          border: "1px solid #e5e7eb",
+          minHeight: "400px",
+          alignItems: "center",
+        }}
+      >
+        <img
+          src={`data:${imageInfo.imageType};base64,${preview}`}
+          alt="Certificate"
+          style={{
+            maxWidth: "100%",
+            height: "auto",
+            borderRadius: "8px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+          }}
+        />
+      </Paper>
+    </Box>
   );
-}
+};
 
 export default CertificateViewer;

@@ -144,7 +144,7 @@ const Task = {
     };
   },
 
-  update: async ({ task, taskId, teamVolunteerId }) => {
+  update: async ({ task, taskId }) => {
     try {
       const {
         taskTitle,
@@ -190,7 +190,7 @@ const Task = {
         values.push(completed);
       }
 
-      if (completionDate !== undefined) {
+      if (completionDate !== undefined || completionDate != "") {
         updates.push("completionDate = ?");
         values.push(completionDate);
       }
@@ -202,11 +202,10 @@ const Task = {
         throw new Error("No valid fields provided for update");
 
       values.push(taskId);
-      values.push(teamVolunteerId);
       const [result] = await db.query(
         `
       UPDATE tasks set ${updates.join(", ")}
-      WHERE taskId = ? AND teamVolunteerId = ?`,
+      WHERE taskId = ?`,
         values
       );
 

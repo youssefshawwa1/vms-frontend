@@ -12,35 +12,37 @@ const Tasks = () => {
 
   hideLoading();
   const handleRowDoulbeClick = (row) => {
-    // navigate(`/tasks/${row.volunteerId}`);
+    navigate(`/tasks/${row.taskId}`);
   };
   const handleAddNew = () => {
     // navigate("/tasks/add");
   };
 
   return (
-    <GenericTable
-      getRowClassName={getRowClassName}
-      customStyles={columnsStyles}
-      columns={columns}
-      apiEndpoint={"/tasks"}
-      title={"Tasks"}
-      initialFilters={{
-        items: [
-          {
-            id: 1,
-            field: "completed",
-            operator: "is",
-            value: false,
-          },
-        ],
-      }}
-      searchPlaceholder="Search tasks..."
-      description="Explore tasks rules data, click on a row to show more details"
-      onRowDoubleClick={handleRowDoulbeClick}
-      rowId="taskId"
-      addNew={handleAddNew}
-    />
+    <div className="p-7 w-full">
+      <GenericTable
+        getRowClassName={getRowClassName}
+        customStyles={columnsStyles}
+        columns={columns}
+        apiEndpoint={"/tasks"}
+        title={"Tasks"}
+        initialFilters={{
+          items: [
+            {
+              id: 1,
+              field: "completed",
+              operator: "is",
+              value: false,
+            },
+          ],
+        }}
+        searchPlaceholder="Search tasks..."
+        description="Explore tasks rules data, click on a row to show more details"
+        onRowDoubleClick={handleRowDoulbeClick}
+        rowId="taskId"
+        // addNew={handleAddNew}
+      />
+    </div>
   );
 };
 

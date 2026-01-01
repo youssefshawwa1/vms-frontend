@@ -14,26 +14,28 @@ const Volunteering = () => {
     // navigate("/volunteering/add");
   };
   return (
-    <GenericTable
-      columns={columns}
-      apiEndpoint={"/volunteering"}
-      title={"Volunteering"}
-      initialFilters={{
-        items: [
-          {
-            id: 1,
-            field: "active",
-            operator: "is",
-            value: 1,
-          },
-        ],
-      }}
-      searchPlaceholder="Search volunteering..."
-      description="Explore volunteering rules data, click on a row to show more details"
-      onRowDoubleClick={handleRowDoulbeClick}
-      rowId="teamVolunteerId"
-      // addNew={handleAddNew}
-    />
+    <div className="p-7 w-full">
+      <GenericTable
+        columns={columns}
+        apiEndpoint={"/volunteering"}
+        title={"Volunteering"}
+        initialFilters={{
+          items: [
+            {
+              id: 1,
+              field: "active",
+              operator: "is",
+              value: 1,
+            },
+          ],
+        }}
+        searchPlaceholder="Search volunteering..."
+        description="Explore volunteering rules data, click on a row to show more details"
+        onRowDoubleClick={handleRowDoulbeClick}
+        rowId="teamVolunteerId"
+        // addNew={handleAddNew}
+      />
+    </div>
   );
 };
 

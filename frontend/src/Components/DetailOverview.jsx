@@ -1,11 +1,22 @@
 import { useOutletContext } from "react-router-dom";
 
-// 1. Receive 'config' as a prop from the Route
-const DetailOverview = ({ config }) => {
-  // 2. Get 'data' from the Shell via Outlet context
-  const { data } = useOutletContext();
+/**
+ * DetailOverview Component
+ * @param {Object} config - The field and section configuration
+ * @param {Array} actions - Optional action components (like CompleteTaskAction)
+ */
+const DetailOverview = ({ config, actions = [] }) => {
+  const context = useOutletContext();
+  const data = context?.data;
+  const onRefresh =
+    context?.refreshData ||
+    context?.onRefresh ||
+    (() => window.location.reload());
 
-  // Safety check: if config isn't passed yet, don't crash
+  if (!data) {
+    return <div className="p-6 text-slate-500">Loading data...</div>;
+  }
+
   if (!config || !config.sections) {
     return <div className="p-6 text-slate-500">Loading configuration...</div>;
   }
@@ -30,8 +41,18 @@ const DetailOverview = ({ config }) => {
 
   return (
     <div className="flex flex-col gap-6 pb-10 w-full">
+      {/* --- QUICK ACTIONS HEADER --- */}
+      {actions && actions.length > 0 && (
+        <div className="flex justify-end items-center gap-3 px-2">
+          {actions.map((ActionComponent, index) => (
+            <ActionComponent key={index} data={data} onRefresh={onRefresh} />
+          ))}
+        </div>
+      )}
+
+      {/* --- DATA SECTIONS --- */}
       {config.sections.map((section, idx) => {
-        // ... rest of your existing mapping logic ...
+        // Check if the section has any fields with actual data to display
         const hasVisibleFields = section.fields.some(
           (f) =>
             data[f.path] !== null &&
@@ -45,22 +66,28 @@ const DetailOverview = ({ config }) => {
           <div
             key={idx}
             className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden w-full animate-slide-up"
+            style={{ animationDelay: `${idx * 0.05}s` }}
           >
+            {/* Section Header */}
             <div className="px-6 py-4 border-b border-slate-50 bg-slate-50/30">
               <h2 className="text-xs font-black text-main uppercase tracking-[0.15em]">
                 {section.group}
               </h2>
             </div>
+
+            {/* Section Body */}
             <div className="p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-y-8 gap-x-10">
                 {section.fields.map((field, fIdx) => {
                   const rawValue = data[field.path];
+
                   if (
                     rawValue === null ||
                     rawValue === undefined ||
                     rawValue === ""
                   )
                     return null;
+
                   return (
                     <div key={fIdx} className="flex flex-col gap-1.5 min-w-0">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">

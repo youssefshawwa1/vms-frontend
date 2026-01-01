@@ -18,10 +18,6 @@ import {
   getVolunteerTasks,
   getVolunteerCertificates,
   createCertificate,
-  updateCertificate,
-  getCertificate,
-  getCertificatePdf,
-  sendCertificateByEmail,
 } from "./controllers/volunteerController.js";
 import {
   getAllTeams,
@@ -39,14 +35,23 @@ import {
   updateTeamVolunteer,
   endVolunteering,
   getTask,
-  deleteTask,
-  completeTask,
   createTask,
-  updateTask,
 } from "./controllers/teamVolunteerController.js";
 
-import { getAllTasks } from "./controllers/taskController.js";
-import { getAllCertificates } from "./controllers/certificateController.js";
+import {
+  getAllTasks,
+  completeTask,
+  updateTask,
+  deleteTask,
+} from "./controllers/taskController.js";
+import {
+  getAllCertificates,
+  updateCertificate,
+  getCertificate,
+  getCertificatePdf,
+  sendCertificateByEmail,
+  getCertificatePreview,
+} from "./controllers/certificateController.js";
 
 const app = express();
 app.use(
@@ -63,26 +68,19 @@ app.get("/users/:userId", getUser);
 app.get("/users", getAllUsers);
 app.post("/users", createUser);
 app.get("/roles", getAllRoles);
-app.post("/volunteers/:volunteerId/certificates", createCertificate);
-app.patch(
-  "/volunteers/:volunteerId/certificates/:certificateId",
-  updateCertificate
-);
-app.post(
-  "/volunteers/:volunteerId/certificates/:certificateId/send",
-  sendCertificateByEmail
-);
-app.get(
-  "/volunteers/:volunteerId/certificates/:certificateId/pdf",
-  getCertificatePdf
-);
-app.get("/volunteers/:volunteerId/certificates/:certificateId", getCertificate);
 
+app.patch("/certificates/:certificateId", updateCertificate);
+app.post("/certificates/:certificateId/send", sendCertificateByEmail);
+app.get("/certificates/:certificateId/pdf", getCertificatePdf);
+app.get("/certificates/:certificateId", getCertificate);
+app.get("/certificates", getAllCertificates);
+app.get("/certificates/:certificateId/preview", getCertificatePreview);
 // app.post("/volunteers/:volunteerId/certificates/:certificateId/send", sendCertificate)
 app.get("/volunteers/:volunteerId/certificates", getVolunteerCertificates);
 
 app.patch("/volunteers/:volunteerId", updateVolunteer);
 // app.get("/volunteers/:volunteerId/teams", getVolunteerTasks);
+app.post("/volunteers/:volunteerId/certificates", createCertificate);
 app.get("/volunteers/:volunteerId/tasks", getVolunteerTasks);
 app.get("/volunteers/:volunteerId/volunteering", getVolunteerVolunteering);
 app.get("/volunteers/:volunteerId", getVolunteer);
@@ -96,17 +94,13 @@ app.get("/teams/:teamId", getTeam);
 app.get("/teams", getAllTeams);
 app.post("/teams", createTeam);
 
-app.get("/volunteering/:teamVolunteerId/tasks/:taskId", getTask);
-app.post("/volunteering/:teamVolunteerId/tasks", createTask);
-app.patch("/volunteering/:teamVolunteerId/tasks/:taskId", updateTask);
-app.patch(
-  "/volunteering/:teamVolunteerId/tasks/:taskId/complete",
-  completeTask
-); /////////check for thiss
-app.delete("/volunteering/:teamVolunteerId/tasks/:taskId", deleteTask);
+app.get("/tasks/:taskId", getTask);
 
-app.patch("/volunteering/:teamVolunteerId/end", endVolunteering); /////////check for thiss
+// app.delete("/volunteering/:teamVolunteerId/tasks/:taskId", deleteTask);
+
+app.patch("/volunteering/:teamVolunteerId/end", endVolunteering);
 app.get("/volunteering/:teamVolunteerId/tasks", getTeamVolunteerTasks);
+app.post("/volunteering/:teamVolunteerId/tasks", createTask);
 app.patch("/volunteering/:teamVolunteerId", updateTeamVolunteer);
 app.get("/volunteering/:teamVolunteerId", getTeamVolunteer);
 app.get("/volunteering", getAllTeamVolunteers);
@@ -114,7 +108,9 @@ app.post("/volunteering", createTeamVolunteer);
 // app.patch("/tasks/:taskId/update", updateTask);
 
 app.get("/tasks", getAllTasks);
-app.get("/certificates", getAllCertificates);
+
+app.patch("/tasks/:taskId", updateTask);
+app.patch("/tasks/:taskId/complete", completeTask);
 
 app.listen(5000, () => {
   console.log("Connected to backend.");

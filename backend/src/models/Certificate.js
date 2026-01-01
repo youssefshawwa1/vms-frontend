@@ -73,12 +73,11 @@ const Certificate = {
           LOWER(c.customMessage) LIKE ? OR 
           LOWER(c.certificateNumber) LIKE ? OR 
           LOWER(v.email) LIKE ? )`);
-        values.push(...Array(9).fill(searchTerm));
+        values.push(...Array(10).fill(searchTerm));
       }
 
       if (conditions.length > 0)
         whereClause = "WHERE " + conditions.join(" AND ");
-      console.log(whereClause);
       const [rows] = await db.query(
         `
         SELECT c.*, v.firstName, v.lastName, v.email, v.phone, v.volunteerId
@@ -114,7 +113,7 @@ const Certificate = {
       return e;
     }
   },
-  findById: async ({ certificateId, volunteerId }) => {
+  findById: async ({ certificateId }) => {
     const [rows] = await db.query(
       `
       SELECT c.*, v.firstName, v.lastName, v.volunteerId, v.phone, v.email,
@@ -123,9 +122,9 @@ const Certificate = {
         JOIN volunteer v ON c.volunteerId = v.volunteerId 
         JOIN users u ON u.userId = c.issuedBy 
         LEFT JOIN users u2 ON u2.userId = c.updatedBy
-        WHERE c.certificateId= ? AND v.volunteerId = ? LIMIT 0,2
+        WHERE c.certificateId= ?  LIMIT 0,2
         `,
-      [certificateId, volunteerId]
+      [certificateId]
     );
     if (!rows[0]) throw new Error("Certificate not found");
     return rows[0];
@@ -185,11 +184,11 @@ const Certificate = {
       if (updates.length === 0)
         throw new Error("No valid fields provided for update");
       values.push(certificateId);
-      values.push(volunteerId);
+
       const [result] = await db.query(
         `
         UPDATE volunteeringcertificate set ${updates.join(", ")} 
-        WHERE certificateId = ? AND volunteerId = ?`,
+        WHERE certificateId = ? `,
         values
       );
 
@@ -197,7 +196,6 @@ const Certificate = {
 
       const updatedCertificate = await Certificate.findById({
         certificateId,
-        volunteerId,
       });
       return updatedCertificate;
     } catch (error) {
@@ -205,16 +203,16 @@ const Certificate = {
     }
   },
 
-  registerSendByEmail: async ({ certificateId, volunteerId }) => {
+  registerSendByEmail: async ({ certificateId }) => {
     const [rows] = await db.query(
       `
         UPDATE volunteeringcertificate
             SET emailSendCount = emailSendCount + 1,
             lastEmailSentAt = NOW(),
             firstEmailSentAt = COALESCE(firstEmailSentAt, NOW())
-            WHERE certificateId = ? AND volunteerId = ?
+            WHERE certificateId = ? 
         `,
-      [certificateId, volunteerId]
+      [certificateId]
     );
 
     if (!rows.affectedRows) throw new Error("Certificate not found");

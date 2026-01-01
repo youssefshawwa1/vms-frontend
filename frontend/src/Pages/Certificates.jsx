@@ -9,22 +9,24 @@ function Certificates() {
 
   hideLoading();
   const handleRowDoulbeClick = (row) => {
-    // navigate(`/teams/${row.teamId}`);
+    navigate(`/certificates/${row.certificateId}`);
   };
   const handleAddNew = () => {
     // navigate("/teams/add");
   };
   return (
-    <GenericTable
-      columns={columns}
-      apiEndpoint={"/certificates"}
-      title={"Certificates"}
-      searchPlaceholder="Search Certificates..."
-      description="Explore certificates data, click on a row to show more details"
-      onRowDoubleClick={handleRowDoulbeClick}
-      rowId="certificateId"
-      // addNew={handleAddNew}
-    />
+    <div className="p-7 w-full">
+      <GenericTable
+        columns={columns}
+        apiEndpoint={"/certificates"}
+        title={"Certificates"}
+        searchPlaceholder="Search Certificates..."
+        description="Explore certificates data, click on a row to show more details"
+        onRowDoubleClick={handleRowDoulbeClick}
+        rowId="certificateId"
+        // addNew={handleAddNew}
+      />
+    </div>
   );
 }
 

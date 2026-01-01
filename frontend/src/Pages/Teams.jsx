@@ -15,16 +15,18 @@ function Teams() {
     navigate("/teams/create");
   };
   return (
-    <GenericTable
-      columns={columns}
-      apiEndpoint={"/teams"}
-      title={"Teams"}
-      searchPlaceholder="Search Teams..."
-      description="Explore teams data, click on a row to show more details"
-      onRowDoubleClick={handleRowDoulbeClick}
-      rowId="teamId"
-      addNew={handleAddNew}
-    />
+    <div className="p-7 w-full">
+      <GenericTable
+        columns={columns}
+        apiEndpoint={"/teams"}
+        title={"Teams"}
+        searchPlaceholder="Search Teams..."
+        description="Explore teams data, click on a row to show more details"
+        onRowDoubleClick={handleRowDoulbeClick}
+        rowId="teamId"
+        addNew={handleAddNew}
+      />
+    </div>
   );
 }
 

@@ -74,5 +74,127 @@ const getAllTasks = async (req, res) => {
     });
   }
 };
+const updateTask = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const updateData = req.body;
+    const allowedUpdates = [
+      "taskTitle",
+      "taskDescription",
+      "startDate",
+      "endDate",
+      "volunteeringHours",
+      "completed",
+      "completionDate",
+      "userId",
+    ];
 
-export { getAllTasks };
+    const updates = {};
+    allowedUpdates.forEach((field) => {
+      if (updateData[field] !== undefined) {
+        updates[field] = updateData[field];
+      }
+    });
+
+    if (
+      Object.keys(updates).length === 0 ||
+      updates.userId === undefined ||
+      updates.userId === "" ||
+      updates.userId <= 999
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields provided for update",
+      });
+    }
+    const updatedTask = await Task.update({
+      taskId: taskId,
+      task: updates,
+    });
+    if (!updatedTask) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Task updated successfully",
+        data: { task: updatedTask },
+      });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating task",
+      error: error.message,
+    });
+  }
+};
+
+const getTask = async (req, res) => {
+  try {
+    const taskId = req.params.taskId || 0;
+    if (!Number.isInteger(Number(taskId)) || Number(taskId) <= 999) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid task id format. must be a positive integer.",
+      });
+    }
+    const result = await Task.findById({ taskId });
+
+    res.status(200).json({
+      success: true,
+      message: "Task retrived successfully",
+      data: { ...result },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching Task",
+      error: error.message,
+    });
+  }
+};
+const completeTask = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const updateData = req.body;
+    const allowedUpdates = ["completionDate", "userId"];
+
+    const updates = {};
+    allowedUpdates.forEach((field) => {
+      if (updateData[field] === undefined) {
+        return res.status(400).json({
+          success: false,
+          message: "No valid fields provided for complete this task",
+        });
+      }
+      updates[field] = updateData[field];
+    });
+    updates["completed"] = 1;
+
+    const updatedTask = await Task.update({
+      taskId: taskId,
+      task: updates,
+    });
+    if (!updatedTask) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Task put as completed successfully",
+        data: { task: updatedTask },
+      });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error completing this task",
+      error: error.message,
+    });
+  }
+};
+const deleteTask = async (req, res) => {};
+export { getAllTasks, updateTask, getTask, completeTask, deleteTask };

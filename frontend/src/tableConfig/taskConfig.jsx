@@ -1,3 +1,5 @@
+import CompleteTaskAction from "../Components/CompleteTaskAction";
+import { Box } from "@mui/material";
 import {
   getGridStringOperators,
   getGridNumericOperators,
@@ -13,6 +15,7 @@ const tasksColumns = [
       (op) => op.value === "equals"
     ),
   },
+
   {
     field: "taskTitle",
     headerName: "Task Title",

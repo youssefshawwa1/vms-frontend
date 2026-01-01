@@ -1,3 +1,6 @@
+import DetailOverview from "../Components/DetailOverview";
+import GenericEditPage from "../Components/GenericEditPage";
+import CompleteTaskAction from "../Components/CompleteTaskAction";
 export const taskFormFields = [
   {
     name: "taskTitle",
@@ -12,23 +15,7 @@ export const taskFormFields = [
     type: "date",
     gridSpan: "md:col-span-1",
     validation: {
-      custom: (value, allValues) => {
-        // 1. If either date is missing, skip this specific check
-        // (Let the 'required' validation handle empty states)
-        if (!value) return "Start Date Field is Required";
-
-        const start = new Date(allValues.startDate);
-        const end = new Date(value);
-
-        // 2. The Error Condition: End Date is before Start Date
-        if (end < start) {
-          return "End Date cannot be earlier than the Start Date";
-        }
-
-        // 3. Keep your previous logic: If inactive, End Date is required
-
-        return null;
-      },
+      required: true,
     },
   },
   {
@@ -37,18 +24,7 @@ export const taskFormFields = [
     type: "date",
     gridSpan: "md:col-span-1",
     validation: {
-      required: true, // Tasks usually need an end date
-      custom: (value, allValues) => {
-        if (!value || !allValues.startDate) return null;
-
-        const start = new Date(allValues.startDate);
-        const end = new Date(value);
-
-        if (end < start) {
-          return "End Date cannot be earlier than the Start Date";
-        }
-        return null;
-      },
+      required: true,
     },
   },
   {
@@ -72,6 +48,7 @@ export const taskFormFields = [
     gridSpan: "md:col-span-2",
     validation: {
       custom: (value, allValues) => {
+        if (!value && !allValues.completionDate) return null;
         if (!value && allValues.completionDate) {
           return "This field is required";
         }
@@ -109,3 +86,73 @@ export const taskFormFields = [
     },
   },
 ];
+
+export const taskFieldConfig = {
+  titleField: "taskTitle",
+  subTitleField: "taskDescription",
+  sections: [
+    {
+      group: "Overview",
+      fields: [
+        { label: "Description", path: "taskDescription" },
+        { label: "Start Date", path: "startDate", type: "dateTime" },
+        { label: "End Date", path: "endDate", type: "dateTime" },
+        {
+          label: "Volunteering Hours",
+          path: "volunteeringHours",
+          type: "number",
+        },
+        { label: "Completion Date", path: "completionDate", type: "dateTime" },
+      ],
+    },
+    {
+      group: "Volunteering Details",
+      fields: [
+        { label: "Title", path: "volunteerTitle" },
+        { label: "First Name", path: "firstName" },
+        { label: "Last Name", path: "lastName" },
+        { label: "Email", path: "lastName" },
+        { label: "Phone", path: "phone" },
+        { label: "Team Name", path: "teamName" },
+        { label: "Completed", path: "completed" },
+        { label: "Role Title", path: "roleTitle" },
+      ],
+    },
+    {
+      group: "System Information",
+      fields: [
+        { label: "Created By", path: "createdByName" },
+        { label: "Created At", path: "createdAt", type: "dateTime" },
+        { label: "Updated By", path: "updatedByName" },
+        { label: "Updated At", path: "updatedAt", type: "dateTime" },
+      ],
+    },
+  ],
+};
+
+export const taskTabsConfig = {
+  titleField: "taskTTitle",
+  // subTitleField: "taskDescription",
+  tabs: [
+    {
+      label: "General Details",
+      path: "",
+
+      component: DetailOverview,
+      props: { config: taskFieldConfig, actions: [CompleteTaskAction] }, // Passes the fields config above to the overview
+    },
+
+    {
+      label: "Edit Task",
+      path: "edit",
+      component: GenericEditPage,
+      props: {
+        config: taskFormFields,
+        apiEndpoint: "/tasks",
+        title: "Task",
+        redirectPath: "/tasks",
+        // Pass the action here
+      },
+    },
+  ],
+};

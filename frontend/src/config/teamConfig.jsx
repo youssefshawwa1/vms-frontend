@@ -41,7 +41,7 @@ export const teamFieldsConfig = {
       fields: [
         { label: "Created By", path: "userName" },
         { label: "Team ID", path: "teamId" },
-        { label: "Created At", path: "createdAt", type: "date" },
+        { label: "Created At", path: "createdAt", type: "dateTime" },
         { label: "Last Updated", path: "updatedAt", type: "dateTime" },
         { label: "Updated By", path: "updatedByName" },
       ],
@@ -64,7 +64,11 @@ export const teamTabsConfig = {
       component: GenericTable,
       props: {
         columns: volunteeringColumns,
-
+        onRowDoubleClick: (row, navigate) => {
+          if (row.teamVolunteerId) {
+            navigate(`/volunteering/${row.teamVolunteerId}`);
+          }
+        },
         apiEndpoint: "/teams/:id/volunteering",
         title: "Volunteering",
         initialFilters: {
@@ -91,7 +95,11 @@ export const teamTabsConfig = {
         getRowClassName: getRowClassName,
         customStyles: columnsStyles,
         columns: tasksColumns,
-
+        onRowDoubleClick: (row, navigate) => {
+          if (row.taskId) {
+            navigate(`/tasks/${row.taskId}`);
+          }
+        },
         apiEndpoint: "/teams/:id/tasks",
         title: "Tasks",
         initialFilters: {

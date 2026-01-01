@@ -14,16 +14,18 @@ function Volunteers() {
     navigate("/volunteers/create");
   };
   return (
-    <GenericTable
-      columns={columns}
-      apiEndpoint={"/volunteers"}
-      title={"Volunteers"}
-      searchPlaceholder="Search Volunteers..."
-      description="Explore volunteers data, click on a row to show more details"
-      onRowDoubleClick={handleRowDoulbeClick}
-      rowId="volunteerId"
-      addNew={handleAddNew}
-    />
+    <div className="p-7 w-full">
+      <GenericTable
+        columns={columns}
+        apiEndpoint={"/volunteers"}
+        title={"Volunteers"}
+        searchPlaceholder="Search Volunteers..."
+        description="Explore volunteers data, click on a row to show more details"
+        onRowDoubleClick={handleRowDoulbeClick}
+        rowId="volunteerId"
+        addNew={handleAddNew}
+      />
+    </div>
   );
 }
 

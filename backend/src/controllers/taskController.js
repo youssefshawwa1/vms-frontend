@@ -9,6 +9,7 @@ const getAllTasks = async (req, res) => {
       "teamId",
       "volunteerId",
       "teamVolunteerId",
+      "teamName",
     ];
     allowedFilters.forEach((key) => {
       if (req.query[key]) {

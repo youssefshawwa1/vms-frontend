@@ -87,7 +87,7 @@ const getTeamVolunteer = async (req, res) => {
       !Number.isInteger(Number(teamVolunteerId)) ||
       Number(teamVolunteerId) <= 999
     ) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Invalid volunteering id format. must be a positive integer.",
       });
@@ -140,7 +140,7 @@ const createTeamVolunteer = async (req, res) => {
     }
 
     const newVolunteer = await TeamVolunteer.create({
-      volunteer: {
+      teamVolunteer: {
         volunteerId,
         startDate,
         roleId,
@@ -211,12 +211,12 @@ const updateTeamVolunteer = async (req, res) => {
         success: false,
         message: "Volunteering not found",
       });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Volunteering updated successfully",
-      data: { volunteering: updatedTeamVolunteer },
-    });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Volunteering updated successfully",
+        data: { volunteering: updatedTeamVolunteer },
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -299,11 +299,11 @@ const getTeamVolunteerTasks = async (req, res) => {
         message: "Tasks retrived successfully",
         ...result,
       });
-    }
-    res.status(404).json({
-      success: false,
-      message: "No Tasks found",
-    });
+    } else
+      res.status(404).json({
+        success: false,
+        message: "No Tasks found",
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -469,12 +469,12 @@ const updateTask = async (req, res) => {
         success: false,
         message: "Task not found",
       });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Task updated successfully",
-      data: { task: updatedTask },
-    });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Task updated successfully",
+        data: { task: updatedTask },
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -489,7 +489,7 @@ const getTask = async (req, res) => {
     const taskId = req.params.taskId || 0;
     const teamVolunteerId = req.params.teamVolunteerId || 0;
     if (!Number.isInteger(Number(taskId)) || Number(taskId) <= 999) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Invalid task id format. must be a positive integer.",
       });
@@ -538,12 +538,12 @@ const completeTask = async (req, res) => {
         success: false,
         message: "Task not found",
       });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Task put as completed successfully",
-      data: { task: updatedTask },
-    });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Task put as completed successfully",
+        data: { task: updatedTask },
+      });
   } catch (error) {
     res.status(500).json({
       success: false,

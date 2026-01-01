@@ -11,6 +11,8 @@ const getAllCertificates = async (req, res) => {
       "certificateType",
       "volunteeringHours",
       "emailSentCount",
+      "issueDate",
+      "certificateNumber",
     ];
 
     allowedFilters.forEach((key) => {

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Teams from "./Teams";
+import Teams from "../../Pages/Teams";
 import VolunteeringForm from "../Volunteering/VolunteeringForm";
-import Volunteers from "../Volunteers/Volunteers";
+import Volunteers from "../../Pages/Volunteers";
 import SelectionCard from "../Global/SelectionCard";
 const AddVolunteering = ({ type, details, reFetch, whenVisible }) => {
   const [selectedItem, setSelectedItem] = useState(null);

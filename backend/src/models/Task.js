@@ -19,7 +19,7 @@ const Task = {
           return;
         } else if (key.includes("completed"))
           simpleFilters["t." + key] = filters[key];
-        else if (key.includes("teamId"))
+        else if (key.includes("teamId") || key.includes("teamName"))
           simpleFilters["te." + key] = filters[key];
         else if (key.includes("volunteerId"))
           simpleFilters["v." + key] = filters[key];
@@ -73,14 +73,7 @@ const Task = {
       if (conditions.length > 0) {
         whereClause = "WHERE " + conditions.join(" AND ");
       }
-      console.log(
-        `      SELECT t.*, v.firstName, v.lastName, tv.volunteerTitle, te.teamName
-            FROM tasks t
-            JOIN teamvolunteer tv ON t.teamVolunteerId = tv.teamVolunteerId
-            JOIN volunteer v ON tv.volunteerId = v.volunteerId
-            JOIN team te ON te.teamId = tv.teamId
-        ${whereClause}`
-      );
+
       const [rows] = await db.query(
         `
       SELECT t.*, v.firstName, v.lastName, tv.volunteerTitle, te.teamName

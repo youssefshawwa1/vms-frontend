@@ -158,7 +158,9 @@ const TeamVolunteer = {
   },
 
   create: async ({ teamVolunteer }) => {
-    const [result] = await db.query(`INSERT INTO team SET ? `, [teamVolunteer]);
+    const [result] = await db.query(`INSERT INTO teamvolunteer SET ? `, [
+      teamVolunteer,
+    ]);
     if (!result) {
       throw new Error("Volunteering not created!");
     }

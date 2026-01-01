@@ -129,12 +129,12 @@ const updateUser = async (req, res) => {
         success: false,
         message: "User not found",
       });
-    }
-    res.status(200).json({
-      success: true,
-      message: "user updated successfully",
-      data: { user: updatedUser },
-    });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "user updated successfully",
+        data: { user: updatedUser },
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -147,7 +147,7 @@ const getUser = async (req, res) => {
   try {
     const userId = req.params.userId;
     if (!Number.isInteger(Number(userId)) || Number(userId) <= 999) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Invalid user id format. must be a positive integer.",
       });
@@ -183,6 +183,7 @@ const deleteUser = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User Deleted",
+      data: result,
     });
   } catch (error) {
     res.status(500).json({

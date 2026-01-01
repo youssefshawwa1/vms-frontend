@@ -31,11 +31,12 @@ const getAllTeams = async (req, res) => {
         success: false,
         message: "No teams found",
       });
-    res.status(200).json({
-      success: true,
-      message: "Teams retrived successfully",
-      ...result,
-    });
+    else
+      res.status(200).json({
+        success: true,
+        message: "Teams retrived successfully",
+        ...result,
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -76,7 +77,6 @@ const createTeam = async (req, res) => {
       data: newTeam,
     });
   } catch (error) {
-    // console.log(error);
     res.status(500).json({
       success: false,
       message: "Error creating team",
@@ -88,8 +88,6 @@ const updateTeam = async (req, res) => {
   try {
     const teamId = req.params.teamId;
     const updateData = req.body;
-    console.log(updateData);
-    console.log(teamId);
     const allowedUpdates = ["teamName", "description", "userId"];
     const updates = {};
     allowedUpdates.forEach((field) => {
@@ -111,12 +109,12 @@ const updateTeam = async (req, res) => {
         success: false,
         message: "Team not found",
       });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Team updated successfully",
-      data: { team: updatedTeam },
-    });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Team updated successfully",
+        data: { team: updatedTeam },
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -208,11 +206,11 @@ const getTeamVolunteering = async (req, res) => {
         message: "Volunteering retrived successfully",
         ...result,
       });
-    }
-    res.status(404).json({
-      success: false,
-      message: "No Volunteering found",
-    });
+    } else
+      res.status(404).json({
+        success: false,
+        message: "No Volunteering found",
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -279,11 +277,11 @@ const getTeamTasks = async (req, res) => {
         message: "Tasks retrived successfully",
         ...result,
       });
-    }
-    res.status(404).json({
-      success: false,
-      message: "No Tasks found",
-    });
+    } else
+      res.status(404).json({
+        success: false,
+        message: "No Tasks found",
+      });
   } catch (error) {
     res.status(500).json({
       success: false,

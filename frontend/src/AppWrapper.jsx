@@ -15,9 +15,9 @@ const AppWrapper = () => {
   }, []);
   return (
     <AuthProvider>
-      {isLoading && <Loading />}
+      {/* {isLoading && <Loading />}
       {isMessageVisible && <Message />}
-      {popUpConfig.isVisible && <PopUp />}
+      {popUpConfig.isVisible && <PopUp />} */}
       <App />
     </AuthProvider>
   );

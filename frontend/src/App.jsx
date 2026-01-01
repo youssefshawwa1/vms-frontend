@@ -2,31 +2,31 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Dashboard from "./Pages/Dashboard";
-import Volunteers from "./Components/Volunteers/Volunteers";
-import VolunteerDetails from "./Components/Volunteers/VolunteerDetails";
-import AddVolunteer from "./Components/Volunteers/AddVolunteer";
-import AddTeam from "./Components/Teams/AddTeam";
-import Teams from "./Components/Teams/Teams";
+import Volunteers from "./Pages/Volunteers";
+import Teams from "./Pages/Teams";
 import Layout from "./Components/Global/Layout/Layout";
 import "./App.css";
-import TeamDetails from "./Components/Teams/TeamDetails";
-import { VolunteerProvider } from "./Contexts/VolunteerContext";
-import { TeamProvider } from "./Contexts/TeamContext";
-import { VolunteeringProvider } from "./Contexts/VolunteeringContext";
 import PageNotFound from "./Components/Global/PageNotFound";
-import Volunteering from "./Components/Volunteering/Volunteering";
-import VolunteeringDetails from "./Components/Volunteering/VolunteeringDetails";
-import Tasks from "./Components/Tasks/Tasks";
+import Volunteering from "./Pages/Volunteering";
+import Tasks from "./Pages/Tasks";
 import TaskDetails from "./Components/Tasks/TaskDetails";
-import Certificates from "./Components/VolunteeringCertificates/Certificates";
+import Certificates from "./Pages/Certificates";
 import CertificateDetails from "./Components/VolunteeringCertificates/CertificateDetails";
 import { useAuth } from "./Contexts/AuthContext";
 import ProtectedRoute from "./Components/Auth/ProtectedRoute";
 import Login from "./Pages/Login";
 import Profile from "./Components/Users/Profile";
-import Users from "./Components/Users/Users";
+import Users from "./Pages/Users";
 import AddUser from "./Components/Users/AddUser";
 import UserDetails from "./Components/Users/UserDetails";
+import { volunteerFormFieldConfig } from "./config/volunteerConfig";
+import GenericCreatePage from "./Components/GenericCreatePage";
+import axios from "axios";
+import DetailViewShell from "./Components/DetailViewShell";
+import { teamTabsConfig } from "./config/teamConfig";
+import { volunteerTabsConfig } from "./config/volunteerConfig";
+import { teamFormFieldConfig } from "./config/teamConfig";
+import { volunteeringTabsConfig } from "./config/volunteeringConfig";
 const App = () => {
   const { isAuthenticated, loading } = useAuth();
   return (
@@ -55,42 +55,111 @@ const App = () => {
         </Route>
         <Route
           path="volunteers"
-          element={
-            <VolunteerProvider>
-              <Outlet />
-            </VolunteerProvider>
-          }
+          // element={<Outlet />} // You can include this, or omit it entirely
         >
           <Route index element={<Volunteers />} />
-          <Route path=":id" element={<VolunteerDetails />} />
-          <Route path="add" element={<AddVolunteer />} />
+
+          <Route
+            path=":id"
+            element={
+              <DetailViewShell
+                idName={"volunteerId"}
+                config={volunteerTabsConfig}
+                fetchFn={(params) =>
+                  axios.get(`http://localhost:5000/volunteers/${params.id}`)
+                }
+              />
+            }
+          >
+            {volunteerTabsConfig.tabs.map((tab) => (
+              <Route
+                key={tab.path}
+                index={tab.path === ""}
+                path={tab.path !== "" ? tab.path : undefined}
+                element={<tab.component {...tab.props} />}
+              />
+            ))}
+          </Route>
+
+          <Route
+            path="create"
+            element={
+              <GenericCreatePage
+                title={"Volunteer"}
+                config={volunteerFormFieldConfig}
+                apiEndpoint={"/volunteers/create"}
+                redirectPath={"/volunteers"}
+              />
+            }
+          />
         </Route>
 
-        {/* Team routes */}
-        <Route
-          path="teams"
-          element={
-            <TeamProvider>
-              <Outlet />
-            </TeamProvider>
-          }
-        >
+        <Route path="teams">
           <Route index element={<Teams />} />
-          <Route path=":id" element={<TeamDetails />} />
-          <Route path="add" element={<AddTeam />} />
+          <Route
+            path=":id"
+            element={
+              <DetailViewShell
+                idName={"teamId"}
+                config={teamTabsConfig}
+                fetchFn={(params) =>
+                  axios.get(`http://localhost:5000/teams/${params.id}`)
+                }
+              />
+            }
+          >
+            {teamTabsConfig.tabs.map((tab) => (
+              <Route
+                key={tab.path}
+                index={tab.path === ""}
+                path={tab.path !== "" ? tab.path : undefined}
+                element={<tab.component {...tab.props} />}
+              />
+            ))}
+          </Route>
+
+          <Route
+            path="create"
+            element={
+              <GenericCreatePage
+                title={"Team"}
+                config={teamFormFieldConfig}
+                apiEndpoint={"/teams"}
+                redirectPath={"/teams"}
+              />
+            }
+          />
         </Route>
 
         <Route
           path="volunteering"
-          element={
-            <VolunteeringProvider>
-              <Outlet />
-            </VolunteeringProvider>
-          }
+          // element={<Outlet />} // You can include this, or omit it entirely
         >
           <Route index element={<Volunteering />} />
-          <Route path=":id" element={<VolunteeringDetails />} />
+
+          <Route
+            path=":id"
+            element={
+              <DetailViewShell
+                idName={"teamVolunteerId"}
+                config={volunteeringTabsConfig}
+                fetchFn={(params) =>
+                  axios.get(`http://localhost:5000/volunteering/${params.id}`)
+                }
+              />
+            }
+          >
+            {volunteeringTabsConfig.tabs.map((tab) => (
+              <Route
+                key={tab.path}
+                index={tab.path === ""}
+                path={tab.path !== "" ? tab.path : undefined}
+                element={<tab.component {...tab.props} />}
+              />
+            ))}
+          </Route>
         </Route>
+
         <Route path="tasks" element={<Outlet />}>
           <Route index element={<Tasks />} />
           <Route path=":id" element={<TaskDetails />} />

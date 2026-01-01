@@ -1,7 +1,7 @@
-import { useOverLay } from "../../Contexts/OverLayContext";
-import GenericTable from "../Global/GenericTable";
+import { useOverLay } from "../Contexts/OverLayContext";
+import GenericTable from "../Components/Global/GenericTable";
 import { useNavigate } from "react-router-dom";
-import { teamsColumns as columns } from "../Global/Columns";
+import { teamsColumns as columns } from "../tableConfig/teamConfig";
 
 function Teams() {
   const { hideLoading } = useOverLay();
@@ -12,7 +12,7 @@ function Teams() {
     navigate(`/teams/${row.teamId}`);
   };
   const handleAddNew = () => {
-    navigate("/teams/add");
+    navigate("/teams/create");
   };
   return (
     <GenericTable

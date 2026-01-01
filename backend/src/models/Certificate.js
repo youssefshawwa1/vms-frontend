@@ -66,12 +66,14 @@ const Certificate = {
           ( LOWER(c.certificateTitle) LIKE ? OR 
           LOWER(v.firstName) LIKE ? OR 
           LOWER(v.lastName) LIKE ? OR 
+          LOWER(v.phone) LIKE ? OR 
           LOWER(c.certificateDescription) LIKE ? OR 
           LOWER(c.certificateKind) LIKE ? OR 
           LOWER(c.certificateType) LIKE ? OR 
-          LOWER(c.customeMessage) LIKE ? OR 
+          LOWER(c.customMessage) LIKE ? OR 
+          LOWER(c.certificateNumber) LIKE ? OR 
           LOWER(v.email) LIKE ? )`);
-        values.push(...Array(8).fill(searchTerm));
+        values.push(...Array(9).fill(searchTerm));
       }
 
       if (conditions.length > 0)
@@ -89,7 +91,10 @@ const Certificate = {
       );
 
       const [[{ total }]] = await db.query(
-        `SELECT COUNT(*) as total FROM volunteeringcertificate c ${whereClause}`,
+        `SELECT COUNT(*) as total 
+        FROM volunteeringcertificate c 
+        JOIN volunteer v ON c.volunteerId = v.volunteerId  
+   ${whereClause}`,
         values
       );
       const totalPages = Math.ceil(total / limit);

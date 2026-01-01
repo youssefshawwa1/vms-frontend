@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { DataGrid, GridOverlay } from "@mui/x-data-grid";
+import { useParams } from "react-router-dom";
 import {
   TextField,
   CircularProgress,
@@ -21,11 +22,17 @@ const GenericTable = ({
   addNew,
   onRowClick,
   onRowDoubleClick,
+  initialFilters,
+  customStyles,
+  getRowClassName,
 }) => {
+  const paramss = useParams();
   const [rows, setRows] = useState([]);
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [filterModel, setFilterModel] = useState({ items: [] });
+  const [filterModel, setFilterModel] = useState(
+    initialFilters || { items: [] }
+  );
 
   // --- 1. Internal State ---
   const [paginationModel, setPaginationModel] = useState({
@@ -67,6 +74,10 @@ const GenericTable = ({
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
+      let finalUrl = apiEndpoint;
+      Object.keys(paramss).forEach((key) => {
+        finalUrl = finalUrl.replace(`:${key}`, paramss[key]);
+      });
       const params = {
         page: paginationModel.page + 1, // Syncing with 1-indexed backend
         limit: paginationModel.pageSize,
@@ -115,7 +126,7 @@ const GenericTable = ({
         }
       });
 
-      const response = await axios.get(`http://localhost:5000${apiEndpoint}`, {
+      const response = await axios.get(`http://localhost:5000${finalUrl}`, {
         params,
       });
 
@@ -145,7 +156,7 @@ const GenericTable = ({
     }
   };
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden m-6 w-full animate-slide-up">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden  w-full animate-slide-up">
       {/* HEADER SECTION */}
       <div className="px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-50">
         <div>
@@ -195,6 +206,7 @@ const GenericTable = ({
       {/* TABLE SECTION */}
       <div className="h-[500px] w-full p-2">
         <DataGrid
+          getRowClassName={getRowClassName ? getRowClassName : () => ""}
           onFilterModelChange={(newModel) => setFilterModel(newModel)}
           filterMode="server" // Crucial: stops local filtering
           filterModel={filterModel}
@@ -207,7 +219,7 @@ const GenericTable = ({
           sortingMode="server"
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
-          pageSizeOptions={[5, 10, 20, 50]}
+          pageSizeOptions={[5, 10, 20]}
           hideFooterPagination={false}
           sortModel={sortModel}
           onSortModelChange={setSortModel}
@@ -269,6 +281,7 @@ const GenericTable = ({
             "& .MuiDataGrid-columnHeader:focus-within": {
               outline: "none",
             },
+            ...customStyles,
           }}
           slots={{
             toolbar: GridToolbar,

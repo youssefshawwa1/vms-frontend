@@ -1,7 +1,7 @@
-import { useOverLay } from "../../Contexts/OverLayContext";
-import GenericTable from "../Global/GenericTable";
+import { useOverLay } from "../Contexts/OverLayContext";
+import GenericTable from "../Components/Global/GenericTable";
 import { useNavigate } from "react-router-dom";
-import { volunteerColumns as columns } from "../Global/Columns";
+import { volunteerColumns as columns } from "../tableConfig/volunteerConfig";
 function Volunteers() {
   const { hideLoading } = useOverLay();
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ function Volunteers() {
     navigate(`/volunteers/${row.volunteerId}`);
   };
   const handleAddNew = () => {
-    navigate("/volunteering/add");
+    navigate("/volunteers/create");
   };
   return (
     <GenericTable

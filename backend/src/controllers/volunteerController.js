@@ -437,7 +437,15 @@ const getVolunteerCertificates = async (req, res) => {
     });
   }
 };
+function generateCertificateNumber() {
+  const prefix = "FEKRA-V-";
+  const year = new Date().getFullYear(); // e.g., 2026
 
+  // Generate 2 random bytes and convert to hex (4 characters)
+  const randomSuffix = crypto.randomBytes(2).toString("hex").toUpperCase();
+
+  return `${prefix}${year}${randomSuffix}`;
+}
 const createCertificate = async (req, res) => {
   try {
     const {
@@ -464,7 +472,10 @@ const createCertificate = async (req, res) => {
       });
     }
     const userId = req.user.userId;
+
+    const certtificateNumber = generateCertificateNumber();
     const certificate = {
+      certificateNumber,
       certificateTitle,
       certificateDescription,
       customMessage,

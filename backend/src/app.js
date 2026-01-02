@@ -52,7 +52,12 @@ import {
   sendCertificateByEmail,
   getCertificatePreview,
 } from "./controllers/certificateController.js";
-
+import {
+  login,
+  verifyOTP,
+  validateToken,
+} from "./controllers/authController.js";
+import { authenticateToken } from "./middleware/auth.js";
 const app = express();
 app.use(
   cors({
@@ -62,6 +67,9 @@ app.use(
 );
 app.use(express.json());
 
+app.post("/auth/login", login);
+app.post("/auth/verify-otp", verifyOTP);
+app.get("/auth/validate-token", authenticateToken, validateToken);
 app.delete("/users/:userId", deleteUser);
 app.patch("/users/:userId/", updateUser);
 app.get("/users/:userId", getUser);

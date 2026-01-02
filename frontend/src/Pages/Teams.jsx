@@ -1,7 +1,7 @@
 import { useOverLay } from "../Contexts/OverLayContext";
 import GenericTable from "../Components/Global/GenericTable";
 import { useNavigate } from "react-router-dom";
-import { teamsColumns as columns } from "../tableConfig/teamConfig";
+import { teamsColumns as columns } from "../config/teamConfig";
 
 function Teams() {
   const { hideLoading } = useOverLay();

@@ -131,10 +131,17 @@ const GenericEditPage = ({
       return;
     }
 
+    // --- FIX: Convert Booleans to Integers (0 or 1) to prevent MySQL Buffer errors ---
+    const sanitizedFields = Object.keys(changedFields).reduce((acc, key) => {
+      const val = changedFields[key];
+      acc[key] = typeof val === "boolean" ? (val ? 1 : 0) : val;
+      return acc;
+    }, {});
+
     setSubmitting(true);
     try {
       await axios.patch(`${BASE_URL}${apiEndpoint}/${id}`, {
-        ...changedFields,
+        ...sanitizedFields,
         userId: 1001, // Audit trail
       });
 

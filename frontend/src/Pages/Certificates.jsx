@@ -1,7 +1,7 @@
 import { useOverLay } from "../Contexts/OverLayContext";
 import GenericTable from "../Components/Global/GenericTable";
 import { useNavigate } from "react-router-dom";
-import { certificatesColumnsForCertificates as columns } from "../tableConfig/certificateConfig";
+import { certificatesColumnsForCertificates as columns } from "../config/certificateConfig";
 
 function Certificates() {
   const { hideLoading } = useOverLay();

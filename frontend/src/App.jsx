@@ -24,6 +24,7 @@ import { teamFormFieldConfig } from "./config/teamConfig";
 import { volunteeringTabsConfig } from "./config/volunteeringConfig";
 import { taskTabsConfig } from "./config/taskConfig";
 import { certificateTabConfig } from "./config/certificateConfig";
+import { userTabsConfig } from "./config/userConfig";
 const App = () => {
   const { isAuthenticated, loading } = useAuth();
   return (
@@ -42,7 +43,45 @@ const App = () => {
       >
         <Route index element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/users" element={<Users />} />
+        {/* <Route path="/users" element={<Users />} /> */}
+
+        <Route path="users">
+          <Route index element={<Users />} />
+          <Route
+            path=":id"
+            element={
+              <DetailViewShell
+                idName={"userId"}
+                config={userTabsConfig}
+                fetchFn={(params) =>
+                  axios.get(`http://localhost:5000/users/${params.id}`)
+                }
+              />
+            }
+          >
+            {userTabsConfig.tabs.map((tab) => (
+              <Route
+                key={tab.path}
+                index={tab.path === ""}
+                path={tab.path !== "" ? tab.path : undefined}
+                element={<tab.component {...tab.props} />}
+              />
+            ))}
+          </Route>
+
+          <Route
+            path="create"
+            element={
+              <GenericCreatePage
+                title={"Team"}
+                config={teamFormFieldConfig}
+                apiEndpoint={"/teams"}
+                redirectPath={"/teams"}
+              />
+            }
+          />
+        </Route>
+
         {/* Volunteer routes */}
 
         {/* <Route path="users" element={<Outlet />}>

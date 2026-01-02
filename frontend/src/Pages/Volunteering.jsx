@@ -1,7 +1,7 @@
 import { useOverLay } from "../Contexts/OverLayContext";
 import GenericTable from "../Components/Global/GenericTable";
 import { useNavigate } from "react-router-dom";
-import { volunteeringColumnsForVolunteering as columns } from "../tableConfig/volunteeringConfig";
+import { volunteeringColumnsForVolunteering as columns } from "../config/volunteeringConfig";
 const Volunteering = () => {
   const { hideLoading } = useOverLay();
   const navigate = useNavigate();

@@ -80,12 +80,28 @@ const User = {
     }
   },
   findById: async ({ userId }) => {
-    const [rows] = await db.query(
-      `SELECT userId, userName, status, firstName, lastName, createdAt, updatedAt, userEmail FROM users WHERE userId = ?`,
-      [userId]
-    );
-    if (!rows[0]) throw new Error("User not found");
-    return rows[0];
+    try {
+      const [rows] = await db.query(
+        `SELECT userId, userName, status, firstName, lastName, createdAt, updatedAt, userEmail FROM users WHERE userId = ?`,
+        [userId]
+      );
+      if (!rows[0]) throw new Error("User not found");
+      return rows[0];
+    } catch (error) {
+      throw error;
+    }
+  },
+  findByEmail: async ({ userEmail }) => {
+    try {
+      const [rows] = await db.execute(
+        "SELECT * FROM users WHERE userEmail = ?",
+        [userEmail]
+      );
+      if (!rows[0]) throw new Error("User not found");
+      return rows[0];
+    } catch (error) {
+      throw error;
+    }
   },
   findByUserName: async ({ userName }) => {
     const [rows] = await db.query("SELECT * FROM users WHERE username = ?", [

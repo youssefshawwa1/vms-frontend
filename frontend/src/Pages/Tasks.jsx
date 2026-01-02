@@ -5,7 +5,7 @@ import {
   tasksColumnsForTasks as columns,
   getRowClassName,
   columnsStyles,
-} from "../tableConfig/taskConfig";
+} from "../config/taskConfig";
 const Tasks = () => {
   const { hideLoading } = useOverLay();
   const navigate = useNavigate();

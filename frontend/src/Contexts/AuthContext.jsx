@@ -1,179 +1,147 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { API } from "../Components/Global/Global";
+import api from "../api/axios";
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true); // For initial auth check
+  const [loading, setLoading] = useState(true);
   const [verificationRequired, setVerificationRequired] = useState(false);
   const [pendingUserId, setPendingUserId] = useState(null);
+  const [expiresAt, setExpiresAt] = useState(null);
+
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  // Validates existing token on refresh
   const checkAuthStatus = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`${API}validate-session.php`, {
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-
-        if (result.isAuthenticated) {
-          setUser(result.user);
-          setIsAuthenticated(true);
-        }
-      } else {
-        console.log("Auth check failed with status:", response.status);
+      // This hits the endpoint we just created in the backend
+      const response = await api.get("/validate-token");
+      if (response.data.success) {
+        setUser(response.data.user);
+        setIsAuthenticated(true);
       }
     } catch (error) {
-      console.error("Auth check failed:", error);
+      console.error("Token validation failed:", error);
+      logout(); // Clear local storage and state if token is bad
     } finally {
       setLoading(false);
     }
   };
-  const resetVerification = () => {
-    setVerificationRequired(false);
-    setPendingUserId(null);
-  };
-  const login = async (userName, password) => {
+
+  const login = async (email, password) => {
     setLoading(true);
-    const data = { username: userName, password: password };
-    const response = await fetch(`${API}login.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
+    try {
+      const response = await api.post("/login", { email, password });
 
-    if (!response.ok) {
-      setLoading(false);
-      return { message: "Login Failed!" };
-    }
+      if (response.data.mfaRequired) {
+        setPendingUserId(response.data.userId);
+        setExpiresAt(response.data.expiresAt); // For the frontend timer
+        setVerificationRequired(true);
+        setLoading(false);
+        return { success: true, mfaRequired: true };
+      }
 
-    const result = await response.json();
-
-    if (result.requiresVerification) {
-      // Show verification code input modal
-      setVerificationRequired(true);
-      setPendingUserId(result.userId); // Store for verification
-      setLoading(false);
-      return result;
-    }
-
-    if (result.success) {
-      setTimeout(() => {
-        setUser(result.data.user);
+      // If MFA is not required (standard login)
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        setUser(response.data.user);
         setIsAuthenticated(true);
-      }, 1000);
+      }
+
+      return response.data;
+    } catch (error) {
+      setLoading(false);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Login Failed",
+      };
     }
-    setLoading(false);
-    return result;
   };
+
+  const resendCode = async () => {
+    try {
+      // Hits the new /resend-otp endpoint
+      const response = await api.post("/resend-otp", { userId: pendingUserId });
+
+      if (response.data.success) {
+        // IMPORTANT: Update the expiration time to restart the timer
+        setExpiresAt(response.data.expiresAt);
+        return { success: true, message: response.data.message };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to resend code",
+      };
+    }
+  };
+
   const verifyTheCode = async (code) => {
     setLoading(true);
-    const data = {
-      code: code,
-      userId: pendingUserId,
-    };
-    const response = await fetch(`${API}verifyCode.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      setLoading(false);
-      return { message: "Verification Failed!" };
-    }
-    const result = await response.json();
-
-    if (result.success) {
-      setUser(result.data.user);
-      setIsAuthenticated(true);
-      setVerificationRequired(false);
-    }
-    setLoading(false);
-    return result;
-  };
-  const resendCode = async () => {
-    setLoading(true);
-    const data = { userId: pendingUserId };
-    const response = await fetch(`${API}resendCode.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      setLoading(false);
-      return { message: "Faild to resend code!" };
-    }
-    setLoading(false);
-    return await response.json();
-  };
-
-  const logout = async () => {
-    setLoading(true);
     try {
-      const response = await fetch(`${API}logout.php`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
+      const response = await api.post("/verify-otp", {
+        userId: pendingUserId,
+        code: code,
       });
-      if (response.ok) {
-        // Clear both session and localStorage
-        localStorage.removeItem("user");
-        localStorage.removeItem("isAuthenticated");
 
-        setUser(null);
-        setIsAuthenticated(false);
-      } else {
-        console.error("Logout failed with status:", response.status);
-        // Still clear frontend state even if backend fails
-        localStorage.removeItem("user");
-        localStorage.removeItem("isAuthenticated");
-        setUser(null);
-        setIsAuthenticated(false);
+      if (response.data.success) {
+        const { token, user: userData } = response.data;
+
+        localStorage.setItem("token", token);
+        setUser(userData);
+        setIsAuthenticated(true);
+        setVerificationRequired(false);
+        setPendingUserId(null);
+        setExpiresAt(null); // Stop the timer
+        return { success: true };
       }
     } catch (error) {
-      console.error("Logout error:", error);
-      // Clear frontend state even if network error
-      localStorage.removeItem("user");
-      localStorage.removeItem("isAuthenticated");
-      setUser(null);
-      setIsAuthenticated(false);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Invalid Code",
+      };
     } finally {
       setLoading(false);
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    setIsAuthenticated(false);
+    setVerificationRequired(false);
+    setPendingUserId(null);
+    setExpiresAt(null);
   };
 
   const value = {
     user,
-    setUser,
     isAuthenticated,
-    setIsAuthenticated,
     loading,
     login,
     logout,
     verificationRequired,
-    pendingUserId,
     verifyTheCode,
-    resetVerification,
     resendCode,
+    expiresAt,
+    resetVerification: () => {
+      setVerificationRequired(false);
+      setExpiresAt(null);
+      setPendingUserId(null);
+    },
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within a AuthProvider");
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);

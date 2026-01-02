@@ -1,7 +1,7 @@
 import { useOverLay } from "../Contexts/OverLayContext";
 import GenericTable from "../Components/Global/GenericTable";
 import { useNavigate } from "react-router-dom";
-import { usersColumnsForAdmin as columns } from "../tableConfig/userConfig";
+import { usersColumnsForAdmin as columns } from "../config/userConfig";
 
 function Users() {
   const { hideLoading } = useOverLay();

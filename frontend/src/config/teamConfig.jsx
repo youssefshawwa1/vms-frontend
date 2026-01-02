@@ -1,15 +1,15 @@
 import DetailOverview from "../Components/DetailOverview";
 import GenericTable from "../Components/Global/GenericTable";
-import { volunteeringColumnsForTeams as volunteeringColumns } from "../tableConfig/volunteeringConfig";
+import { volunteeringColumnsForTeams as volunteeringColumns } from "./volunteeringConfig";
 import GenericEditPage from "../Components/GenericEditPage";
 import SelectAndCreatePage from "../Components/SelectAndCreatePage";
 import { volunteeringFormFieldConfig } from "../config/volunteeringConfig";
-import { volunteerColumns } from "../tableConfig/volunteerConfig";
+import { volunteerColumns } from "./volunteerConfig";
 import {
   getRowClassName,
   columnsStyles,
   tasksColumnsForTeam as tasksColumns,
-} from "../tableConfig/taskConfig";
+} from "./taskConfig";
 
 export const teamFormFieldConfig = [
   {
@@ -152,3 +152,34 @@ export const teamTabsConfig = {
     },
   ],
 };
+
+import { getGridStringOperators } from "@mui/x-data-grid";
+const teamsColumns = [
+  {
+    field: "teamId",
+    headerName: "ID",
+    width: 70,
+    filterOperators: getGridStringOperators().filter(
+      (op) => op.value === "equals"
+    ),
+  },
+  {
+    field: "teamName",
+    headerName: "Team Name",
+    width: 130,
+    filterOperators: getGridStringOperators().filter(
+      (op) => op.value === "equals"
+    ),
+  },
+  {
+    field: "description",
+    headerName: "description",
+    width: 400,
+    sortable: true,
+    filterOperators: getGridStringOperators().filter(
+      (op) => op.value === "equals"
+    ),
+  },
+];
+
+export { teamsColumns };

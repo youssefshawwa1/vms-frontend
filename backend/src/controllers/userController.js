@@ -54,7 +54,7 @@ const getAllUsers = async (req, res) => {
 };
 const createUser = async (req, res) => {
   try {
-    const { userName, userEmail, password, firstName, lastName, status } =
+    const { userName, userEmail, password, firstName, lastName, status, role } =
       req.body;
 
     if (!userName || !userEmail || !password || !firstName || !lastName) {
@@ -72,6 +72,13 @@ const createUser = async (req, res) => {
       });
     }
 
+    const existingEmail = await User.findByEmail({ userEmail });
+    if (existingEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "An account with this email already exists",
+      });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       user: {
@@ -81,6 +88,7 @@ const createUser = async (req, res) => {
         firstName,
         lastName,
         status,
+        role,
       },
     });
 
@@ -136,6 +144,7 @@ const updateUser = async (req, res) => {
         data: { user: updatedUser },
       });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error updating user",

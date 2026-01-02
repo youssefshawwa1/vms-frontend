@@ -65,7 +65,7 @@ import { getDashboardStats } from "./controllers/dashboardController.js";
 const app = express();
 app.use(
   cors({
-    origin: "https://vms-frontend-cjon.onrender.com",
+    origin: "https://remarkable-monstera-21ca08.netlify.app",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );

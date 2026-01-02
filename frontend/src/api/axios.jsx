@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // Use the root URL so you can hit different endpoints
-  baseURL: "http://trolley.proxy.rlwy.net:37078",
+  baseURL: "https://vms-frontend-production.up.railway.app/",
 });
 
 // This interceptor sits between your app and the server

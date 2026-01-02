@@ -1,6 +1,7 @@
 import db from "../config/db.js";
-
+//Handling Teams Crud operations.
 const Team = {
+  //getting all teams, based on filters
   findAll: async ({
     page = 1,
     limit = 5,
@@ -71,6 +72,7 @@ const Team = {
       return e;
     }
   },
+  //getting a specific team using teamId
   findById: async ({ teamId }) => {
     const [rows] = await db.query(
       `SELECT t.*, u1.userName as userName, u2.userName as updatedByName
@@ -82,6 +84,7 @@ const Team = {
     if (!rows[0]) throw new Error("Team not found");
     return rows[0];
   },
+  //find a team by its name for checking if a team exists already.
   findByName: async ({ teamName }) => {
     const [rows] = await db.query("SELECT * FROM team WHERE teamName = ?", [
       teamName,
@@ -89,6 +92,7 @@ const Team = {
     // console.log(userName);
     return rows[0];
   },
+  //creating a team
   create: async ({ team }) => {
     const [result] = await db.query(`INSERT INTO team SET ? `, [team]);
     if (!result) {
@@ -98,6 +102,7 @@ const Team = {
       team,
     };
   },
+  //updating a team dynamically
   update: async ({ team, teamId }) => {
     try {
       const { teamName, description, userId } = team;
@@ -144,9 +149,24 @@ const Team = {
       throw error;
     }
   },
+  //get total teams for dashboard.
   getTotalCount: async () => {
     const [rows] = await db.execute("SELECT COUNT(*) as count FROM team");
     return rows[0].count;
+  },
+  //delete a team
+  delete: async ({ teamId }) => {
+    //here deleting the certificate if needed!
+    const [result] = await db.query(
+      "DELETE FROM team WHERE teamId = ?",
+      teamId
+    );
+    if (!result) {
+      throw new Error("Team not Deleted!");
+    }
+    return {
+      teamId: teamId,
+    };
   },
 };
 export default Team;

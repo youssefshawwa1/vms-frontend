@@ -1,6 +1,8 @@
 import db from "../config/db.js";
 
+//task model is handling all tasks CRUD.
 const Task = {
+  //getting all tasks baased on filters, this will be used in teams, volunteering, and volunteer.
   findAll: async ({
     page = 1,
     limit = 5,
@@ -114,6 +116,7 @@ const Task = {
       return e;
     }
   },
+  //finding a specific task by id
   findById: async ({ taskId }) => {
     const [rows] = await db.query(
       `SELECT t.*, tv.volunteerTitle,
@@ -133,6 +136,7 @@ const Task = {
     if (!rows[0]) throw new Error("Task not found");
     return rows[0];
   },
+  //creating a task
   create: async ({ task }) => {
     const [result] = await db.query(`INSERT INTO tasks SET ? `, [task]);
     if (!result) {
@@ -144,6 +148,7 @@ const Task = {
     };
   },
 
+  //dynamically update a task
   update: async ({ task, taskId }) => {
     try {
       const {
@@ -217,15 +222,31 @@ const Task = {
       throw error;
     }
   },
+  //get total tasks count, for the dashboard.
   getTotalCount: async () => {
     const [rows] = await db.execute("SELECT COUNT(*) as count FROM tasks");
     return rows[0].count;
   },
+  //get currenly active tasks for the dashboard.
   getActiveCount: async () => {
     const [rows] = await db.execute(
       "SELECT COUNT(*) as count FROM tasks WHERE completed = 0"
     );
     return rows[0].count;
+  },
+  //delet a task if needed!
+  delete: async ({ taskId }) => {
+    //here deleting the certificate if needed!
+    const [result] = await db.query(
+      "DELETE FROM tasks WHERE taskId = ?",
+      taskId
+    );
+    if (!result) {
+      throw new Error("Task not Deleted!");
+    }
+    return {
+      taskId: taskId,
+    };
   },
   // update: async ({ task, taskId }) => {
   //   try {

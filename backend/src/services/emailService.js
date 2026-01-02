@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-
+//email service using nodemailer to send emails
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -8,6 +8,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+//sending the certificate by email, witth attachment a pdf.
 export const sendCertificateEmail = async ({
   email,
   data,
@@ -52,6 +53,7 @@ export const sendCertificateEmail = async ({
 
   return transporter.sendMail(mailOptions);
 };
+//sending the OTP by email!
 export const sendOTP = async ({ user, otpCode }) => {
   const bodyHtml = `
         <h1><b>Dear ${user.firstName} ${user.lastName} Your Verification Code is</b></h1></br

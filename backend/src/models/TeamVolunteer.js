@@ -1,6 +1,8 @@
 import db from "../config/db.js";
 
+//this model, is the one that connect a volunteer with the team.
 const TeamVolunteer = {
+  //getting all volunteering, with filters.
   findAll: async ({
     page = 1,
     limit = 5,
@@ -139,6 +141,7 @@ const TeamVolunteer = {
       throw e;
     }
   },
+  //get a voluntteering by id
   findById: async ({ teamVolunteerId }) => {
     const [rows] = await db.query(
       `SELECT tv.*, v.firstName, v.lastName, v.email, v.phone,
@@ -156,7 +159,7 @@ const TeamVolunteer = {
     if (!rows[0]) throw new Error("Volunteering not found");
     return rows[0];
   },
-
+  //creating a volunteering.
   create: async ({ teamVolunteer }) => {
     const [result] = await db.query(`INSERT INTO teamvolunteer SET ? `, [
       teamVolunteer,
@@ -168,6 +171,7 @@ const TeamVolunteer = {
       teamVolunteer,
     };
   },
+  //updating a volunteering
   update: async ({ teamVolunteer, teamVolunteerId }) => {
     try {
       //change active to status in db
@@ -231,17 +235,32 @@ const TeamVolunteer = {
       throw error;
     }
   },
+  //get total count for tthe dashboard.
   getTotalCount: async () => {
     const [rows] = await db.execute(
       "SELECT COUNT(*) as count FROM teamvolunteer"
     );
     return rows[0].count;
   },
+  //get total active for the dashboard.
   getActiveCount: async () => {
     const [rows] = await db.execute(
       "SELECT COUNT(*) as count FROM teamvolunteer WHERE active = 1"
     );
     return rows[0].count;
+  },
+  delete: async ({ teamvolunteerId }) => {
+    //here deleting the certificate if needed!
+    const [result] = await db.query(
+      "DELETE FROM teamvolunteer WHERE teamvolunteerId = ?",
+      teamvolunteerId
+    );
+    if (!result) {
+      throw new Error("Volunteering not Deleted!");
+    }
+    return {
+      teamvolunteerId: teamvolunteerId,
+    };
   },
 };
 export default TeamVolunteer;

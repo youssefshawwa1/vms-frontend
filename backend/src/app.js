@@ -1,3 +1,5 @@
+//all my routes are here, I didnt use a seperate routes folder or file. as I will work on it later.
+
 import express from "express";
 import cors from "cors";
 import {
@@ -161,6 +163,6 @@ app.get("/tasks", authenticateToken, getAllTasks);
 app.patch("/tasks/:taskId", authenticateToken, updateTask);
 app.patch("/tasks/:taskId/complete", authenticateToken, completeTask);
 
-app.listen(5000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Connected to backend.");
 });

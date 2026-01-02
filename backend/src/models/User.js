@@ -1,6 +1,8 @@
 import db from "../config/db.js";
 
+//the user model
 const User = {
+  //geting all users with filters.
   findAll: async ({
     page = 1,
     limit = 5,
@@ -79,6 +81,7 @@ const User = {
       return e;
     }
   },
+  //specific user.
   findById: async ({ userId, withPassword }) => {
     try {
       let query = "";
@@ -92,6 +95,7 @@ const User = {
       throw error;
     }
   },
+  //gettting user by email for login.
   findByEmail: async ({ userEmail }) => {
     try {
       const [rows] = await db.execute(
@@ -104,6 +108,7 @@ const User = {
       throw error;
     }
   },
+  //fing by username to see if the username exists.
   findByUserName: async ({ userName }) => {
     const [rows] = await db.query("SELECT * FROM users WHERE username = ?", [
       userName,
@@ -111,6 +116,7 @@ const User = {
     // console.log(userName);
     return rows[0];
   },
+  //create a user
   create: async ({ user }) => {
     const [result] = await db.query("INSERT INTO users SET ?", [user]);
     if (!result) {
@@ -120,6 +126,7 @@ const User = {
       user,
     };
   },
+  //udpate a user dynamically
   update: async ({ user, userId }) => {
     try {
       const { userName, userEmail, firstName, lastName, status, passwordHash } =
@@ -180,6 +187,7 @@ const User = {
       throw error;
     }
   },
+  //delete a user if needed
   delete: async ({ userId }) => {
     const [result] = await db.query("DELETE FROM users WHERE userId=?", userId);
     if (!result) {

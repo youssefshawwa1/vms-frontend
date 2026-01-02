@@ -2,12 +2,16 @@ import Volunteer from "../models/volunteer.js";
 import TeamVolunteer from "../models/teamVolunteer.js";
 import Task from "../models/task.js";
 import Certificate from "../models/certificate.js";
+//All actions concerning the volunteer is in this file.
 
 const getAllVolunteers = async (req, res) => {
+  //Getting all volunteers,  with filters, and pages, and limit.
+  //this will be used by many otther endpoints, they will give it the filters, and it will work normally.
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const filters = {};
+    //the allowed filters are here
     const allowedFilters = [
       "birthDate",
       "major",
@@ -25,6 +29,7 @@ const getAllVolunteers = async (req, res) => {
       }
     });
 
+    //special kind of filters that need to be handled.
     if (req.query.birthDateFrom) {
       filters.birthDateFrom = req.query.birthDateFrom;
     }
@@ -44,6 +49,7 @@ const getAllVolunteers = async (req, res) => {
       filters.search = req.query.search;
     }
 
+    //making sure that sortBy and orderBy values are not an injection.
     const rawSortBy = req.query.sortBy;
     const rawOrderBy = req.query.orderBy;
     const sortBy = allowedFilters.includes(rawSortBy)
@@ -51,6 +57,7 @@ const getAllVolunteers = async (req, res) => {
       : "volunteerId";
     const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
+    //Calling the Volunteer.findAll() which get the volunteers, with the given filtters, page, sortBy and orderBy, and with allowedFilters.
     const result = await Volunteer.findAll({
       page,
       limit,
@@ -59,6 +66,7 @@ const getAllVolunteers = async (req, res) => {
       orderBy,
       allowedFilters,
     });
+    //if there is result
     if (result) {
       res.status(200).json({
         success: true,
@@ -66,12 +74,14 @@ const getAllVolunteers = async (req, res) => {
         ...result,
       });
     } else {
+      //no error but no result also.
       res.status(404).json({
         success: false,
         message: "No Volunteers found",
       });
     }
   } catch (error) {
+    //there is an error occured
     res.status(500).json({
       success: false,
       message: "Error fetching Volunteers",
@@ -80,16 +90,19 @@ const getAllVolunteers = async (req, res) => {
   }
 };
 const getVolunteer = async (req, res) => {
+  //getting specific voluntteer by getting its id from the params (url)
   try {
     const volunteerId = req.params.volunteerId;
+    //check if its valid id.
     if (!Number.isInteger(Number(volunteerId)) || Number(volunteerId) <= 999) {
       res.status(400).json({
         success: false,
         message: "Invalid volunteer id format. must be a positive integer.",
       });
     }
+    //getting the volunteer
     const result = await Volunteer.findById({ volunteerId });
-
+    //responding to the user the data.
     res.status(200).json({
       success: true,
       message: "volunteer retrived successfully",
@@ -105,13 +118,13 @@ const getVolunteer = async (req, res) => {
 };
 const createVolunteer = async (req, res) => {
   try {
+    //getting the data from the request body.
     const {
       firstName,
       lastName,
       birthDate,
       major,
       university,
-
       phone,
       email,
       gender,
@@ -119,6 +132,7 @@ const createVolunteer = async (req, res) => {
       residentCountry,
     } = req.body;
 
+    //those fields are required in order to create.
     if (
       !firstName ||
       !lastName ||
@@ -136,7 +150,9 @@ const createVolunteer = async (req, res) => {
         message: "All fields are required",
       });
     }
+    //getting the current logged in user, to put it n history.
     const userId = req.user.userId;
+    //creating the volunteer.
     const newVolunteer = await Volunteer.create({
       volunteer: {
         firstName,
@@ -168,6 +184,7 @@ const createVolunteer = async (req, res) => {
 };
 
 const updateVolunteer = async (req, res) => {
+  //the update is dynamic, it will see if any of the allowedUpdates is therr, then it will update it.
   try {
     const volunteerId = req.params.volunteerId;
     const updateData = req.body;
@@ -197,21 +214,23 @@ const updateVolunteer = async (req, res) => {
       });
     }
     updates.userId = req.user.userId;
+    //updating the volunteer
     const updatedVolunteer = await Volunteer.update({
       volunteerId: volunteerId,
       volunteer: updates,
     });
+    //if didnt update the user. then the user not found (returned null or empty row)
     if (!updatedVolunteer) {
       return res.status(404).json({
         success: false,
         message: "Volunteer not found",
       });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Volunteer updated successfully",
-      data: { volunteer: updatedVolunteer },
-    });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Volunteer updated successfully",
+        data: { volunteer: updatedVolunteer },
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -223,6 +242,7 @@ const updateVolunteer = async (req, res) => {
 
 const getVolunteerVolunteering = async (req, res) => {
   try {
+    //getting the volunteering of a volunteer
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const volunteerId = req.params.volunteerId;
@@ -233,6 +253,7 @@ const getVolunteerVolunteering = async (req, res) => {
         filters[key] = req.query[key];
       }
     });
+    //speical filters
     if (req.query.startDateFrom) {
       filters.startDateFrom = req.query.startDateFrom;
     }
@@ -254,6 +275,7 @@ const getVolunteerVolunteering = async (req, res) => {
     if (req.query.search) {
       filters.search = req.query.search;
     }
+    //adding the volunteerId as a filter, as we will be using the TeamVolunteer.
     filters.volunteerId = volunteerId;
     const rawSortBy = req.query.sortBy;
     const rawOrderBy = req.query.orderBy;
@@ -262,6 +284,7 @@ const getVolunteerVolunteering = async (req, res) => {
       : "teamVolunteerId";
     const orderBy = rawOrderBy?.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
+    //finding the volunteering with the optoins
     const result = await TeamVolunteer.findAll({
       page,
       limit,
@@ -291,6 +314,7 @@ const getVolunteerVolunteering = async (req, res) => {
 
 const getVolunteerTasks = async (req, res) => {
   try {
+    //getting the voluntteer ttasks
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const volunteerId = req.params.volunteerId;
@@ -446,6 +470,7 @@ function generateCertificateNumber() {
   return `${prefix}${year}${randomSuffix}`;
 }
 const createCertificate = async (req, res) => {
+  //creating a certificate for a specific volunteer
   try {
     const {
       certificateTitle,
@@ -456,6 +481,8 @@ const createCertificate = async (req, res) => {
       certificateKind,
     } = req.body;
     const volunteerId = req.params.volunteerId;
+
+    //required fields
     if (
       !certificateTitle ||
       !certificateDescription ||
@@ -472,9 +499,11 @@ const createCertificate = async (req, res) => {
     }
     const userId = req.user.userId;
 
+    //generating a certificate number.
     const certtificateNumber = generateCertificateNumber();
+    //creating a certificate object
     const certificate = {
-      certificateNumber,
+      certtificateNumber,
       certificateTitle,
       certificateDescription,
       customMessage,
@@ -483,12 +512,14 @@ const createCertificate = async (req, res) => {
       issuedBy: userId,
       volunteerId,
     };
+    //if the certificatte with hours, get the volunteering hours from the request
     if (certificateKind == "withHours") {
       certificate.volunteeringHours = volunteeringHours;
       certificate.totalHoursAtIssue = (
         await Volunteer.readVolunteeringHours({ volunteerId })
       ).totalHours;
     }
+    //check if the the volunteer can have this certificate. based on the hours
     const canIssue = await Volunteer.canIssueCertificate({
       volunteerId,
       certificate,

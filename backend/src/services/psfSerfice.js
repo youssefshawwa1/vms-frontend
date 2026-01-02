@@ -4,8 +4,7 @@ import puppeteer from "puppeteer";
 import ejs from "ejs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-
-// Fix for __dirname in ES Modules
+//here creating the pdf of the html certificate. using puppeteer, and ejs.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -14,6 +13,7 @@ const toBase64 = (filePath) => {
   return Buffer.from(bitmap).toString("base64");
 };
 
+//this one creates the pdf, and converts it to an image for easy preview.
 async function generateCertificatePreview(data) {
   // 1. Prepare Base64 assets
   const logoImage = `data:image/png;base64,${toBase64(
@@ -76,6 +76,7 @@ async function generateCertificatePreview(data) {
   await browser.close();
   return imageBuffer;
 }
+//this one creates tthe pdf and send it back.
 async function generateCertificatePDF(data) {
   // 1. Prepare Base64 assets
   const logoImage = `data:image/png;base64,${toBase64(

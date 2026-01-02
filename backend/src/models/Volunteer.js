@@ -1,6 +1,7 @@
 import db from "../config/db.js";
-
+//Volunteer model
 const Volunteer = {
+  //like the other, getting all volunteers by specific filters.
   findAll: async ({
     page = 1,
     limit = 5,
@@ -94,6 +95,7 @@ const Volunteer = {
       return e;
     }
   },
+  //specific volunteer by id
   findById: async ({ volunteerId }) => {
     const [rows] = await db.query(
       `SELECT v.*, u1.userName as userName, u2.userName as updatedByName
@@ -105,6 +107,7 @@ const Volunteer = {
     if (!rows[0]) throw new Error("User not found");
     return rows[0];
   },
+  //creating new volunteer with no team yet.
   create: async ({ volunteer }) => {
     const [result] = await db.query(`INSERT INTO volunteer SET ?`, [volunteer]);
     if (!result) throw new Error("Volunteer not created!");
@@ -113,6 +116,7 @@ const Volunteer = {
     };
   },
 
+  //updating a volunteer data.
   update: async ({ volunteer, volunteerId }) => {
     try {
       const {
@@ -192,6 +196,7 @@ const Volunteer = {
       throw error;
     }
   },
+  //getting the currentt volunteerin hours of a volunteer.
   readVolunteeringHours: async ({ volunteerId }) => {
     const [rows] = await db.query(
       `SELECT 
@@ -209,6 +214,7 @@ const Volunteer = {
     return rows[0];
   },
 
+  //check if this volunteer, can issue this certificatte.
   canIssueCertificate: async ({ certificate, volunteerId }) => {
     try {
       if (certificate.certificateKind == "withHours") {
@@ -224,23 +230,20 @@ const Volunteer = {
       throw error;
     }
   },
-  //   public function canIssueCertificate($certificate) {
-
-  //     if($certificate->certificateKind == "withHours"){
-
-  //         $res = $this->getVolunteeringHours();
-  //         if($res){
-  //             $row = $res->fetch(PDO::FETCH_ASSOC);
-  //             extract(($row));
-  //            if($certificate->volunteeringHours >($totalHours - $issuedHours)  ){
-  //                 return false;
-  //             }
-  //         $certificate->totalHoursAtIssue = $totalHours - $issuedHours;
-  //         }
-
-  //     }
-  //     return true;
-  // }
+  //deleteing a volunteer, if needed
+  delete: async ({ volunteerId }) => {
+    const [result] = await db.query(
+      "DELETE FROM volunteer WHERE volunteerId = ?",
+      volunteerId
+    );
+    if (!result) {
+      throw new Error("Volunteer not Deleted!");
+    }
+    return {
+      volunteerId: volunteerId,
+    };
+  },
+  //get total volunteer counts for dashboard
   getTotalCount: async () => {
     const [rows] = await db.execute("SELECT COUNT(*) as count FROM volunteer");
     return rows[0].count;

@@ -1,6 +1,7 @@
 import db from "../config/db.js";
-
+//the roles didnt matter much, they are here because I used them.
 const Role = {
+  //justt getting the all roles like the other functions.
   findAll: async ({
     page = 1,
     limit = 5,

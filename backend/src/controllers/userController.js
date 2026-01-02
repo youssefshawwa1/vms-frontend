@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
-
+//everything related to the user conttroller is here.
 const getAllUsers = async (req, res) => {
+  //getting all users with filters.
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -53,6 +54,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 const createUser = async (req, res) => {
+  //creating a user, with some specific requirements.
   try {
     const { userName, userEmail, password, firstName, lastName, status, role } =
       req.body;
@@ -80,6 +82,8 @@ const createUser = async (req, res) => {
       });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    //calling method to create.
     const newUser = await User.create({
       user: {
         userName,
@@ -106,6 +110,7 @@ const createUser = async (req, res) => {
   }
 };
 const updateUser = async (req, res) => {
+  //updating the user, with some restriction, here can't update the password.
   try {
     const userId = req.params.userId;
     const updateData = req.body;
@@ -151,6 +156,7 @@ const updateUser = async (req, res) => {
   }
 };
 const updateProfile = async (req, res) => {
+  //here can be updated the logged in profile, with making sure to get the password and check it.
   try {
     const userId = req.user.userId;
     const oldUserData = await User.findById({ userId, withPassword: true });
@@ -220,6 +226,7 @@ const updateProfile = async (req, res) => {
   }
 };
 const getUser = async (req, res) => {
+  //here getting a user data, using id
   try {
     const userId = req.params.userId;
     if (!Number.isInteger(Number(userId)) || Number(userId) <= 999) {
@@ -245,6 +252,7 @@ const getUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+  //here deleting a user
   try {
     const userId = req.params.userId;
     if (!userId) {
@@ -270,6 +278,7 @@ const deleteUser = async (req, res) => {
   }
 };
 export const getProfile = async (req, res) => {
+  //here getting the profile of the logged in user
   const userId = req.user.userId;
 
   try {

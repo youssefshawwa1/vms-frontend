@@ -1,7 +1,8 @@
 import db from "../config/db.js";
-
+//the certificate model, includes getting all the certificate, and sending certificate by email, getting certificate as pdf, or image.
 const Certificate = {
   findAll: async ({
+    //getting tthe certtificate witth filters, will be used by many other functions.
     page = 1,
     limit = 5,
     filters = {},
@@ -114,6 +115,9 @@ const Certificate = {
     }
   },
   findById: async ({ certificateId }) => {
+    //getting a specific certificate
+
+    //building the query.
     const [rows] = await db.query(
       `
       SELECT c.*, v.firstName, v.lastName, v.volunteerId, v.phone, v.email,
@@ -142,6 +146,7 @@ const Certificate = {
     };
   },
   update: async ({ certificate, certificateId, volunteerId }) => {
+    //updating a certificate, and also make sure that the hours is not mismatched, or any error happens
     try {
       const {
         certificateTitle,
@@ -202,7 +207,7 @@ const Certificate = {
       throw error;
     }
   },
-
+  //here if the controller, sends the certificate by email I want to make sure that its registered.
   registerSendByEmail: async ({ certificateId }) => {
     const [rows] = await db.query(
       `
@@ -218,12 +223,14 @@ const Certificate = {
     if (!rows.affectedRows) throw new Error("Certificate not found");
     return true;
   },
+  //get total issued certificates counts for the dashboard.
   getTotalIssued: async () => {
     const [rows] = await db.execute(
       "SELECT COUNT(*) as count FROM volunteeringcertificate"
     );
     return rows[0].count;
   },
+  //get total issued hours for the dashboard.
   getTotalIssuedHours: async () => {
     const [rows] = await db.execute(
       "SELECT SUM(volunteeringHours) FROM volunteeringcertificate WHERE certificateKind = 'withHours'"
@@ -231,15 +238,19 @@ const Certificate = {
     return rows[0].count;
   },
 
-  //   delete: async ({ userId }) => {
-  //     const [result] = await db.query("DELETE FROM users WHERE userId=?", userId);
-  //     if (!result) {
-  //       throw new Error("User not Deleted!");
-  //     }
-  //     return {
-  //       userId: userId,
-  //     };
-  //   },
+  delete: async ({ certificateId }) => {
+    //here deleting the certificate if needed!
+    const [result] = await db.query(
+      "DELETE FROM volunteeringcertificate WHERE certttificateId = ?",
+      certificateId
+    );
+    if (!result) {
+      throw new Error("Certificate not Deleted!");
+    }
+    return {
+      certificateId: certificateId,
+    };
+  },
   //   history: async ({ userId }) => {},
 };
 export default Certificate;

@@ -4,7 +4,7 @@ import AuthModel from "../models/authModel.js";
 import config from "../config/config.js";
 import { sendOTP } from "../services/emailService.js";
 import User from "../models/user.js";
-
+//here when the user asks for a verification code, (when he tryes to login). this function triggers.
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -29,7 +29,6 @@ export const login = async (req, res) => {
     res.json({
       mfaRequired: true,
       userId: user.userId,
-      // .toISOString() ensures the frontend timer parses the date correctly
       expiresAt: expiresAt.toISOString(),
       message: "Verification code sent to your email.",
     });
@@ -38,6 +37,7 @@ export const login = async (req, res) => {
   }
 };
 
+//resending otp, but didnt implement it yet.
 export const resendOTP = async (req, res) => {
   const { userId } = req.body;
   try {
@@ -57,6 +57,7 @@ export const resendOTP = async (req, res) => {
   }
 };
 
+//verifyng the otp .
 export const verifyOTP = async (req, res) => {
   const { userId, code } = req.body;
 
@@ -91,6 +92,7 @@ export const verifyOTP = async (req, res) => {
     res.status(500).json({ message: "Verification error" });
   }
 };
+//validating the token, each time the user tryes to do something.
 export const validateToken = async (req, res) => {
   try {
     // req.user comes from authenticateToken middleware

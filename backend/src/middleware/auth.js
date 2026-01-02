@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
-
+//this middle ware functtttion is o authenticate the token every time.
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -18,6 +18,7 @@ export const authenticateToken = (req, res, next) => {
     res.status(403).json({ message: "Invalid or Expired Token" });
   }
 };
+//here will be implementing this later.
 export const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
     // We get req.user from the authenticateToken middleware above

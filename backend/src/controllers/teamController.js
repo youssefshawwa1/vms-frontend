@@ -1,4 +1,4 @@
-import Team from "../models/Team.js";
+import Team from "../models/team.js";
 import TeamVolunteer from "../models/teamVolunteer.js";
 import Task from "../models/task.js";
 const getAllTeams = async (req, res) => {

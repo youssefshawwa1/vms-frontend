@@ -33,10 +33,10 @@ export const login = async (req, res) => {
       message: "Verification code sent to your email.",
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Login error", error: error.message });
   }
 };
-
 //resending otp, but didnt implement it yet.
 export const resendOTP = async (req, res) => {
   const { userId } = req.body;

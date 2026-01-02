@@ -65,7 +65,7 @@ import { getDashboardStats } from "./controllers/dashboardController.js";
 const app = express();
 app.use(
   cors({
-    origin: "https://vms-frontend-cjon.onrender.com",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
@@ -163,6 +163,6 @@ app.get("/tasks", authenticateToken, getAllTasks);
 app.patch("/tasks/:taskId", authenticateToken, updateTask);
 app.patch("/tasks/:taskId/complete", authenticateToken, completeTask);
 
-app.listen(process.env.PORT, () => {
+app.listen(5000, () => {
   console.log("Connected to backend.");
 });

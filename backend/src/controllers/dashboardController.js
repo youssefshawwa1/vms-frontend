@@ -1,8 +1,8 @@
-import Volunteer from "../models/volunteer.js";
-import Volunteering from "../models/teamVolunteer.js";
-import Team from "../models/team.js";
-import Task from "../models/task.js";
-import Certificate from "../models/certificate.js";
+import Volunteer from "../models/Volunteer.js";
+import Volunteering from "../models/TeamVolunteer.js";
+import Team from "../models/Team.js";
+import Task from "../models/Task.js";
+import Certificate from "../models/Certificate.js";
 
 export const getDashboardStats = async (req, res) => {
   try {

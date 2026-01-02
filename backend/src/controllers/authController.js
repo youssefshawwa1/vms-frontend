@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import AuthModel from "../models/authModel.js";
+import AuthModel from "../models/AuthModel.js";
 import config from "../config/config.js";
 import { sendOTP } from "../services/emailService.js";
-import User from "../models/user.js";
+import User from "../models/User.js";
 //here when the user asks for a verification code, (when he tryes to login). this function triggers.
 export const login = async (req, res) => {
   const { email, password } = req.body;

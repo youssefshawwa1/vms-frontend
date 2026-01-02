@@ -1,7 +1,7 @@
-import Volunteer from "../models/volunteer.js";
-import TeamVolunteer from "../models/teamVolunteer.js";
-import Task from "../models/task.js";
-import Certificate from "../models/certificate.js";
+import Volunteer from "../models/Volunteer.js";
+import TeamVolunteer from "../models/TeamVolunteer.js";
+import Task from "../models/Task.js";
+import Certificate from "../models/Certificate.js";
 //All actions concerning the volunteer is in this file.
 
 const getAllVolunteers = async (req, res) => {

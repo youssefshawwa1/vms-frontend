@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import User from "../models/user.js";
+import User from "../models/User.js";
 //everything related to the user conttroller is here.
 const getAllUsers = async (req, res) => {
   //getting all users with filters.

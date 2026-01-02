@@ -1,5 +1,5 @@
-import TeamVolunteer from "../models/teamVolunteer.js";
-import Task from "../models/task.js";
+import TeamVolunteer from "../models/TeamVolunteer.js";
+import Task from "../models/Task.js";
 const getAllTeamVolunteers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;

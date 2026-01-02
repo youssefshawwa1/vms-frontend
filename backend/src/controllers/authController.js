@@ -16,7 +16,7 @@ export const login = async (req, res) => {
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     // 10 minutes expiry
-    const expiresAt = new Date(Date.now() + 10 * 60000);
+    const expiresAt = new Date(Date.now() + 10 * 30000);
 
     await AuthModel.storeVerificationCode({
       userId: user.userId,

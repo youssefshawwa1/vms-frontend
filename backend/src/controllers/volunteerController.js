@@ -276,11 +276,11 @@ const getVolunteerVolunteering = async (req, res) => {
         message: "Volunteering retrived successfully",
         ...result,
       });
-    }
-    res.status(404).json({
-      success: false,
-      message: "No Volunteering found",
-    });
+    } else
+      res.status(404).json({
+        success: false,
+        message: "No Volunteering found",
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -349,11 +349,11 @@ const getVolunteerTasks = async (req, res) => {
         message: "Tasks retrived successfully",
         ...result,
       });
-    }
-    res.status(404).json({
-      success: false,
-      message: "No Tasks found",
-    });
+    } else
+      res.status(404).json({
+        success: false,
+        message: "No Tasks found",
+      });
   } catch (error) {
     res.status(500).json({
       success: false,

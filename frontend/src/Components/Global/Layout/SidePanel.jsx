@@ -49,7 +49,11 @@ const SidePanel = () => {
     },
     { path: "/tasks", label: "Tasks", icon: <Assignment /> },
     { path: "/certificates", label: "Certificates", icon: <CardMembership /> },
-    { path: "/users", label: "Users", icon: <ManageAccounts /> },
+    user.userRole == "Admin" && {
+      path: "/users",
+      label: "Users",
+      icon: <ManageAccounts />,
+    },
   ];
 
   return (

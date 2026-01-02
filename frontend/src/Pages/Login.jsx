@@ -6,7 +6,7 @@ import {
   VpnKeyOutlined,
   ArrowForward,
 } from "@mui/icons-material";
-import { Cancel } from "../Components/Global/Icons";
+import { Cancel } from "@mui/icons-material";
 import { useAuth } from "../Contexts/AuthContext";
 import fekra from "../assets/logo.png";
 
@@ -22,7 +22,6 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [verifyError, setVerifyError] = useState("");
   const [resend, setResend] = useState(false);
-
   const {
     verifyTheCode,
     login,
@@ -115,7 +114,6 @@ const LoginPage = () => {
 
   // --- UPDATED TIMER LOGIC ---
   useEffect(() => {
-    // 1. Only run if we actually need verification AND we have an expiry time
     if (!verificationRequired || !expiresAt) return;
 
     const calculateTimeLeft = () => {
@@ -125,11 +123,9 @@ const LoginPage = () => {
       return diff > 0 ? diff : 0;
     };
 
-    // 2. Set it immediately so the user doesn't see "0"
     const initialTime = calculateTimeLeft();
     setTimeLeft(initialTime);
 
-    // 3. Only start the interval if there is actually time left
     if (initialTime <= 0) return;
 
     const timer = setInterval(() => {
@@ -143,8 +139,13 @@ const LoginPage = () => {
 
     return () => clearInterval(timer);
   }, [verificationRequired, expiresAt, resend]);
-  // Adding expiresAt here ensures that when the login response updates the context,
-  // this effect fires immediately.
+
+  // Helper to format seconds into MM:SS
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
@@ -173,7 +174,7 @@ const LoginPage = () => {
                 onClick={resetVerification}
                 className="hover:bg-red-50"
               >
-                <Cancel className="text-red-400" />
+                <Cancel className=" text-main" />
               </IconButton>
             )}
           </div>
@@ -243,7 +244,9 @@ const LoginPage = () => {
                   {timeLeft > 0 ? (
                     <span className="text-gray-400">
                       Resend in{" "}
-                      <span className="text-main font-bold">{timeLeft}s</span>
+                      <span className="text-main font-bold">
+                        {formatTime(timeLeft)}
+                      </span>
                     </span>
                   ) : (
                     <button

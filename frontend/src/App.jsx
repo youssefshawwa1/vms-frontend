@@ -28,7 +28,8 @@ import { userTabsConfig } from "./config/userConfig";
 import { userFormFieldConfigForEditForUser } from "./config/userConfig";
 import GenericEditPage from "./Components/GenericEditPage";
 const App = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
+  console.log(user);
   return (
     <Routes>
       <Route
@@ -60,52 +61,44 @@ const App = () => {
         />
         <Route path="/profile" element={<Profile />} />
         {/* <Route path="/users" element={<Users />} /> */}
-        <Route path="users">
-          <Route index element={<Users />} />
-          <Route
-            path=":id"
-            element={
-              <DetailViewShell
-                idName={"userId"}
-                config={userTabsConfig}
-                fetchFn={(params) => api.get(`/users/${params.id}`)}
-              />
-            }
-          >
-            {userTabsConfig.tabs.map((tab) => (
-              <Route
-                key={tab.path}
-                index={tab.path === ""}
-                path={tab.path !== "" ? tab.path : undefined}
-                element={<tab.component {...tab.props} />}
-              />
-            ))}
+        {user?.userRole == "Admin" && (
+          <Route path="users">
+            <Route index element={<Users />} />
+            <Route
+              path=":id"
+              element={
+                <DetailViewShell
+                  idName={"userId"}
+                  config={userTabsConfig}
+                  fetchFn={(params) => api.get(`/users/${params.id}`)}
+                />
+              }
+            >
+              {userTabsConfig.tabs.map((tab) => (
+                <Route
+                  key={tab.path}
+                  index={tab.path === ""}
+                  path={tab.path !== "" ? tab.path : undefined}
+                  element={<tab.component {...tab.props} />}
+                />
+              ))}
+            </Route>
+
+            <Route
+              path="create"
+              element={
+                <GenericCreatePage
+                  title={"Team"}
+                  config={teamFormFieldConfig}
+                  apiEndpoint={"/teams"}
+                  redirectPath={"/teams"}
+                />
+              }
+            />
           </Route>
+        )}
 
-          <Route
-            path="create"
-            element={
-              <GenericCreatePage
-                title={"Team"}
-                config={teamFormFieldConfig}
-                apiEndpoint={"/teams"}
-                redirectPath={"/teams"}
-              />
-            }
-          />
-        </Route>
-
-        {/* Volunteer routes */}
-
-        {/* <Route path="users" element={<Outlet />}>
-          <Route index element={<Users />} />
-          <Route path=":id" element={<UserDetails />} />
-          <Route path="add" element={<AddUser />} />
-        </Route> */}
-        <Route
-          path="volunteers"
-          // element={<Outlet />} // You can include this, or omit it entirely
-        >
+        <Route path="volunteers">
           <Route index element={<Volunteers />} />
 
           <Route

@@ -1,15 +1,13 @@
-import { useOverLay } from "../Contexts/OverLayContext";
 import GenericTable from "../Components/Global/GenericTable";
 import { useNavigate } from "react-router-dom";
 import { usersColumnsForAdmin as columns } from "../config/userConfig";
-
+import { useAuth } from "../Contexts/AuthContext";
 function Users() {
-  const { hideLoading } = useOverLay();
+  const { user } = useAuth();
   const navigate = useNavigate();
-
-  hideLoading();
+  console.log(user);
   const handleRowDoulbeClick = (row) => {
-    // navigate(`/teams/${row.teamId}`);
+    navigate(`/users/${row.userId}`);
   };
   const handleAddNew = () => {
     // navigate("/teams/add");
@@ -24,7 +22,7 @@ function Users() {
         description="Explore Users data, click on a row to show more details"
         onRowDoubleClick={handleRowDoulbeClick}
         rowId="userId"
-        addNew={handleAddNew}
+        addNew={user?.userRole == "Admin" ? handleAddNew : null}
       />
     </div>
   );

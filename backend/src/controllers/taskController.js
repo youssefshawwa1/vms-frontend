@@ -1,7 +1,6 @@
 import Task from "../models/Task.js";
 const getAllTasks = async (req, res) => {
   try {
-    console.log(req.user);
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const filters = {};
@@ -155,8 +154,8 @@ const completeTask = async (req, res) => {
   try {
     const taskId = req.params.taskId;
     const updateData = req.body;
-    const allowedUpdates = ["completionDate", "userId"];
-
+    const allowedUpdates = ["completionDate"];
+    const userId = req.user.userId;
     const updates = {};
     allowedUpdates.forEach((field) => {
       if (updateData[field] === undefined) {
@@ -168,7 +167,8 @@ const completeTask = async (req, res) => {
       updates[field] = updateData[field];
     });
     updates["completed"] = 1;
-    updates.userId = req.user.userId;
+    updates.userId = userId;
+    console.log();
     const updatedTask = await Task.update({
       taskId: taskId,
       task: updates,

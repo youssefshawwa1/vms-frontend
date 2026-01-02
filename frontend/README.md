@@ -4,7 +4,7 @@
 
 ## Overview
 
-A modern, responsive Volunteering Management System built with React.js and Tailwind CSS. This frontend application provides comprehensive tools for managing volunteers, volunteering activities, teams, tasks, and certificates with secure authentication.
+A modern, responsive Volunteering Management System built with React.js and Tailwind CSS. This frontend application provides comprehensive tools for managing volunteers, volunteering activities, teams, tasks, and certificates with secure authentication, and 2 step verificattion.
 
 ## Features
 
@@ -62,9 +62,12 @@ A modern, responsive Volunteering Management System built with React.js and Tail
 - **Frontend Framework:** React.js 19+
 - **Styling:** Tailwind CSS
 - **Icons:** React Icons
+- **UI Combonents:** Material UI
 - **State Management:** React Context API
 - **Form Handling:** Custome Hook.
 - **Routing:** React Router DOM.
+
+This application is very dynamic, it usses config files to generate dynamically pages.
 
 ## Installation
 
@@ -79,9 +82,9 @@ A modern, responsive Volunteering Management System built with React.js and Tail
 
    ```bash
    git clone https://github.com/youssefshawwa1/vms-frontend.git
-   cd volunteering-management-system
+   cd vms-frontend/frontend
    npm install
-   npm run dev / npm start
+   npm run dev
    ```
 
 2. Please note that this app, needs backend in order to work, as its depending on the login page, and 2 step verification in order

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // Use the root URL so you can hit different endpoints
-  baseURL: "http://localhost:5000",
+  baseURL: "https://vms-backend-t90i.onrender.com",
 });
 
 // This interceptor sits between your app and the server

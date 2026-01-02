@@ -3,7 +3,7 @@ import Header from "./Header";
 import SidePanel from "./SidePanel";
 import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { useOverLay } from "../../../contexts/OverLayContext";
+import { useOverLay } from "../../../Contexts/OverLayContext";
 import { LoadingTime } from "../Global";
 const Layout = () => {
   const [isDone, setIsDone] = useState(false);

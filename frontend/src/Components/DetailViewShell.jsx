@@ -129,17 +129,6 @@ const DetailViewShell = ({ config, fetchFn, idName }) => {
   return (
     <div className="w-full min-h-screen bg-slate-50 flex flex-col animate-in fade-in duration-500">
       <div className="px-4 py-6 md:px-8 w-full">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-500 hover:text-main transition-colors mb-6 group"
-        >
-          <HiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm font-medium uppercase tracking-tight">
-            Back to List
-          </span>
-        </button>
-
         {/* Header Card */}
         <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm w-full">
           <div className="flex flex-col md:flex-row justify-between items-start gap-6">
@@ -167,9 +156,8 @@ const DetailViewShell = ({ config, fetchFn, idName }) => {
             </div>
           </div>
 
-          {/* Tabs Navigation */}
           {config.tabs.length > 0 && (
-            <div className="flex flex-col md:flex-row md:gap-8 mt-8 border-l-2 md:border-l-0 md:border-b border-slate-100">
+            <div className="flex flex-col lg:flex-row md:gap-8 mt-8 border-l-2 md:border-l-0 md:border-b border-slate-100 ">
               {config.tabs.map((tab) => {
                 const isActive = activeTabPath === tab.path;
                 return (

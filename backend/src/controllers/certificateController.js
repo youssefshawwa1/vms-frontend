@@ -90,7 +90,6 @@ const updateCertificate = async (req, res) => {
       "customMessage",
       "certificateType",
       "certificateKind",
-      "userId",
     ];
 
     const updates = {};
@@ -113,16 +112,7 @@ const updateCertificate = async (req, res) => {
         message: "No valid fields provided for update",
       });
     }
-
-    //     if($this->certificateKind == "withHours"){
-    //     if($this->volunteeringHours > ($currentHours + $oldCertificateHours) ){
-    //         return false;
-    //     }
-    //     elseif($this->isOld()) {
-    //         return false;
-    //     }
-    // }
-    // console.log(certificateId, volunteerId, updateData);
+    updates.userId = req.user.userId;
     const oldCertificate = await Certificate.findById({
       certificateId,
     });
@@ -198,29 +188,6 @@ const getCertificate = async (req, res) => {
     });
   }
 };
-
-// const date = new Date(result.issueDate);
-// const month = date.toLocaleString("en-US", { month: "long" });
-// const year = date.getFullYear();
-// const formattedDate = `${month} ${year}`;
-
-// const namesPart = [
-//   result.firstName,
-//   result.lastName,
-//   result.certificateType,
-//   result.certificateNumber,
-//   new Date().toLocaleDateString(),
-// ];
-// const fileName = namesPart.join("_").toLowerCase();
-// const certificateImageBuffer = await generateCertificatePreview({
-//   certificateId: result.certificateNumber,
-//   volunteerName: `${result.firstName} ${result.lastName}`,
-//   certificateType: result.certificateType,
-//   issueDate: formattedDate,
-//   certificateDescription: result.certificateDescription,
-//   title: fileName,
-// });
-// const base64CertificateImage = certificateImageBuffer.toString("base64");
 
 const getCertificatePreview = async (req, res) => {
   try {
@@ -343,59 +310,7 @@ const getCertificatePdf = async (req, res) => {
     });
   }
 };
-//   try
-//     const volunteerId = req.params.volunteerId;
-//     const certificateId = req.params.certificateId;
-//     if (
-//       !Number.isInteger(Number(volunteerId)) ||
-//       Number(volunteerId) <= 999 ||
-//       !Number.isInteger(Number(certificateId)) ||
-//       Number(certificateId) <= 0
-//     ) {
-//       res.status(400).json({
-//         success: false,
-//         message:
-//           "Invalid volunteer id or certificate id format. must be a positive integer.",
-//       });
-//     }
-//     const result = await Certificate.findById({ volunteerId, certificateId });
 
-//     const date = new Date(result.issueDate);
-//     const month = date.toLocaleString("en-US", { month: "long" });
-//     const year = date.getFullYear();
-//     const formattedDate = `${month} ${year}`;
-
-//     const namesPart = [
-//       result.firstName,
-//       result.lastName,
-//       result.certificateType,
-//       result.certificateNumber,
-//       new Date().toLocaleDateString(),
-//     ];
-//     const fileName = namesPart.join("_").toLowerCase();
-//     const imageBuffer = await generateCertificatePreview({
-//       certificateId: result.certificateNumber,
-//       volunteerName: `${result.firstName} ${result.lastName}`,
-//       certificateType: result.certificateType,
-//       issueDate: formattedDate,
-//       certificateDescription: result.certificateDescription,
-//       title: fileName,
-//     });
-
-//     res.set({
-//       "Content-Type": "image/jpeg",
-//       "Cache-Control": "public, max-age=3600", // Cache it for 1 hour to save CPU
-//     });
-
-//     res.send(imageBuffer);
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Error fetching Certificate",
-//       error: error.message,
-//     });
-//   }
-// };
 const sendCertificateByEmail = async (req, res) => {
   try {
     const certificateId = req.params.certificateId;

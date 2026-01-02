@@ -12,11 +12,11 @@ import Certificates from "./Pages/Certificates";
 import { useAuth } from "./Contexts/AuthContext";
 import ProtectedRoute from "./Components/Auth/ProtectedRoute";
 import Login from "./Pages/Login";
-import Profile from "./Components/Users/Profile";
+import Profile from "./Pages/Profile";
 import Users from "./Pages/Users";
 import { volunteerFormFieldConfig } from "./config/volunteerConfig";
 import GenericCreatePage from "./Components/GenericCreatePage";
-import axios from "axios";
+import api from "./api/axios";
 import DetailViewShell from "./Components/DetailViewShell";
 import { teamTabsConfig } from "./config/teamConfig";
 import { volunteerTabsConfig } from "./config/volunteerConfig";
@@ -25,6 +25,8 @@ import { volunteeringTabsConfig } from "./config/volunteeringConfig";
 import { taskTabsConfig } from "./config/taskConfig";
 import { certificateTabConfig } from "./config/certificateConfig";
 import { userTabsConfig } from "./config/userConfig";
+import { userFormFieldConfigForEditForUser } from "./config/userConfig";
+import GenericEditPage from "./Components/GenericEditPage";
 const App = () => {
   const { isAuthenticated, loading } = useAuth();
   return (
@@ -42,9 +44,22 @@ const App = () => {
         }
       >
         <Route index element={<Dashboard />} />
+        <Route
+          path="/profile/edit"
+          element={
+            <GenericEditPage
+              title="Profile"
+              apiEndpoint="/profile" // Adjust based on your backend route
+              config={userFormFieldConfigForEditForUser}
+              redirectPath="/profile" // Where to go after saving
+              description="Update your personal information below."
+              // useAuthId={true} // <--- THIS IS THE KEY
+              useWithoutId={true}
+            />
+          }
+        />
         <Route path="/profile" element={<Profile />} />
         {/* <Route path="/users" element={<Users />} /> */}
-
         <Route path="users">
           <Route index element={<Users />} />
           <Route
@@ -53,9 +68,7 @@ const App = () => {
               <DetailViewShell
                 idName={"userId"}
                 config={userTabsConfig}
-                fetchFn={(params) =>
-                  axios.get(`http://localhost:5000/users/${params.id}`)
-                }
+                fetchFn={(params) => api.get(`/users/${params.id}`)}
               />
             }
           >
@@ -101,9 +114,7 @@ const App = () => {
               <DetailViewShell
                 idName={"volunteerId"}
                 config={volunteerTabsConfig}
-                fetchFn={(params) =>
-                  axios.get(`http://localhost:5000/volunteers/${params.id}`)
-                }
+                fetchFn={(params) => api.get(`/volunteers/${params.id}`)}
               />
             }
           >
@@ -138,9 +149,7 @@ const App = () => {
               <DetailViewShell
                 idName={"teamId"}
                 config={teamTabsConfig}
-                fetchFn={(params) =>
-                  axios.get(`http://localhost:5000/teams/${params.id}`)
-                }
+                fetchFn={(params) => api.get(`/teams/${params.id}`)}
               />
             }
           >
@@ -176,9 +185,7 @@ const App = () => {
               <DetailViewShell
                 idName={"teamVolunteerId"}
                 config={volunteeringTabsConfig}
-                fetchFn={(params) =>
-                  axios.get(`http://localhost:5000/volunteering/${params.id}`)
-                }
+                fetchFn={(params) => api.get(`/volunteering/${params.id}`)}
               />
             }
           >
@@ -202,9 +209,7 @@ const App = () => {
               <DetailViewShell
                 idName={"taskId"}
                 config={taskTabsConfig}
-                fetchFn={(params) =>
-                  axios.get(`http://localhost:5000/tasks/${params.id}`)
-                }
+                fetchFn={(params) => api.get(`/tasks/${params.id}`)}
               />
             }
           >
@@ -228,9 +233,7 @@ const App = () => {
               <DetailViewShell
                 idName={"certificateId"}
                 config={certificateTabConfig}
-                fetchFn={(params) =>
-                  axios.get(`http://localhost:5000/certificates/${params.id}`)
-                }
+                fetchFn={(params) => api.get(`/certificates/${params.id}`)}
               />
             }
           >

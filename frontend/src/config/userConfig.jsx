@@ -203,7 +203,7 @@ export const userFormFieldConfigForEditForUser = [
     validation: { required: true },
   },
   {
-    name: "oldPassword",
+    name: "password",
     label: "Old Password",
     type: "password",
     gridSpan: "md:col-span-2",
@@ -221,12 +221,13 @@ export const userFormFieldConfigForEditForUser = [
     },
   },
   {
-    name: "passwordHash",
+    name: "newPassword",
     label: "New Password",
     type: "password",
     gridSpan: "md:col-span-2",
     validation: {
       custom: (value, allValues) => {
+        if (!value && !allValues.confirmPassword) return null;
         if (!value) return "Required!";
         if (value !== allValues.confirmPassword) return "Didnt Match!";
         if (value.length < 8 || value.length > 32)
@@ -246,8 +247,9 @@ export const userFormFieldConfigForEditForUser = [
     gridSpan: "md:col-span-2",
     validation: {
       custom: (value, allValues) => {
+        if (!value && !allValues.newPassword) return null;
         if (!value) return "Required!";
-        if (value !== allValues.passwordHash) return "Didnt Match!";
+        if (value !== allValues.newPassword) return "Didnt Match!";
         if (value.length < 8 || value.length > 32)
           return "Password must be 8 chars more";
         if (!value || value == "") {
@@ -257,13 +259,6 @@ export const userFormFieldConfigForEditForUser = [
         return null;
       },
     },
-  },
-  {
-    name: "active",
-    label: "Is Currently Active?",
-    type: "checkbox",
-    gridSpan: "md:col-span-2", // Spans full width or md:col-span-1 to sit next to date
-    validation: { required: false },
   },
 ];
 export const userFormFieldConfigForEditForAdmin = [

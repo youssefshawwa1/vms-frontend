@@ -1,11 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import fekra from "../../../assets/logo.png";
 import { useAuth } from "../../../Contexts/AuthContext";
-import { Link, matchPath } from "react-router-dom";
+import { Link, matchPath, useLocation } from "react-router-dom";
+// MUI Icons
+import {
+  PersonOutline,
+  Logout,
+  KeyboardArrowDown,
+  SettingsOutlined,
+} from "@mui/icons-material";
+import { Avatar, Divider } from "@mui/material";
+
 const Header = () => {
   const { logout, user } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const location = useLocation();
+
   const getPageTitle = (pathname) => {
     const routes = [
       { path: "/dashboard", title: "Dashboard" },
@@ -23,12 +34,13 @@ const Header = () => {
 
     return matchingRoute?.title || "Dashboard";
   };
+
   const pageTitle = getPageTitle(location.pathname);
 
-  // Update document title
   useEffect(() => {
     document.title = `${pageTitle} - FEKRA`;
   }, [pageTitle]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -44,80 +56,100 @@ const Header = () => {
 
   return (
     <header className="header bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between ">
-      {/* Brand */}
+      {/* Brand Section */}
       <div className="flex items-center space-x-4 md:space-x-6">
-        <h1 className="text-lg font-semibold text-gray-900 w-16 md:w-20">
-          <img src={fekra} alt="Fekra" />
-        </h1>
-        <div className="border-l border-gray-300 pl-4 md:pl-6">
-          <h2 className="text-base md:text-xl font-semibold text-gray-800 capitalize">
-            {getPageTitle(location.pathname)}
+        <div className="w-16 md:w-20 transition-transform hover:scale-105">
+          <img
+            src={fekra}
+            alt="Fekra"
+            className="w-full h-auto object-contain"
+          />
+        </div>
+
+        {/* Vertical Divider */}
+        <div className="h-10 w-[1px] bg-gray-200"></div>
+
+        <div>
+          <h2 className="text-base md:text-xl font-bold text-[#0d4461] tracking-tight capitalize">
+            {pageTitle}
           </h2>
-          {/* Hide subtitle on mobile */}
-          <p className="hidden md:block text-sm text-gray-500 mt-1">
-            Manage {getPageTitle(location.pathname).toLowerCase()}.
+          <p className="hidden md:block text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
+            System / {pageTitle.toLowerCase()}
           </p>
         </div>
       </div>
 
-      {/* User dropdown */}
-      <div className="relative" ref={dropdownRef}>
+      {/* User Actions Section */}
+      <div className="relative flex items-center" ref={dropdownRef}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="cursor-pointer w-8 h-8 bg-[#0b4e70] rounded-full flex items-center justify-center hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-main focus:ring-offset-2"
+          className="group flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
         >
-          <span className="text-white font-semibold text-xs uppercase">
-            {user.username.substring(0, 2)}
-          </span>
+          <Avatar
+            sx={{
+              width: 35,
+              height: 35,
+              bgcolor: "#0b4e70",
+              fontSize: "0.85rem",
+              fontWeight: "bold",
+              boxShadow: "0 2px 8px rgba(11, 78, 112, 0.2)",
+            }}
+          >
+            {user?.userName?.substring(0, 2).toUpperCase()}
+          </Avatar>
+
+          <KeyboardArrowDown
+            className={`text-gray-400 transition-transform duration-300 ${
+              isDropdownOpen ? "rotate-180" : ""
+            }`}
+            sx={{ fontSize: 18 }}
+          />
         </button>
 
-        {/* Dropdown menu */}
+        {/* Professional Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-300">
+          <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-[999] animate-in fade-in slide-in-from-top-2 duration-200">
+            {/* User Info Header */}
+            <div className="px-4 py-3 mb-1">
+              <p className="text-[10px] font-black text-[#f59e0b] uppercase tracking-tighter">
+                Current Session
+              </p>
+              <p className="text-sm font-bold text-[#0d4461] truncate">
+                {user?.userName}
+              </p>
+            </div>
+
+            <Divider sx={{ mb: 1, opacity: 0.6 }} />
+
             <Link
               to="/profile"
-              onClick={() => {
-                setIsDropdownOpen(false);
-              }}
-              className="cursor-pointer w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              onClick={() => setIsDropdownOpen(false)}
+              className="flex items-center space-x-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#0b4e70] transition-colors"
             >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              <span>Profile</span>
+              <PersonOutline sx={{ fontSize: 20, opacity: 0.7 }} />
+              <span className="font-medium">My Profile</span>
             </Link>
+
+            <Link
+              to="/settings"
+              onClick={() => setIsDropdownOpen(false)}
+              className="flex items-center space-x-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#0b4e70] transition-colors"
+            >
+              <SettingsOutlined sx={{ fontSize: 20, opacity: 0.7 }} />
+              <span className="font-medium">Settings</span>
+            </Link>
+
+            <Divider sx={{ my: 1, opacity: 0.6 }} />
 
             <button
               onClick={() => {
                 setIsDropdownOpen(false);
                 logout();
               }}
-              className="cursor-pointer w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              className="w-full flex items-center space-x-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors font-bold"
             >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-              <span>Logout</span>
+              <Logout sx={{ fontSize: 20 }} />
+              <span>Sign Out</span>
             </button>
           </div>
         )}

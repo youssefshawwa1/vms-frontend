@@ -231,5 +231,17 @@ const TeamVolunteer = {
       throw error;
     }
   },
+  getTotalCount: async () => {
+    const [rows] = await db.execute(
+      "SELECT COUNT(*) as count FROM teamvolunteer"
+    );
+    return rows[0].count;
+  },
+  getActiveCount: async () => {
+    const [rows] = await db.execute(
+      "SELECT COUNT(*) as count FROM teamvolunteer WHERE active = 1"
+    );
+    return rows[0].count;
+  },
 };
 export default TeamVolunteer;

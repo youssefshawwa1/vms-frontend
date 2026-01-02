@@ -6,14 +6,14 @@ import { Edit, Cancel, Block, Activate } from "../Global/Icons";
 import Card from "../Global/Card";
 import { useDocumentTitle } from "../../Hooks/useDocumentTitle";
 import { useOverLay } from "../../Contexts/OverLayContext";
-import UserForm from "./UserForm";
+import { useNavigate } from "react-router-dom";
 const UserDetails = ({ userId }) => {
+  const navigate = useNavigate(); // Initialize navigate
   const { showPopUp, hidePopUp } = useOverLay();
   const { fetchData, sendData } = useFetching();
   const [userData, setUserData] = useState(null);
   const { id } = useParams();
   const [cardData, setCardData] = useState({});
-  const [edit, setEdit] = useState(false);
   useEffect(() => {
     const fetchTeamData = async () => {
       if (!userData) {
@@ -111,45 +111,26 @@ const UserDetails = ({ userId }) => {
         <>
           <div className="bg-white rounded-lg shadow-md  mb-6 border border-gray-200">
             <div className=" animate-slide-up relative ">
-              {!edit && (
-                <div className=" animate-slide-up p-6">
-                  {userId && (
-                    <div
-                      className="absolute top-0 right-0 m-2 p-1 z-55"
-                      onClick={() => setEdit(!edit)}
-                    >
-                      <Edit />
-                    </div>
-                  )}
-                  {!userId && (
-                    <div
-                      className="absolute top-0 right-0 m-2 p-1 z-55"
-                      onClick={handleSwitchStatus}
-                    >
-                      {userData?.details?.status ? <Block /> : <Activate />}
-                    </div>
-                  )}
-                  <Card data={cardData} />
-                </div>
-              )}
-              {edit && (
-                <div className=" animate-slide-up p-6">
+              <div className=" animate-slide-up p-6">
+                HelloDear
+                {userId && (
                   <div
-                    className="absolute top-0 right-0 m-2 p-1  z-55"
-                    onClick={() => setEdit(!edit)}
+                    className="absolute top-0 right-0 m-2 p-1 z-55"
+                    onClick={() => navigate(`/profile/edit`)} // Updated this
                   >
-                    <Cancel />
+                    <Edit />
                   </div>
-                  <UserForm
-                    type="updateProfile"
-                    user={userData}
-                    reFetch={() => {
-                      setUserData(null);
-                      setEdit(!edit);
-                    }}
-                  />
-                </div>
-              )}
+                )}
+                {!userId && (
+                  <div
+                    className="absolute top-0 right-0 m-2 p-1 z-55"
+                    onClick={handleSwitchStatus}
+                  >
+                    {userData?.details?.status ? <Block /> : <Activate />}
+                  </div>
+                )}
+                <Card data={cardData} />
+              </div>
             </div>
           </div>
           {/* <VolunteerCard /> */}

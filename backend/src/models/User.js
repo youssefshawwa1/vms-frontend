@@ -79,12 +79,13 @@ const User = {
       return e;
     }
   },
-  findById: async ({ userId }) => {
+  findById: async ({ userId, withPassword }) => {
     try {
-      const [rows] = await db.query(
-        `SELECT userId, userName, status, firstName, lastName, createdAt, updatedAt, userEmail FROM users WHERE userId = ?`,
-        [userId]
-      );
+      let query = "";
+      if (!withPassword) {
+        query = `SELECT userName, userId, status, firstName, lastName, userEmail,createdAt, updatedAt, role  FROM users WHERE userId = ?`;
+      } else query = `SELECT * from users WHERE userId = ?`;
+      const [rows] = await db.query(query, [userId]);
       if (!rows[0]) throw new Error("User not found");
       return rows[0];
     } catch (error) {
@@ -121,8 +122,11 @@ const User = {
   },
   update: async ({ user, userId }) => {
     try {
-      const { userName, userEmail, firstName, lastName, status } = user;
+      const { userName, userEmail, firstName, lastName, status, passwordHash } =
+        user;
 
+      console.log(user);
+      console.log(userId);
       const updates = [];
       const values = [];
       if (userName !== undefined) {
@@ -148,6 +152,10 @@ const User = {
       if (status !== undefined) {
         updates.push("status = ?");
         values.push(status);
+      }
+      if (passwordHash !== undefined) {
+        updates.push("passwordHash = ?");
+        values.push(passwordHash);
       }
 
       if (updates.length === 0)

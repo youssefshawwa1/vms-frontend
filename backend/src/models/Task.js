@@ -217,7 +217,16 @@ const Task = {
       throw error;
     }
   },
-
+  getTotalCount: async () => {
+    const [rows] = await db.execute("SELECT COUNT(*) as count FROM tasks");
+    return rows[0].count;
+  },
+  getActiveCount: async () => {
+    const [rows] = await db.execute(
+      "SELECT COUNT(*) as count FROM tasks WHERE completed = 0"
+    );
+    return rows[0].count;
+  },
   // update: async ({ task, taskId }) => {
   //   try {
   //     const { teamName, description, userId } = task;

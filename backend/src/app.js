@@ -7,6 +7,8 @@ import {
   updateUser,
   getUser,
   deleteUser,
+  getProfile,
+  updateProfile,
 } from "./controllers/userController.js";
 import { getAllRoles } from "./controllers/roleController.js";
 import {
@@ -58,6 +60,7 @@ import {
   validateToken,
 } from "./controllers/authController.js";
 import { authenticateToken } from "./middleware/auth.js";
+import { getDashboardStats } from "./controllers/dashboardController.js";
 const app = express();
 app.use(
   cors({
@@ -67,58 +70,97 @@ app.use(
 );
 app.use(express.json());
 
+app.get("/dashboard", authenticateToken, getDashboardStats);
 app.post("/auth/login", login);
 app.post("/auth/verify-otp", verifyOTP);
 app.get("/auth/validate-token", authenticateToken, validateToken);
 app.delete("/users/:userId", deleteUser);
 app.patch("/users/:userId/", updateUser);
-app.get("/users/:userId", getUser);
-app.get("/users", getAllUsers);
-app.post("/users", createUser);
+app.get("/users/:userId", authenticateToken, getUser);
+app.get("/users", authenticateToken, getAllUsers);
+app.post("/users", authenticateToken, createUser);
 app.get("/roles", getAllRoles);
 
-app.patch("/certificates/:certificateId", updateCertificate);
-app.post("/certificates/:certificateId/send", sendCertificateByEmail);
-app.get("/certificates/:certificateId/pdf", getCertificatePdf);
-app.get("/certificates/:certificateId", getCertificate);
-app.get("/certificates", getAllCertificates);
-app.get("/certificates/:certificateId/preview", getCertificatePreview);
+app.patch("/certificates/:certificateId", authenticateToken, updateCertificate);
+app.post(
+  "/certificates/:certificateId/send",
+  authenticateToken,
+  sendCertificateByEmail
+);
+app.get(
+  "/certificates/:certificateId/pdf",
+  authenticateToken,
+  getCertificatePdf
+);
+app.get("/certificates/:certificateId", authenticateToken, getCertificate);
+app.get("/certificates", authenticateToken, getAllCertificates);
+app.get(
+  "/certificates/:certificateId/preview",
+  authenticateToken,
+  getCertificatePreview
+);
 // app.post("/volunteers/:volunteerId/certificates/:certificateId/send", sendCertificate)
-app.get("/volunteers/:volunteerId/certificates", getVolunteerCertificates);
+app.get(
+  "/volunteers/:volunteerId/certificates",
+  authenticateToken,
+  getVolunteerCertificates
+);
 
-app.patch("/volunteers/:volunteerId", updateVolunteer);
+app.patch("/volunteers/:volunteerId", authenticateToken, updateVolunteer);
 // app.get("/volunteers/:volunteerId/teams", getVolunteerTasks);
-app.post("/volunteers/:volunteerId/certificates", createCertificate);
-app.get("/volunteers/:volunteerId/tasks", getVolunteerTasks);
-app.get("/volunteers/:volunteerId/volunteering", getVolunteerVolunteering);
-app.get("/volunteers/:volunteerId", getVolunteer);
-app.get("/volunteers", getAllVolunteers);
-app.post("/volunteers", createVolunteer);
+app.post(
+  "/volunteers/:volunteerId/certificates",
+  authenticateToken,
+  createCertificate
+);
+app.get("/volunteers/:volunteerId/tasks", authenticateToken, getVolunteerTasks);
+app.get(
+  "/volunteers/:volunteerId/volunteering",
+  authenticateToken,
+  getVolunteerVolunteering
+);
+app.get("/volunteers/:volunteerId", authenticateToken, getVolunteer);
+app.get("/volunteers", authenticateToken, getAllVolunteers);
+app.post("/volunteers", authenticateToken, createVolunteer);
 
-app.patch("/teams/:teamId", updateTeam);
-app.get("/teams/:teamId/tasks", getTeamTasks);
-app.get("/teams/:teamId/volunteering", getTeamVolunteering);
-app.get("/teams/:teamId", getTeam);
-app.get("/teams", getAllTeams);
+app.patch("/teams/:teamId", authenticateToken, updateTeam);
+app.get("/teams/:teamId/tasks", authenticateToken, getTeamTasks);
+app.get("/teams/:teamId/volunteering", authenticateToken, getTeamVolunteering);
+app.get("/teams/:teamId", authenticateToken, getTeam);
+app.get("/teams", authenticateToken, getAllTeams);
 app.post("/teams", createTeam);
 
-app.get("/tasks/:taskId", getTask);
+app.get("/tasks/:taskId", authenticateToken, getTask);
 
 // app.delete("/volunteering/:teamVolunteerId/tasks/:taskId", deleteTask);
 
-app.patch("/volunteering/:teamVolunteerId/end", endVolunteering);
-app.get("/volunteering/:teamVolunteerId/tasks", getTeamVolunteerTasks);
-app.post("/volunteering/:teamVolunteerId/tasks", createTask);
-app.patch("/volunteering/:teamVolunteerId", updateTeamVolunteer);
-app.get("/volunteering/:teamVolunteerId", getTeamVolunteer);
-app.get("/volunteering", getAllTeamVolunteers);
-app.post("/volunteering", createTeamVolunteer);
+app.patch(
+  "/volunteering/:teamVolunteerId/end",
+  authenticateToken,
+  endVolunteering
+);
+app.get(
+  "/volunteering/:teamVolunteerId/tasks",
+  authenticateToken,
+  getTeamVolunteerTasks
+);
+app.post("/volunteering/:teamVolunteerId/tasks", authenticateToken, createTask);
+app.patch(
+  "/volunteering/:teamVolunteerId",
+  authenticateToken,
+  updateTeamVolunteer
+);
+app.get("/volunteering/:teamVolunteerId", authenticateToken, getTeamVolunteer);
+app.get("/volunteering", authenticateToken, getAllTeamVolunteers);
+app.post("/volunteering", authenticateToken, createTeamVolunteer);
 // app.patch("/tasks/:taskId/update", updateTask);
+app.get("/profile", authenticateToken, getProfile);
+app.patch("/profile", authenticateToken, updateProfile);
 
-app.get("/tasks", getAllTasks);
+app.get("/tasks", authenticateToken, getAllTasks);
 
-app.patch("/tasks/:taskId", updateTask);
-app.patch("/tasks/:taskId/complete", completeTask);
+app.patch("/tasks/:taskId", authenticateToken, updateTask);
+app.patch("/tasks/:taskId/complete", authenticateToken, completeTask);
 
 app.listen(5000, () => {
   console.log("Connected to backend.");

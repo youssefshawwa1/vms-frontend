@@ -47,9 +47,9 @@ const getAllTeams = async (req, res) => {
 };
 const createTeam = async (req, res) => {
   try {
-    const { teamName, description, userId } = req.body;
+    const { teamName, description } = req.body;
 
-    if (!teamName || !description || !userId) {
+    if (!teamName || !description) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -63,6 +63,7 @@ const createTeam = async (req, res) => {
         message: "Team Name exists",
       });
     }
+    userId = req.user.userId;
     const newTeam = await Team.create({
       team: {
         teamName,
@@ -88,7 +89,7 @@ const updateTeam = async (req, res) => {
   try {
     const teamId = req.params.teamId;
     const updateData = req.body;
-    const allowedUpdates = ["teamName", "description", "userId"];
+    const allowedUpdates = ["teamName", "description"];
     const updates = {};
     allowedUpdates.forEach((field) => {
       if (updateData[field] !== undefined) {
@@ -102,7 +103,7 @@ const updateTeam = async (req, res) => {
         message: "No valid fields provided for update",
       });
     }
-
+    updates.userId = req.user.userId;
     const updatedTeam = await Team.update({ teamId: teamId, team: updates });
     if (!updatedTeam) {
       return res.status(404).json({

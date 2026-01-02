@@ -116,7 +116,7 @@ const createTeamVolunteer = async (req, res) => {
       volunteerId,
       startDate,
       roleId,
-      userId,
+
       description,
       volunteerTitle,
       teamId,
@@ -127,7 +127,6 @@ const createTeamVolunteer = async (req, res) => {
       !volunteerId ||
       !startDate ||
       !roleId ||
-      !userId ||
       !description ||
       !volunteerTitle ||
       !teamId ||
@@ -138,7 +137,7 @@ const createTeamVolunteer = async (req, res) => {
         message: "All fields are required",
       });
     }
-
+    const userId = req.user.userId;
     const newVolunteer = await TeamVolunteer.create({
       teamVolunteer: {
         volunteerId,
@@ -186,7 +185,6 @@ const updateTeamVolunteer = async (req, res) => {
       "description",
       "volunteerTitle",
       "active",
-      "userId",
     ];
     const updates = {};
     allowedUpdates.forEach((field) => {
@@ -201,7 +199,7 @@ const updateTeamVolunteer = async (req, res) => {
         message: "No valid fields provided for update",
       });
     }
-
+    updates.userId = req.user.userId;
     const updatedTeamVolunteer = await TeamVolunteer.update({
       teamVolunteerId: teamVolunteerId,
       teamVolunteer: updates,
@@ -316,7 +314,7 @@ const endVolunteering = async (req, res) => {
   try {
     const teamVolunteerId = req.params.teamVolunteerId;
     const updateData = req.body;
-    const allowedUpdates = ["endDate", "userId"];
+    const allowedUpdates = ["endDate"];
     const updates = {};
 
     allowedUpdates.forEach((field) => {
@@ -330,7 +328,7 @@ const endVolunteering = async (req, res) => {
     });
 
     updates["active"] = 0;
-
+    updates.userId = req.user.userId;
     const updatedTeamVolunteer = await TeamVolunteer.update({
       teamVolunteerId: teamVolunteerId,
       teamVolunteer: updates,
@@ -369,7 +367,7 @@ const createTask = async (req, res) => {
       startDate,
       endDate,
       volunteeringHours,
-      userId,
+
       completed,
       completionDate,
     } = req.body;
@@ -377,7 +375,6 @@ const createTask = async (req, res) => {
     if (
       !taskTitle ||
       !taskDescription ||
-      !userId ||
       !startDate ||
       !endDate ||
       !volunteeringHours ||
@@ -388,6 +385,7 @@ const createTask = async (req, res) => {
         message: "All fields are required",
       });
     }
+    const userId = req.user.userId;
     const task = {
       taskTitle,
       taskDescription,
@@ -438,7 +436,6 @@ const updateTask = async (req, res) => {
       "volunteeringHours",
       "completed",
       "completionDate",
-      "userId",
     ];
 
     const updates = {};
@@ -459,6 +456,7 @@ const updateTask = async (req, res) => {
         message: "No valid fields provided for update",
       });
     }
+    updates.userId = req.user.userId;
     const updatedTask = await Task.update({
       taskId: taskId,
       task: updates,
@@ -514,7 +512,7 @@ const completeTask = async (req, res) => {
     const taskId = req.params.taskId;
     const teamVolunteerId = req.params.teamVolunteerId;
     const updateData = req.body;
-    const allowedUpdates = ["completionDate", "userId"];
+    const allowedUpdates = ["completionDate"];
 
     const updates = {};
     allowedUpdates.forEach((field) => {
@@ -527,7 +525,7 @@ const completeTask = async (req, res) => {
       updates[field] = updateData[field];
     });
     updates["completed"] = 1;
-
+    updates.userId = req.user.userId;
     const updatedTask = await Task.update({
       taskId: taskId,
       task: updates,

@@ -1,6 +1,7 @@
 import Task from "../models/Task.js";
 const getAllTasks = async (req, res) => {
   try {
+    console.log(req.user);
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const filters = {};
@@ -86,7 +87,6 @@ const updateTask = async (req, res) => {
       "volunteeringHours",
       "completed",
       "completionDate",
-      "userId",
     ];
 
     const updates = {};
@@ -96,17 +96,13 @@ const updateTask = async (req, res) => {
       }
     });
 
-    if (
-      Object.keys(updates).length === 0 ||
-      updates.userId === undefined ||
-      updates.userId === "" ||
-      updates.userId <= 999
-    ) {
+    if (Object.keys(updates).length === 0) {
       return res.status(400).json({
         success: false,
         message: "No valid fields provided for update",
       });
     }
+    updates.userId = req.user.userId;
     const updatedTask = await Task.update({
       taskId: taskId,
       task: updates,
@@ -172,7 +168,7 @@ const completeTask = async (req, res) => {
       updates[field] = updateData[field];
     });
     updates["completed"] = 1;
-
+    updates.userId = req.user.userId;
     const updatedTask = await Task.update({
       taskId: taskId,
       task: updates,

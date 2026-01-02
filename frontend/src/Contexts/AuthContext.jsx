@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       // This hits the endpoint we just created in the backend
-      const response = await api.get("/validate-token");
+      const response = await api.get("/auth/validate-token");
       if (response.data.success) {
         setUser(response.data.user);
         setIsAuthenticated(true);
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setLoading(true);
     try {
-      const response = await api.post("/login", { email, password });
+      const response = await api.post("/auth/login", { email, password });
 
       if (response.data.mfaRequired) {
         setPendingUserId(response.data.userId);
@@ -71,7 +71,9 @@ export const AuthProvider = ({ children }) => {
   const resendCode = async () => {
     try {
       // Hits the new /resend-otp endpoint
-      const response = await api.post("/resend-otp", { userId: pendingUserId });
+      const response = await api.post("/auth/resend-otp", {
+        userId: pendingUserId,
+      });
 
       if (response.data.success) {
         // IMPORTANT: Update the expiration time to restart the timer
@@ -89,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   const verifyTheCode = async (code) => {
     setLoading(true);
     try {
-      const response = await api.post("/verify-otp", {
+      const response = await api.post("/auth/verify-otp", {
         userId: pendingUserId,
         code: code,
       });

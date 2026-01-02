@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import UserDetails from "./UserDetails";
 import { useAuth } from "../../Contexts/AuthContext";
 const Profile = () => {

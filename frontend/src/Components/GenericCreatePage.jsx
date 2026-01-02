@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import { Snackbar, Alert } from "@mui/material";
 import GenericForm from "../Components/GenericForm";
 
@@ -36,7 +36,7 @@ const GenericCreatePage = ({
         setLoading(true);
         const hasRoleIdField = config.some((field) => field.name === "roleId");
         if (hasRoleIdField) {
-          const rolesRes = await axios.get(`http://localhost:5000/roles`);
+          const rolesRes = await api.get(`/roles`);
           if (rolesRes.data && rolesRes.data.data) {
             const roles = rolesRes.data.data;
             const roleOptions = roles.map((r) => ({
@@ -83,11 +83,10 @@ const GenericCreatePage = ({
         }
       });
 
-      await axios.post(`http://localhost:5000${finalEndpoint}`, {
+      await api.post(finalEndpoint, {
         ...formData,
         ...mappedParams,
         ...extraPayload,
-        userId: 1001,
       });
 
       showToast(`${title} created successfully!`, "success");

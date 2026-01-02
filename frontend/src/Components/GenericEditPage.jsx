@@ -1,11 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import { Snackbar, Alert, CircularProgress, Box } from "@mui/material";
 import GenericForm from "../Components/GenericForm";
-
-const BASE_URL = "http://localhost:5000";
-
 const GenericEditPage = ({
   config,
   apiEndpoint,
@@ -13,11 +10,13 @@ const GenericEditPage = ({
   redirectPath,
   description = "Modify only the fields you wish to change.",
   getRoles = false,
+  useWithoutId = false,
 }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id: paramId } = useParams();
 
+  const navigate = useNavigate();
   // --- State Management ---
+  const id = useWithoutId ? "" : `/${paramId}`;
   const [initialData, setInitialData] = useState(null);
   const [smartConfig, setSmartConfig] = useState(config);
   const [loading, setLoading] = useState(true);
@@ -64,10 +63,9 @@ const GenericEditPage = ({
       try {
         setLoading(true);
 
-        console.log(`${BASE_URL}/${apiEndpoint}/${id}`);
         const [recordRes, rolesRes] = await Promise.all([
-          axios.get(`${BASE_URL}${apiEndpoint}/${id}`),
-          getRoles ? axios.get(`${BASE_URL}/roles`) : Promise.resolve(null),
+          api.get(`${apiEndpoint}${id}`),
+          getRoles ? api.get(`/roles`) : Promise.resolve(null),
         ]);
 
         const rawData = recordRes.data.data || recordRes.data;
@@ -140,9 +138,8 @@ const GenericEditPage = ({
 
     setSubmitting(true);
     try {
-      await axios.patch(`${BASE_URL}${apiEndpoint}/${id}`, {
+      await api.patch(`${apiEndpoint}${id}`, {
         ...sanitizedFields,
-        userId: 1001, // Audit trail
       });
 
       showToast(`${title} updated successfully!`, "success");

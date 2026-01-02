@@ -1,16 +1,29 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/auth",
+  // Use the root URL so you can hit different endpoints
+  baseURL: "http://localhost:5000",
 });
 
-// Automatically attach the token to every request if it exists
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// This interceptor sits between your app and the server
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // 1. Attach the token to the headers
+      config.headers.Authorization = `Bearer ${token}`;
+
+      // 2. (Optional) If your backend specifically requires a userId header:
+      // const userId = localStorage.getItem("userId");
+      // if (userId) config.headers['x-user-id'] = userId;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 export default api;

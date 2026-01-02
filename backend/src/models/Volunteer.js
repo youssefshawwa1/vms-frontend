@@ -241,5 +241,9 @@ const Volunteer = {
   //     }
   //     return true;
   // }
+  getTotalCount: async () => {
+    const [rows] = await db.execute("SELECT COUNT(*) as count FROM volunteer");
+    return rows[0].count;
+  },
 };
 export default Volunteer;

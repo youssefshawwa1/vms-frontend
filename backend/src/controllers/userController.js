@@ -98,7 +98,6 @@ const createUser = async (req, res) => {
       data: newUser,
     });
   } catch (error) {
-    // console.log(error);
     res.status(500).json({
       success: false,
       message: "Error creating user",
@@ -144,10 +143,78 @@ const updateUser = async (req, res) => {
         data: { user: updatedUser },
       });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error updating user",
+      error: error.message,
+    });
+  }
+};
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const oldUserData = await User.findById({ userId, withPassword: true });
+    const updateData = req.body;
+    const allowedUpdates = [
+      "userName",
+      "firstName",
+      "lastName",
+      "status",
+      "userEmail",
+    ];
+    const updates = {};
+    allowedUpdates.forEach((field) => {
+      if (updateData[field] !== undefined) {
+        updates[field] = updateData[field];
+      }
+    });
+
+    if (updateData.password == undefined || updateData.password == "") {
+      return res.status(400).json({
+        success: false,
+        message: "Please make sure to submit your password!",
+      });
+    }
+
+    const canUpdate = await bcrypt.compare(
+      updateData.password,
+      oldUserData.passwordHash
+    );
+
+    if (!canUpdate) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect Password!",
+      });
+    }
+    if (updateData.newPassword !== undefined) {
+      const hashedPassword = await bcrypt.hash(updateData.newPassword, 10);
+      updates.passwordHash = hashedPassword;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields provided for update",
+      });
+    }
+
+    const updatedUser = await User.update({ userId: userId, user: updates });
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "Profile not found",
+      });
+    } else
+      res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+        data: { user: updatedUser },
+      });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating Profile",
       error: error.message,
     });
   }
@@ -202,4 +269,23 @@ const deleteUser = async (req, res) => {
     });
   }
 };
-export { getAllUsers, createUser, updateUser, getUser, deleteUser };
+export const getProfile = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    // We join with other tables if you want to show stats like 'Total Tasks'
+    const response = await User.findById({ userId });
+
+    res.json({ success: true, data: response });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+export {
+  getAllUsers,
+  createUser,
+  updateUser,
+  getUser,
+  deleteUser,
+  updateProfile,
+};

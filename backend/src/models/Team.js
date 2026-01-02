@@ -144,5 +144,9 @@ const Team = {
       throw error;
     }
   },
+  getTotalCount: async () => {
+    const [rows] = await db.execute("SELECT COUNT(*) as count FROM team");
+    return rows[0].count;
+  },
 };
 export default Team;

@@ -91,21 +91,20 @@ export const verifyOTP = async (req, res) => {
     res.status(500).json({ message: "Verification error" });
   }
 };
-
 export const validateToken = async (req, res) => {
   try {
     // req.user comes from authenticateToken middleware
     const user = await User.findById({ userId: req.user.userId });
 
     if (!user) return res.status(404).json({ success: false });
-
+    console.log(user);
     res.status(200).json({
       success: true,
       user: {
         userId: user.userId,
         username: user.userName,
         email: user.userEmail,
-        userRole: user.userRole,
+        userRole: user.role,
       },
     });
   } catch (error) {

@@ -218,6 +218,19 @@ const Certificate = {
     if (!rows.affectedRows) throw new Error("Certificate not found");
     return true;
   },
+  getTotalIssued: async () => {
+    const [rows] = await db.execute(
+      "SELECT COUNT(*) as count FROM volunteeringcertificate"
+    );
+    return rows[0].count;
+  },
+  getTotalIssuedHours: async () => {
+    const [rows] = await db.execute(
+      "SELECT SUM(volunteeringHours) FROM volunteeringcertificate WHERE certificateKind = 'withHours'"
+    );
+    return rows[0].count;
+  },
+
   //   delete: async ({ userId }) => {
   //     const [result] = await db.query("DELETE FROM users WHERE userId=?", userId);
   //     if (!result) {

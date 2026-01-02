@@ -112,7 +112,7 @@ const createVolunteer = async (req, res) => {
       birthDate,
       major,
       university,
-      userId,
+
       phone,
       email,
       gender,
@@ -126,7 +126,6 @@ const createVolunteer = async (req, res) => {
       !birthDate ||
       !major ||
       !university ||
-      !userId ||
       !phone ||
       !email ||
       !gender ||
@@ -138,7 +137,7 @@ const createVolunteer = async (req, res) => {
         message: "All fields are required",
       });
     }
-
+    const userId = req.user.userId;
     const newVolunteer = await Volunteer.create({
       volunteer: {
         firstName,
@@ -170,19 +169,6 @@ const createVolunteer = async (req, res) => {
 };
 
 const updateVolunteer = async (req, res) => {
-  // expecting:
-  //         firstName:
-  //     lastName:
-  //     birthDate:
-  //     major:
-  //     university:
-  //     phone:
-  //     email:
-  //     gender:
-  //     nationality:
-  //     residentCountry:
-  //     userId:
-  //    id (params.id)
   try {
     const volunteerId = req.params.volunteerId;
     const updateData = req.body;
@@ -192,7 +178,6 @@ const updateVolunteer = async (req, res) => {
       "birthDate",
       "major",
       "university",
-      "userId",
       "phone",
       "email",
       "gender",
@@ -212,7 +197,7 @@ const updateVolunteer = async (req, res) => {
         message: "No valid fields provided for update",
       });
     }
-
+    updates.userId = req.user.userId;
     const updatedVolunteer = await Volunteer.update({
       volunteerId: volunteerId,
       volunteer: updates,
@@ -462,7 +447,6 @@ const createCertificate = async (req, res) => {
       customMessage,
       certificateType,
       certificateKind,
-      userId,
     } = req.body;
     const volunteerId = req.params.volunteerId;
     if (
@@ -471,7 +455,6 @@ const createCertificate = async (req, res) => {
       !customMessage ||
       !certificateType ||
       !certificateKind ||
-      !userId ||
       (certificateKind == "withHours" &&
         (volunteeringHours === undefined || volunteeringHours == 0))
     ) {
@@ -480,7 +463,7 @@ const createCertificate = async (req, res) => {
         message: "All fields are required",
       });
     }
-
+    const userId = req.user.userId;
     const certificate = {
       certificateTitle,
       certificateDescription,

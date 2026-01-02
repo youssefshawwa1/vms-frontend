@@ -9,7 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import axios from "axios";
+import api from "../../api/axios";
 import debounce from "lodash.debounce";
 import { GridToolbar } from "@mui/x-data-grid/internals";
 
@@ -115,7 +115,7 @@ const GenericTable = ({
         }
       });
 
-      const response = await axios.get(`http://localhost:5000${finalUrl}`, {
+      const response = await api.get(finalUrl, {
         params: queryParams,
       });
 

@@ -12,9 +12,7 @@ import {
   CalendarToday,
   CheckCircle,
 } from "@mui/icons-material";
-import axios from "axios";
-
-const BASE_URL = "http://localhost:5000";
+import api from "../api/axios";
 
 const CompleteTaskAction = ({ data, onRefresh }) => {
   const navigate = useNavigate();
@@ -55,10 +53,9 @@ const CompleteTaskAction = ({ data, onRefresh }) => {
     if (!taskId) return;
     setLoading(true);
     try {
-      await axios.patch(`${BASE_URL}/tasks/${taskId}/complete`, {
+      await api.patch(`/tasks/${taskId}/complete`, {
         completionDate: completionDate,
         completed: 1,
-        userId: 1001,
       });
 
       showToast("Task completed successfully!", "success");

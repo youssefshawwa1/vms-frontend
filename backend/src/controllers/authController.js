@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import AuthModel from "../models/authModel.js";
 import config from "../config/config.js";
 import { sendOTP } from "../services/emailService.js";
-import User from "../models/User.js";
+import User from "../models/user.js";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -24,7 +24,7 @@ export const login = async (req, res) => {
       expiresAt,
     });
 
-    // await sendOTP({ user: user, otpCode: otpCode });
+    await sendOTP({ user: user, otpCode: otpCode });
 
     res.json({
       mfaRequired: true,

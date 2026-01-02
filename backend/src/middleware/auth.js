@@ -18,7 +18,6 @@ export const authenticateToken = (req, res, next) => {
     res.status(403).json({ message: "Invalid or Expired Token" });
   }
 };
-
 export const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
     // We get req.user from the authenticateToken middleware above

@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import db, { testConnection } from "./config/db.js";
 import {
   getAllUsers,
   createUser,

@@ -19,7 +19,6 @@ const AuthModel = {
     const [rows] = await db.execute(query, [userId, code]);
     return rows[0];
   },
-
   consumeCode: async (userId) => {
     return await db.execute("DELETE FROM verification_codes WHERE userId = ?", [
       userId,

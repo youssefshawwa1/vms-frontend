@@ -1,5 +1,5 @@
-import Certificate from "../models/Certificate.js";
-import Volunteer from "../models/Volunteer.js";
+import Certificate from "../models/certificate.js";
+import Volunteer from "../models/volunteer.js";
 import {
   generateCertificatePreview,
   generateCertificatePDF,

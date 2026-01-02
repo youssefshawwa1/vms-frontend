@@ -1,6 +1,6 @@
 import Team from "../models/Team.js";
-import TeamVolunteer from "../models/TeamVolunteer.js";
-import Task from "../models/Task.js";
+import TeamVolunteer from "../models/teamVolunteer.js";
+import Task from "../models/task.js";
 const getAllTeams = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;

@@ -1,8 +1,7 @@
-import Volunteer from "../models/Volunteer.js";
-import TeamVolunteer from "../models/TeamVolunteer.js";
-import Task from "../models/Task.js";
-import Certificate from "../models/Certificate.js";
-import { sendCertificateEmail } from "../services/emailService.js";
+import Volunteer from "../models/volunteer.js";
+import TeamVolunteer from "../models/teamVolunteer.js";
+import Task from "../models/task.js";
+import Certificate from "../models/certificate.js";
 
 const getAllVolunteers = async (req, res) => {
   try {

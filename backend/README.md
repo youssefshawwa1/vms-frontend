@@ -22,6 +22,12 @@ The VMS Backend is a robust **Node.js** and **Express.js** REST API designed to 
 - **Two-Step Verification (2FA):** Automatic generation and emailing of 6-digit verification codes using **Nodemailer**.
 - **Role-Based Access Control (RBAC): (will implement it later)** Middleware-driven permission checks for Admins, Managers, and Volunteers.
 
+### Dynamic Updates and, filters, search.
+
+- **Dynamically updates:** This system dynamically look at what it recived and updates the fields that only been recived, no need to update the whole record.
+- **Search/Filters:** In each endpoint there is a search and filter query, you can use them as u which, and they are secure, there are onlly few filterss are allowed.
+- **Pagination:** All gett requet comes with paginatoin and limit, and ssortBy orderBy.
+
 ### 📜 Certificate Generation & Dispatch
 
 - **Dynamic Templating:** Uses **EJS** to inject volunteer data into HTML templates located in `views/pdf-templates`.

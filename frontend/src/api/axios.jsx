@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // Use the root URL so you can hit different endpoints
-  baseURL: "https://vms-frontend-production.up.railway.app/",
+  baseURL: "http://localhost:5000",
 });
 
 // This interceptor sits between your app and the server

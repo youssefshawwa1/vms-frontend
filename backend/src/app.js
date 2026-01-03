@@ -65,7 +65,7 @@ import { getDashboardStats } from "./controllers/dashboardController.js";
 const app = express();
 app.use(
   cors({
-    origin: "https://remarkable-monstera-21ca08.netlify.app",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );

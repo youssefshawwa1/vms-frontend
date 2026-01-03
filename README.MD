@@ -50,6 +50,13 @@ The project is structured as a **monorepo** and consists of two main parts:
   - Tasks
   - Certificates
 
+  - **Dynamically updates:** This system dynamically look at what it recived and updates the fields that only been recived, no need to update the whole record.
+  - **Search/Filters:** In each endpoint there is a search and filter query, you can use them as u which, and they are secure, there are onlly few filterss are allowed.
+  - **Pagination:** All gett requet comes with paginatoin and limit, and ssortBy orderBy.
+
+  - **Uing Grid from MUI** Ussing the grid, with customizaion on the filters and search to ue the backend, and also paginatoin with the abackend directly.
+  - **Search, and paginatioin** All tabless are uing paginatoins from backend, limit, filter search. all from backend. Jut consuming the functionalities.
+
 - **Certificate Generation**
 
   - Dynamic certificate creation

@@ -18,6 +18,11 @@ A modern, responsive Volunteering Management System built with React.js and Tail
 
 ![Volunteering Management System](./images/verification.png "Two step verification")
 
+### Table search and filters:
+
+- **Uing Grid from MUI** Ussing the grid, with customizaion on the filters and search to ue the backend, and also paginatoin with the abackend directly.
+- **Search, and paginatioin** All tabless are uing paginatoins from backend, limit, filter search. all from backend. Jut consuming the functionalities.
+
 ### Volunteer Management
 
 - **Create, Read, Update** volunteer profiles

@@ -7,9 +7,7 @@ import {
   Mail,
   CheckCircle,
 } from "@mui/icons-material";
-import axios from "axios";
-
-const BASE_URL = "http://localhost:5000";
+import api from "../api/axios";
 
 const CertificateViewer = ({ data }) => {
   const { id } = useParams();
@@ -36,9 +34,10 @@ const CertificateViewer = ({ data }) => {
       if (!certificateId) return;
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${BASE_URL}/certificates/${certificateId}/preview`
+        const response = await api.get(
+          `/certificates/${certificateId}/preview`
         );
+        console.log(await response);
         if (response.data.success) {
           setPreviewData(response.data.data);
         }
@@ -74,10 +73,9 @@ const CertificateViewer = ({ data }) => {
     if (!certificateId) return;
     try {
       setPdfLoading(true);
-      const response = await axios.get(
-        `${BASE_URL}/certificates/${certificateId}/pdf`,
-        { responseType: "blob" }
-      );
+      const response = await api.get(`/certificates/${certificateId}/pdf`, {
+        responseType: "blob",
+      });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -94,9 +92,7 @@ const CertificateViewer = ({ data }) => {
   const handleSendEmail = async () => {
     try {
       setEmailLoading(true);
-      const response = await axios.post(
-        `${BASE_URL}/certificates/${certificateId}/send`
-      );
+      const response = await api.post(`/certificates/${certificateId}/send`);
 
       if (response.data.success) {
         showToast("Certificate sent successfully!", "success");
@@ -129,6 +125,7 @@ const CertificateViewer = ({ data }) => {
       </div>
     );
 
+  console.log(previewData);
   const { imageInfo, preview } = previewData.image;
 
   return (

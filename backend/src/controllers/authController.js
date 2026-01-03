@@ -7,7 +7,7 @@ import User from "../models/User.js";
 //here when the user asks for a verification code, (when he tryes to login). this function triggers.
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
+  console.log("lkjsdlfkj");
   try {
     const user = await User.findByEmail({ userEmail: email });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
